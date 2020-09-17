@@ -48,7 +48,6 @@ graficos.grid(pady=alto/20)
 
 
 class Menu:
-
     def crear_menu(self):
 
         # Logo
