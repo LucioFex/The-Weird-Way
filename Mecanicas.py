@@ -70,9 +70,9 @@ class Menu:
                             command=self.cerrar_menu)
 
         self.logo.grid(padx=ancho/6, row=0, column=0)
-        self.nueva.grid(pady=19, row=1, column=0)
-        self.continuar.grid(pady=20, row=2, column=0)
-        self.salir.grid(pady=19, row=3, column=0)
+        self.nueva.grid(pady=18, row=1, column=0)
+        self.continuar.grid(pady=18, row=2, column=0)
+        self.salir.grid(pady=18, row=3, column=0)
 
     def cerrar_menu(self):
         self.logo.grid_remove()
@@ -81,8 +81,8 @@ class Menu:
         self.salir.grid_remove()
 
 
-jojer = Menu().crear_menu()
+jojer = Menu()
+jojer.crear_menu()
 
 # -- -- -- Mainloop
-if __name__ == "__main__":
-    root.mainloop()
+root.mainloop()
