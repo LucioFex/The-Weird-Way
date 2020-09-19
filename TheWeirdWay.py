@@ -1,4 +1,4 @@
-from tkinter import Canvas, Frame, Tk, PhotoImage, Label, Button
+from tkinter import Canvas, Frame, Tk, PhotoImage, Button
 
 # -- -- -- Titulo
 
@@ -37,56 +37,68 @@ logo_img = PhotoImage(file="Imagenes/Logo.png")
 # -- -- -- Frame
 
 pantalla = Frame(root, width=ancho, height=alto, bg=c_pantalla)
-pantalla.grid(pady=alto/20)
+pantalla.pack()
 
 # -- -- -- Canvas
 
 graficos = Canvas(pantalla, width=ancho, height=alto, bg=c_pantalla,
                   borderwidth=0, highlightthickness=0)
-graficos.grid(pady=alto/20)
+graficos.pack()
 
 # -- -- -- Botones Menu
 
 
 class Menu:
-    def crear_menu(self):
-        self.num = 0
 
-        self.ani_menu = graficos.create_rectangle(0, 0, ancho, 0)
-        self.logo = Label(graficos, image=logo_img, bg=c_pantalla)
+    def crear_menu(self):
+        self.num = alto
+        self.ani_menu = graficos.create_rectangle(-1, 0, ancho, 0,
+                                                  fill=c_fondo,
+                                                  outline="purple")
 
         self.nueva = Button(graficos, text="Nueva Partida", fg=c_fg,
                             cursor="hand2", font=("Century Gothic", 20),
-                            bg=c_bg_fg, width=30, command=self.cerrar_menu,
-                            activeforeground=c_fg, activebackground=c_bg_press)
+                            bg=c_bg_fg, width=30, activeforeground=c_fg,
+                            activebackground=c_bg_press,
+                            command=lambda: self.cerrar_menu("nueva"))
 
         self.continuar = Button(graficos, text="Continuar Partida", fg=c_fg,
                                 cursor="hand2", font=("Century Gothic", 20),
                                 bg=c_bg_fg, width=27, activeforeground=c_fg,
                                 activebackground=c_bg_press,
-                                command=self.cerrar_menu)
+                                command=lambda: self.cerrar_menu("continuar"))
 
         self.salir = Button(graficos, text="Salir", fg=c_fg, cursor="hand2",
                             font=("Century Gothic", 20), bg=c_bg_fg, width=24,
                             activeforeground=c_fg, activebackground=c_bg_press,
-                            command=self.cerrar_menu)
+                            command=lambda: self.cerrar_menu("salir"))
 
-        self.logo.grid(padx=ancho/6, row=0, column=0)
-        self.nueva.grid(pady=19, row=1, column=0)
-        self.continuar.grid(pady=20, row=2, column=0)
-        self.salir.grid(pady=19, row=3, column=0)
+        self.logo = graficos.create_image(ancho/2, alto/2 - alto/4,
+                                          image=logo_img)
+        self.nueva = graficos.create_window(ancho/2, alto/2 + alto/50,
+                                            window=self.nueva)
+        self.continuar = graficos.create_window(ancho/2, alto/2 + alto/5,
+                                                window=self.continuar)
+        self.salir = graficos.create_window(ancho/2, alto/2 + alto/2.70,
+                                            window=self.salir)
 
-    def cerrar_menu(self):
-        self.num += 5
-        graficos.coords(self.ani_menu, 0, 0, ancho, self.num)
-        if self.num != 675:
-            root.after(1000, self.cerrar_menu)
+    def cerrar_menu(self, selected):
+        self.num -= 75
+        graficos.coords(self.ani_menu, -1, alto, ancho, self.num)
+        if selected == "nueva":
+            graficos.move(self.nueva, 0 - 90, 0)
+        elif selected == "continuar":
+            graficos.move(self.continuar, 0 + 90, 0)
+        elif selected == "salir":
+            graficos.move(self.salir, 0 - 90, 0)
+
+        if self.num > -75:
+            root.after(150, lambda: self.cerrar_menu(selected))
 
         else:
-            self.logo.grid_remove()
-            self.nueva.grid_remove()
-            self.continuar.grid_remove()
-            self.salir.grid_remove()
+            graficos.delete("all")
+
+
 
 
 jojer = Menu().crear_menu()
