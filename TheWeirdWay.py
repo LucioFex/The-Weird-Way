@@ -49,8 +49,10 @@ graficos.grid(pady=alto/20)
 
 
 class Menu:
-
     def crear_menu(self):
+        self.num = 0
+
+        self.ani_menu = graficos.create_rectangle(0, 0, ancho, 0)
         self.logo = Label(graficos, image=logo_img, bg=c_pantalla)
 
         self.nueva = Button(graficos, text="Nueva Partida", fg=c_fg,
@@ -75,10 +77,16 @@ class Menu:
         self.salir.grid(pady=19, row=3, column=0)
 
     def cerrar_menu(self):
-        self.logo.grid_remove()
-        self.nueva.grid_remove()
-        self.continuar.grid_remove()
-        self.salir.grid_remove()
+        self.num += 5
+        graficos.coords(self.ani_menu, 0, 0, ancho, self.num)
+        if self.num != 675:
+            root.after(1000, self.cerrar_menu)
+
+        else:
+            self.logo.grid_remove()
+            self.nueva.grid_remove()
+            self.continuar.grid_remove()
+            self.salir.grid_remove()
 
 
 jojer = Menu().crear_menu()
