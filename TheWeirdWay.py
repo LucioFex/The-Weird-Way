@@ -33,6 +33,9 @@ root.config(bg=c_fondo)
 # -- -- -- Imagenes
 
 logo_img = PhotoImage(file="Imagenes/Logo.png")
+puente_x = PhotoImage(file="Imagenes/PuenteX.png")
+puente_y = PhotoImage(file="Imagenes/PuenteY.png")
+puente_xy = PhotoImage(file="Imagenes/PuenteXY.png")
 
 # -- -- -- Frame
 
@@ -100,8 +103,48 @@ class Menu:  # Menu principal
         if self.num > -75:  # Bucle generado para repetír el método (Animación)
             root.after(125, lambda: self.cerrar_menu(selected))
 
-        else:
+        else:  # Acciones tras animación. Eliminación de todo.
             graficos.delete("all")
+            del self.ani_menu, self.continuar, self.salir, self.num
+            return Seleccion().abrir_selector()
+
+
+class Seleccion:  # Seleccionador de Niveles.
+
+    def __init__(self):
+
+        self.nivel_1 = Button(graficos, text="Nivel 1", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+        self.nivel_2 = Button(graficos, text="Nivel 2", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+        self.nivel_3 = Button(graficos, text="Nivel 3", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+        self.nivel_4 = Button(graficos, text="Nivel 4", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+        self.nivel_5 = Button(graficos, text="Nivel 5", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+        self.nivel_6 = Button(graficos, text="Nivel 6", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+        self.nivel_7 = Button(graficos, text="Nivel 7", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+        self.nivel_8 = Button(graficos, text="Nivel 8", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+        self.nivel_9 = Button(graficos, text="Nivel 9", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+
+    def abrir_selector(self):
+
+        graficos.create_window(ancho/5.5, alto/4.5, window=self.nivel_1)
+        graficos.create_window(ancho/1.955, alto/4.5, window=self.nivel_2)
+        graficos.create_window(ancho/1.20, alto/4.5, window=self.nivel_3)
+
+        graficos.create_window(ancho/5.5, alto/2, window=self.nivel_4)
+        graficos.create_window(ancho/1.955, alto/2, window=self.nivel_5)
+        graficos.create_window(ancho/1.20, alto/2, window=self.nivel_6)
+
+        graficos.create_window(ancho/5.5, alto/1.27, window=self.nivel_7)
+        graficos.create_window(ancho/1.955, alto/1.27, window=self.nivel_8)
+        graficos.create_window(ancho/1.20, alto/1.27, window=self.nivel_9)
 
 
 jojer = Menu()
