@@ -48,10 +48,10 @@ graficos.pack()
 # -- -- -- Botones Menu
 
 
-class Menu:
+class Menu:  # Menu principal
 
     def crear_menu(self):
-        self.num = alto
+        self.num = alto  # Reseteo del numerador de la animación de cerrado.
         self.ani_menu = graficos.create_rectangle(-1, 0, ancho, 0,
                                                   fill=c_fondo,
                                                   outline="purple")
@@ -73,35 +73,39 @@ class Menu:
                             activeforeground=c_fg, activebackground=c_bg_press,
                             command=lambda: self.cerrar_menu("salir"))
 
-        self.logo = graficos.create_image(ancho/2, alto/2 - alto/4,
-                                          image=logo_img)
-        self.nueva = graficos.create_window(ancho/2, alto/2 + alto/50,
-                                            window=self.nueva)
-        self.continuar = graficos.create_window(ancho/2, alto/2 + alto/5,
-                                                window=self.continuar)
-        self.salir = graficos.create_window(ancho/2, alto/2 + alto/2.70,
-                                            window=self.salir)
+        self.logo2 = graficos.create_image(ancho/2, alto/2 - alto/4,
+                                           image=logo_img)
+        self.nueva2 = graficos.create_window(ancho/2, alto/2 + alto/50,
+                                             window=self.nueva)
+        self.continuar2 = graficos.create_window(ancho/2, alto/2 + alto/5,
+                                                 window=self.continuar)
+        self.salir2 = graficos.create_window(ancho/2, alto/2 + alto/2.70,
+                                             window=self.salir)
 
-    def cerrar_menu(self, selected):
+    def cerrar_menu(self, selected):  # 1ro: Animación, luego cerrado.
+        self.nueva.config(command=lambda: None)
+        self.continuar.config(command=lambda: None)
+        self.salir.config(command=lambda: None)
+
         self.num -= 75
         graficos.coords(self.ani_menu, -1, alto, ancho, self.num)
-        if selected == "nueva":
-            graficos.move(self.nueva, 0 - 90, 0)
-        elif selected == "continuar":
-            graficos.move(self.continuar, 0 + 90, 0)
-        elif selected == "salir":
-            graficos.move(self.salir, 0 - 90, 0)
 
-        if self.num > -75:
-            root.after(150, lambda: self.cerrar_menu(selected))
+        if selected == "nueva":
+            graficos.move(self.nueva2,     0 - 90, 0)
+        elif selected == "continuar":
+            graficos.move(self.continuar2, 0 + 90, 0)
+        elif selected == "salir":
+            graficos.move(self.salir2,     0 - 90, 0)
+
+        if self.num > -75:  # Bucle generado para repetír el método (Animación)
+            root.after(125, lambda: self.cerrar_menu(selected))
 
         else:
             graficos.delete("all")
 
 
-
-
-jojer = Menu().crear_menu()
+jojer = Menu()
+jojer.crear_menu()
 
 # -- -- -- Mainloop
 if __name__ == "__main__":
