@@ -1,4 +1,5 @@
 from tkinter import Canvas, Frame, Tk, PhotoImage, Button
+import time
 
 # -- -- -- Titulo
 
@@ -18,8 +19,11 @@ alto = tamaño * filas
 c_fondo = "#1c1b20"
 c_pantalla = "#26242b"
 c_fg = "#8b64ed"
+c_fg_win = "#615637"
 c_bg_fg = "#222027"
+c_bg_fg_win = "#d7b64c"
 c_bg_press = "#1c1b20"
+c_bg_press_win = "#ffd00d"
 
 # -- -- -- Root
 
@@ -54,6 +58,8 @@ graficos.pack()
 class Menu:  # Menu principal
 
     def crear_menu(self):
+        graficos.delete("all")
+
         self.num = alto  # Reseteo del numerador de la animación de cerrado.
         self.ani_menu = graficos.create_rectangle(-1, 0, ancho, 0,
                                                   fill=c_fondo,
@@ -94,54 +100,78 @@ class Menu:  # Menu principal
         graficos.coords(self.ani_menu, -1, alto, ancho, self.num)
 
         if selected == "nueva":
-            graficos.move(self.nueva2,     0 - 90, 0)
+            graficos.move(self.nueva2,     - 90, 0)
         elif selected == "continuar":
-            graficos.move(self.continuar2, 0 + 90, 0)
+            graficos.move(self.continuar2, + 90, 0)
         elif selected == "salir":
-            graficos.move(self.salir2,     0 - 90, 0)
+            graficos.move(self.salir2,     - 90, 0)
 
         if self.num > -75:  # Bucle generado para repetír el método (Animación)
             root.after(125, lambda: self.cerrar_menu(selected))
 
         else:  # Acciones tras animación. Eliminación de todo.
+            time.sleep(0.90)  # Tiempo para que cargue
             graficos.delete("all")
-            del self.ani_menu, self.continuar, self.salir, self.num
             return Seleccion().abrir_selector()
 
 
 class Seleccion:  # Seleccionador de Niveles.
 
     def __init__(self):
-
+        self.volver = Button(graficos, text="Volver al menu principal",
+                             width=19, font=("Comic Sans MS", 15), bg=c_bg_fg,
+                             fg=c_fg, activebackground=c_bg_press,
+                             activeforeground=c_fg,
+                             command=lambda: Menu().crear_menu())
         self.nivel_1 = Button(graficos, text="Nivel 1", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
+                              activebackground=c_bg_press,
+                              activeforeground=c_fg)
         self.nivel_2 = Button(graficos, text="Nivel 2", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
+                              activebackground=c_bg_press,
+                              activeforeground=c_fg)
         self.nivel_3 = Button(graficos, text="Nivel 3", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
+                              activebackground=c_bg_press,
+                              activeforeground=c_fg)
         self.nivel_4 = Button(graficos, text="Nivel 4", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
+                              activebackground=c_bg_press,
+                              activeforeground=c_fg)
         self.nivel_5 = Button(graficos, text="Nivel 5", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
+                              activebackground=c_bg_press,
+                              activeforeground=c_fg)
         self.nivel_6 = Button(graficos, text="Nivel 6", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
+                              activebackground=c_bg_press,
+                              activeforeground=c_fg)
         self.nivel_7 = Button(graficos, text="Nivel 7", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
+                              activebackground=c_bg_press,
+                              activeforeground=c_fg)
         self.nivel_8 = Button(graficos, text="Nivel 8", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
+                              activebackground=c_bg_press,
+                              activeforeground=c_fg)
         self.nivel_9 = Button(graficos, text="Nivel 9", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg="red", fg="blue")
+                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
+                              activebackground=c_bg_press,
+                              activeforeground=c_fg)
 
     def abrir_selector(self):
-
+        # Fila 0
+        graficos.create_window(ancho/8, 30, window=self.volver)
+        # Fila 1
         graficos.create_window(ancho/5.5, alto/4.5, window=self.nivel_1)
         graficos.create_window(ancho/1.955, alto/4.5, window=self.nivel_2)
         graficos.create_window(ancho/1.20, alto/4.5, window=self.nivel_3)
-
+        # Fila 2
         graficos.create_window(ancho/5.5, alto/2, window=self.nivel_4)
         graficos.create_window(ancho/1.955, alto/2, window=self.nivel_5)
         graficos.create_window(ancho/1.20, alto/2, window=self.nivel_6)
-
+        # Fila 3
         graficos.create_window(ancho/5.5, alto/1.27, window=self.nivel_7)
         graficos.create_window(ancho/1.955, alto/1.27, window=self.nivel_8)
         graficos.create_window(ancho/1.20, alto/1.27, window=self.nivel_9)
