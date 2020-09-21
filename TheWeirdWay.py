@@ -1,5 +1,4 @@
 from tkinter import Canvas, Frame, Tk, PhotoImage, Button
-import time
 
 # -- -- -- Titulo
 
@@ -20,7 +19,8 @@ c_fondo = "#1c1b20"
 c_pantalla = "#26242b"
 c_fg = "#8b64ed"
 c_fg_win = "#615637"
-c_bg_fg = "#222027"
+c_bg_fg_no = "#222027"
+c_bg_fg_si = "#272430"
 c_bg_fg_win = "#d7b64c"
 c_bg_press = "#1c1b20"
 c_bg_press_win = "#ffd00d"
@@ -37,9 +37,11 @@ root.config(bg=c_fondo)
 # -- -- -- Imagenes
 
 logo_img = PhotoImage(file="Imagenes/Logo.png")
-puente_x = PhotoImage(file="Imagenes/PuenteX.png")
-puente_y = PhotoImage(file="Imagenes/PuenteY.png")
-puente_xy = PhotoImage(file="Imagenes/PuenteXY.png")
+fondo_img = PhotoImage(file="Imagenes/Fondo2.png")
+puente_x_img = PhotoImage(file="Imagenes/PuenteX.png")
+puente_y_img = PhotoImage(file="Imagenes/PuenteY.png")
+puente_xy_img = PhotoImage(file="Imagenes/PuenteXY.png")
+player_img = PhotoImage(file="Imagenes/Mr_Hat.png")
 
 # -- -- -- Frame
 
@@ -58,7 +60,6 @@ graficos.pack()
 class Menu:  # Menu principal
 
     def crear_menu(self):
-        graficos.delete("all")
 
         self.num = alto  # Reseteo del numerador de la animación de cerrado.
         self.ani_menu = graficos.create_rectangle(-1, 0, ancho, 0,
@@ -67,18 +68,18 @@ class Menu:  # Menu principal
 
         self.nueva = Button(graficos, text="Nueva Partida", fg=c_fg,
                             cursor="hand2", font=("Century Gothic", 20),
-                            bg=c_bg_fg, width=30, activeforeground=c_fg,
+                            bg=c_bg_fg_no, width=30, activeforeground=c_fg,
                             activebackground=c_bg_press,
                             command=lambda: self.cerrar_menu("nueva"))
 
         self.continuar = Button(graficos, text="Continuar Partida", fg=c_fg,
                                 cursor="hand2", font=("Century Gothic", 20),
-                                bg=c_bg_fg, width=27, activeforeground=c_fg,
+                                bg=c_bg_fg_no, width=27, activeforeground=c_fg,
                                 activebackground=c_bg_press,
                                 command=lambda: self.cerrar_menu("continuar"))
 
         self.salir = Button(graficos, text="Salir", fg=c_fg, cursor="hand2",
-                            font=("Century Gothic", 20), bg=c_bg_fg, width=24,
+                            font=("Century Gothic", 20), bg=c_bg_fg_no, width=24,
                             activeforeground=c_fg, activebackground=c_bg_press,
                             command=lambda: self.cerrar_menu("salir"))
 
@@ -95,7 +96,7 @@ class Menu:  # Menu principal
         self.nueva.config(command=lambda: None)
         self.continuar.config(command=lambda: None)
         self.salir.config(command=lambda: None)
-
+        # Animaciones:
         self.num -= 75
         graficos.coords(self.ani_menu, -1, alto, ancho, self.num)
 
@@ -110,57 +111,69 @@ class Menu:  # Menu principal
             root.after(125, lambda: self.cerrar_menu(selected))
 
         else:  # Acciones tras animación. Eliminación de todo.
-            time.sleep(0.90)  # Tiempo para que cargue
             graficos.delete("all")
-            return Seleccion().abrir_selector()
+            if selected != "salir":
+                return Seleccion().abrir_selector()
+            else:
+                root.destroy()
 
 
 class Seleccion:  # Seleccionador de Niveles.
 
-    def __init__(self):
-        self.volver = Button(graficos, text="Volver al menu principal",
-                             width=19, font=("Comic Sans MS", 15), bg=c_bg_fg,
-                             fg=c_fg, activebackground=c_bg_press,
-                             activeforeground=c_fg,
-                             command=lambda: Menu().crear_menu())
-        self.nivel_1 = Button(graficos, text="Nivel 1", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
-                              activebackground=c_bg_press,
-                              activeforeground=c_fg)
-        self.nivel_2 = Button(graficos, text="Nivel 2", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
-                              activebackground=c_bg_press,
-                              activeforeground=c_fg)
-        self.nivel_3 = Button(graficos, text="Nivel 3", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
-                              activebackground=c_bg_press,
-                              activeforeground=c_fg)
-        self.nivel_4 = Button(graficos, text="Nivel 4", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
-                              activebackground=c_bg_press,
-                              activeforeground=c_fg)
-        self.nivel_5 = Button(graficos, text="Nivel 5", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
-                              activebackground=c_bg_press,
-                              activeforeground=c_fg)
-        self.nivel_6 = Button(graficos, text="Nivel 6", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
-                              activebackground=c_bg_press,
-                              activeforeground=c_fg)
-        self.nivel_7 = Button(graficos, text="Nivel 7", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
-                              activebackground=c_bg_press,
-                              activeforeground=c_fg)
-        self.nivel_8 = Button(graficos, text="Nivel 8", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
-                              activebackground=c_bg_press,
-                              activeforeground=c_fg)
-        self.nivel_9 = Button(graficos, text="Nivel 9", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg, fg=c_fg,
-                              activebackground=c_bg_press,
-                              activeforeground=c_fg)
-
     def abrir_selector(self):
+
+        self.volver = Button(graficos, text="Volver al menu principal",
+                             width=19, font=("Comic Sans MS", 15),
+                             bg=c_bg_fg_no, fg=c_fg,
+                             activebackground=c_bg_press,
+                             activeforeground=c_fg,
+                             command=lambda: self.cerrar_selector("0"))
+        self.nivel_1 = Button(graficos, text="Nivel 1", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg=c_bg_fg_si,
+                              fg=c_fg, activebackground=c_bg_press,
+                              activeforeground=c_fg,
+                              command=lambda: self.cerrar_selector("1"))
+        self.nivel_2 = Button(graficos, text="Nivel 2", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
+                              fg=c_fg, activebackground=c_bg_press,
+                              activeforeground=c_fg,
+                              command=lambda: self.cerrar_selector("2"))
+        self.nivel_3 = Button(graficos, text="Nivel 3", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
+                              fg=c_fg, activebackground=c_bg_press,
+                              activeforeground=c_fg,
+                              command=lambda: self.cerrar_selector("3"))
+        self.nivel_4 = Button(graficos, text="Nivel 4", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
+                              fg=c_fg, activebackground=c_bg_press,
+                              activeforeground=c_fg,
+                              command=lambda: self.cerrar_selector("4"))
+        self.nivel_5 = Button(graficos, text="Nivel 5", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
+                              fg=c_fg, activebackground=c_bg_press,
+                              activeforeground=c_fg,
+                              command=lambda: self.cerrar_selector("5"))
+        self.nivel_6 = Button(graficos, text="Nivel 6", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
+                              fg=c_fg, activebackground=c_bg_press,
+                              activeforeground=c_fg,
+                              command=lambda: self.cerrar_selector("6"))
+        self.nivel_7 = Button(graficos, text="Nivel 7", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
+                              fg=c_fg, activebackground=c_bg_press,
+                              activeforeground=c_fg,
+                              command=lambda: self.cerrar_selector("7"))
+        self.nivel_8 = Button(graficos, text="Nivel 8", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
+                              fg=c_fg, activebackground=c_bg_press,
+                              activeforeground=c_fg,
+                              command=lambda: self.cerrar_selector("8"))
+        self.nivel_9 = Button(graficos, text="Nivel 9", width=17, height=2,
+                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
+                              fg=c_fg, activebackground=c_bg_press,
+                              activeforeground=c_fg,
+                              command=lambda: self.cerrar_selector("9"))
+        # ---------------------------------------------------------------------
         # Fila 0
         graficos.create_window(ancho/8, 30, window=self.volver)
         # Fila 1
@@ -175,6 +188,28 @@ class Seleccion:  # Seleccionador de Niveles.
         graficos.create_window(ancho/5.5, alto/1.27, window=self.nivel_7)
         graficos.create_window(ancho/1.955, alto/1.27, window=self.nivel_8)
         graficos.create_window(ancho/1.20, alto/1.27, window=self.nivel_9)
+
+    def cerrar_selector(self, nivel):  # 0 = Menu | >= 1 y <=9 = X nivel
+        graficos.delete("all")
+        del self.volver, self.nivel_1, self.nivel_2, self.nivel_3,
+        self.nivel_4, self.nivel_5, self.nivel_6,
+        self.nivel_7, self.nivel_8, self.nivel_9
+
+        if nivel == "0":  # If por si se quiere volver al menu principal.
+            return Menu().crear_menu()
+        else:  # Else para activar la clase Partída con método para el nivel.
+            for lvl in ("1", "2", "3", "4", "5", "6", "7", "8", "9"):
+                if nivel == lvl:
+                    print("LLEGUE", lvl)
+                    exec("Partida.nivel_{}".format(lvl))
+                    break
+
+
+class Partida:
+
+    def __init__(self):
+        self.fondo = graficos.create_image(100, 125, image=fondo_img)
+        # self.player = graficos.create_image
 
 
 jojer = Menu()
