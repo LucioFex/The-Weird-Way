@@ -28,13 +28,14 @@ c_bg_press_win = "#ffd00d"
 root = Tk()
 root.title(titulo)
 root.resizable(False, False)
-root.geometry("{}x{}+{}+{}".format(ancho, alto, 245, 55))
+root.geometry("{}x{}+{}+{}".format(ancho, alto, 200, 45))
 root.iconbitmap("LucioPalIco.ico")
 root.config(bg=c_fondo)
 
 # -- -- -- Imagenes
 
 logo_img = PhotoImage(file="Imagenes/Logo.png")
+menu_img = PhotoImage(file="Imagenes/Inicio.png")
 fondo_img = PhotoImage(file="Imagenes/Fondo3.png")
 player_img = PhotoImage(file="Imagenes/Red_Skull2.png")
 
@@ -71,6 +72,8 @@ class Menu:  # Menu principal
     def crear_menu(self):
 
         self.num = alto  # Reseteo del numerador de la animación de cerrado.
+        self.imagen = graficos.create_image(ancho/2, alto/2, image=menu_img)
+
         self.ani_menu = graficos.create_rectangle(-1, 0, ancho, 0,
                                                   fill=c_fondo,
                                                   outline="purple")
@@ -107,18 +110,18 @@ class Menu:  # Menu principal
         self.continuar.config(command=lambda: None)
         self.salir.config(command=lambda: None)
         # Animaciones:
-        self.num -= 75
+        self.num -= 40
         graficos.coords(self.ani_menu, -1, alto, ancho, self.num)
 
         if selected == "nueva":
-            graficos.move(self.nueva2,     - 90, 0)
+            graficos.move(self.nueva2,     - 43, 0)
         elif selected == "continuar":
-            graficos.move(self.continuar2, + 90, 0)
+            graficos.move(self.continuar2, + 43, 0)
         elif selected == "salir":
-            graficos.move(self.salir2,     - 90, 0)
+            graficos.move(self.salir2,     - 43, 0)
 
-        if self.num > -75:  # Bucle generado para repetír el método (Animación)
-            root.after(125, lambda: self.cerrar_menu(selected))
+        if self.num > -40:  # Bucle generado para repetír el método (Animación)
+            root.after(100, lambda: self.cerrar_menu(selected))
 
         else:  # Acciones tras animación. Eliminación de todo.
             graficos.delete("all")
@@ -138,52 +141,32 @@ class Seleccion:  # Seleccionador de Niveles.
                              activebackground=c_bg_press,
                              activeforeground=c_fg, cursor="hand2",
                              command=lambda: self.cerrar_selector("0"))
-        self.nivel_1 = Button(graficos, text="Nivel 1", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg_si,
-                              fg=c_fg, activebackground=c_bg_press,
-                              activeforeground=c_fg, cursor="hand2",
-                              command=lambda: self.cerrar_selector("1"))
-        self.nivel_2 = Button(graficos, text="Nivel 2", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
-                              fg=c_fg, activebackground=c_bg_press,
-                              activeforeground=c_fg, cursor="hand2",
-                              command=lambda: self.cerrar_selector("2"))
-        self.nivel_3 = Button(graficos, text="Nivel 3", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
-                              fg=c_fg, activebackground=c_bg_press,
-                              activeforeground=c_fg, cursor="hand2",
-                              command=lambda: self.cerrar_selector("3"))
-        self.nivel_4 = Button(graficos, text="Nivel 4", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
-                              fg=c_fg, activebackground=c_bg_press,
-                              activeforeground=c_fg, cursor="hand2",
-                              command=lambda: self.cerrar_selector("4"))
-        self.nivel_5 = Button(graficos, text="Nivel 5", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
-                              fg=c_fg, activebackground=c_bg_press,
-                              activeforeground=c_fg, cursor="hand2",
-                              command=lambda: self.cerrar_selector("5"))
-        self.nivel_6 = Button(graficos, text="Nivel 6", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
-                              fg=c_fg, activebackground=c_bg_press,
-                              activeforeground=c_fg, cursor="hand2",
-                              command=lambda: self.cerrar_selector("6"))
-        self.nivel_7 = Button(graficos, text="Nivel 7", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
-                              fg=c_fg, activebackground=c_bg_press,
-                              activeforeground=c_fg, cursor="hand2",
-                              command=lambda: self.cerrar_selector("7"))
-        self.nivel_8 = Button(graficos, text="Nivel 8", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
-                              fg=c_fg, activebackground=c_bg_press,
-                              activeforeground=c_fg, cursor="hand2",
-                              command=lambda: self.cerrar_selector("8"))
-        self.nivel_9 = Button(graficos, text="Nivel 9", width=17, height=2,
-                              font=("Comic Sans MS", 20), bg=c_bg_fg_no,
-                              fg=c_fg, activebackground=c_bg_press,
-                              activeforeground=c_fg, cursor="hand2",
-                              command=lambda: self.cerrar_selector("9"))
+
+        # Loop para generar los botones de los niveles:
+        for nivel in ["self.nivel_1", "self.nivel_2", "self.nivel_3",
+                      "self.nivel_4", "self.nivel_5", "self.nivel_6",
+                      "self.nivel_7", "self.nivel_8", "self.nivel_9"]:
+
+            exec("""{0} = Button(graficos, text='Nivel {1}', width=17,
+                 height=2, font=('Comic Sans MS', 20),
+                 bg=c_bg_fg_no, fg=c_fg,
+                 activebackground=c_bg_press,
+                 activeforeground=c_fg, cursor='hand2')""".
+                 format(nivel, nivel[-1]))
+
+        self.nivel_1.config(bg=c_bg_fg_si,
+                            command=lambda: self.cerrar_selector("1"))
+        self.nivel_2.config(command=lambda: self.cerrar_selector("2"))
+        self.nivel_3.config(command=lambda: self.cerrar_selector("3"))
+        self.nivel_4.config(command=lambda: self.cerrar_selector("4"))
+        self.nivel_5.config(command=lambda: self.cerrar_selector("5"))
+        self.nivel_6.config(command=lambda: self.cerrar_selector("6"))
+        self.nivel_7.config(command=lambda: self.cerrar_selector("7"))
+        self.nivel_8.config(command=lambda: self.cerrar_selector("8"))
+        self.nivel_9.config(command=lambda: self.cerrar_selector("9"))
+
         # ---------------------------------------------------------------------
+
         # Fila 0
         graficos.create_window(ancho/8, 30, window=self.volver)
         # Fila 1
@@ -214,7 +197,7 @@ class Seleccion:  # Seleccionador de Niveles.
                     break
 
 
-class Partida:  # Ancho base = 76 * | Alto base = 71 *
+class Partida:  # Ancho base = 154 | Alto base = 140
 
     def __init__(self):
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_img)
@@ -223,27 +206,27 @@ class Partida:  # Ancho base = 76 * | Alto base = 71 *
 
     def nivel_1(self, act):  # "init" = Crear | "game" = Acción del juego
         if act == "init":
-            self.puente1 = [graficos.create_image(153, 140*2,
+            self.puente1 = [graficos.create_image(154, 140*2,
                                                   image=puente_acd_img), "acd"]
-            self.puente2 = [graficos.create_image(153, 140*3,
+            self.puente2 = [graficos.create_image(154, 140*3,
                                                   image=puente_y_img), "y"]
-            self.puente3 = [graficos.create_image(153*2, 140*2,
-                                                  image=puente_xy_img), "xy"]
-            self.puente4 = [graficos.create_image(153*2, 140*3,
+            self.puente3 = [graficos.create_image(154*2, 140*2,
                                                   image=puente_bc_img), "bc"]
-            self.puente5 = [graficos.create_image(153*3, 140*3,
-                                                  image=puente_y_img), "y"]
-            self.puente6 = [graficos.create_image(153*4, 140*2,
+            self.puente4 = [graficos.create_image(154*2, 140*3,
                                                   image=puente_bc_img), "bc"]
-            self.puente5 = [graficos.create_image(153*4, 140*6,
-                                                  image=puente_ac_img), "ac"]
-            self.puente5 = [graficos.create_image(153*5, 140*3,
+            self.puente5 = [graficos.create_image(154*3, 140*2,
                                                   image=puente_y_img), "y"]
-            self.puente5 = [graficos.create_image(153*6, 140*3,
+            self.puente6 = [graficos.create_image(154*4, 140*2,
+                                                  image=puente_bc_img), "bc"]
+            self.puente5 = [graficos.create_image(154*4, 140*3,
                                                   image=puente_ac_img), "ac"]
-            self.puente5 = [graficos.create_image(153*6, 140*2,
+            self.puente5 = [graficos.create_image(154*5, 140*3,
+                                                  image=puente_y_img), "y"]
+            self.puente5 = [graficos.create_image(154*6, 140*3,
+                                                  image=puente_ac_img), "ac"]
+            self.puente5 = [graficos.create_image(154*6, 140*2,
                                                   image=puente_x_img), "x"]
-            self.puente5 = [graficos.create_image(153*6, 140,
+            self.puente5 = [graficos.create_image(154*6, 140,
                                                   image=puente_ad_img), "ad"]
 
         graficos.lift(self.player)
