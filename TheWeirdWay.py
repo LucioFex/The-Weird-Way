@@ -8,11 +8,9 @@ print("=" * len(titulo) + "\n" + titulo + "\n" + "=" * len(titulo), "\n")
 # -- -- -- Variables e imagenes previas
 
 # Tamaños
-tamaño = 26
-columnas = 40
-filas = 27
-ancho = (tamaño * columnas) - 6
-alto = (tamaño * filas) + 6
+
+ancho = 1071
+alto = 708
 
 # Colores
 c_fondo = "#1c1b20"
@@ -30,14 +28,14 @@ c_bg_press_win = "#ffd00d"
 root = Tk()
 root.title(titulo)
 root.resizable(False, False)
-root.geometry("{}x{}+{}+{}".format(ancho - 6, alto, 245, 55))
+root.geometry("{}x{}+{}+{}".format(ancho, alto, 245, 55))
 root.iconbitmap("LucioPalIco.ico")
 root.config(bg=c_fondo)
 
 # -- -- -- Imagenes
 
 logo_img = PhotoImage(file="Imagenes/Logo.png")
-fondo_img = PhotoImage(file="Imagenes/Fondo4.png")
+fondo_img = PhotoImage(file="Imagenes/Fondo3.png")
 player_img = PhotoImage(file="Imagenes/Red_Skull2.png")
 
 puente_x_img = PhotoImage(file="Imagenes/PuenteX.png")  # X
@@ -225,16 +223,28 @@ class Partida:  # Ancho base = 76 * | Alto base = 71 *
 
     def nivel_1(self, act):  # "init" = Crear | "game" = Acción del juego
         if act == "init":
-            self.puente1 = [graficos.create_image(76*2, 71*6,
+            self.puente1 = [graficos.create_image(153, 140*2,
+                                                  image=puente_acd_img), "acd"]
+            self.puente2 = [graficos.create_image(153, 140*3,
+                                                  image=puente_y_img), "y"]
+            self.puente3 = [graficos.create_image(153*2, 140*2,
+                                                  image=puente_xy_img), "xy"]
+            self.puente4 = [graficos.create_image(153*2, 140*3,
+                                                  image=puente_bc_img), "bc"]
+            self.puente5 = [graficos.create_image(153*3, 140*3,
+                                                  image=puente_y_img), "y"]
+            self.puente6 = [graficos.create_image(153*4, 140*2,
+                                                  image=puente_bc_img), "bc"]
+            self.puente5 = [graficos.create_image(153*4, 140*6,
                                                   image=puente_ac_img), "ac"]
-            self.puente1 = [graficos.create_image(76*2, 71*4,
-                                                  image=puente_bd_img), "bd"]
-            self.puente1 = [graficos.create_image(76*2, 71*6,
+            self.puente5 = [graficos.create_image(153*5, 140*3,
+                                                  image=puente_y_img), "y"]
+            self.puente5 = [graficos.create_image(153*6, 140*3,
                                                   image=puente_ac_img), "ac"]
-            self.puente1 = [graficos.create_image(76*2, 71*6,
-                                                  image=puente_ac_img), "ac"]
-            self.puente1 = [graficos.create_image(76*2, 71*6,
-                                                  image=puente_ac_img), "ac"]
+            self.puente5 = [graficos.create_image(153*6, 140*2,
+                                                  image=puente_x_img), "x"]
+            self.puente5 = [graficos.create_image(153*6, 140,
+                                                  image=puente_ad_img), "ad"]
 
         graficos.lift(self.player)
 
