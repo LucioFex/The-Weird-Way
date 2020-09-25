@@ -20,9 +20,10 @@ c_fg_win = "#615637"  # Letras de los niveles ganados
 c_bg_se = "#1a1820"  # Color de cuadros de inicio
 c_bg_no = "#1e1c24"  # Color de niveles bloqueados
 c_bg_si = "#272430"  # Color de niveles desbloqueados
+c_bg_press = "#1c1b20"  # Color de botones comúnes siendo presionados
+c_bg_press_si = "#221f2a"  # Color de niveles desbloqueados siendo presionados
 c_bg_win = "#d7b64c"  # Color de niveles superados
-c_bg_press = "#1c1b20"  # Color de botones siendo presionados
-c_bg_press_win = "#ffd00d"  # Color de niveles ganados siendo presionados
+c_bg_press_win = "#cbab47"  # Color de niveles ganados siendo presionados
 
 # -- -- -- Root
 
@@ -34,10 +35,10 @@ root.iconbitmap("LucioPalIco.ico")
 root.config(bg=c_fondo)
 
 # -- -- -- Imagenes
-
+# A = Izquierda | B = Derecha | C = Arriba | D = Abajo
 logo_img = PhotoImage(file="Imagenes/Logo.png")
-menu_img = PhotoImage(file="Imagenes/Inicio.png")
-fondo_img = PhotoImage(file="Imagenes/Fondo3.png")
+menu_img = PhotoImage(file="Imagenes/Inicio3.png")
+fondo_img = PhotoImage(file="Imagenes/Fondo6.png")
 player_img = PhotoImage(file="Imagenes/Red_Skull2.png")
 candado_img = PhotoImage(file="Imagenes/Candado2.png")
 
@@ -155,7 +156,7 @@ class Seleccion:  # Seleccionador de Niveles.
                       "self.nivel_4", "self.nivel_5", "self.nivel_6",
                       "self.nivel_7", "self.nivel_8", "self.nivel_9"]:
 
-            exec("""{0} = Button(graficos, text='     Nivel {1} ',
+            exec("""{0} = Button(graficos, text='       Nivel {1} ',
                  width=276,font=('Comic Sans MS', 20),
                  bg=c_bg_se, fg=c_fg,
                  activebackground=c_bg_press,
@@ -167,6 +168,7 @@ class Seleccion:  # Seleccionador de Niveles.
                      .format(nivel))
 
         self.nivel_1.config(bg=c_bg_si, width=17, height=2, text="Nivel 1",
+                            activebackground=c_bg_press_si,
                             command=lambda: self.cerrar_selector("1"))
         self.nivel_2.config(command=lambda: self.cerrar_selector("2"))
         self.nivel_3.config(command=lambda: self.cerrar_selector("3"))
@@ -255,4 +257,4 @@ jojer.crear_menu()
 
 # -- -- -- Mainloop
 if __name__ == "__main__":
-    root.mainloop()  # Continuar con la adición de las estrellas
+    root.mainloop()
