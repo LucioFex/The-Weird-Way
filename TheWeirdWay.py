@@ -1,14 +1,11 @@
 from tkinter import Canvas, Frame, Tk, PhotoImage, Button
 
 # -- -- -- Titulo
-
 titulo = "The Weird Way"
 print("=" * len(titulo) + "\n" + titulo + "\n" + "=" * len(titulo), "\n")
 
 # -- -- -- Variables e imagenes previas
-
 # Tamaños
-
 ancho = 1071
 alto = 708
 
@@ -25,8 +22,13 @@ c_bg_press_si = "#221f2a"  # Color de niveles desbloqueados siendo presionados
 c_bg_win = "#d7b64c"  # Color de niveles superados
 c_bg_press_win = "#cbab47"  # Color de niveles ganados siendo presionados
 
-# -- -- -- Root
+# Direcciones
+all_p = ("xy")  # Cantidad de direcciones: 1
+xy_p = ("x", "y")  # Cantidad de direcciones: 2
+dos_p = ("ac", "bc", "bd", "ad")  # Cantidad de direcciones: 4
+tres_p = ("abd", "acd", "abc", "bcd")  # Cantidad de direcciones: 4
 
+# -- -- -- Root
 root = Tk()
 root.title(titulo)
 root.resizable(False, False)
@@ -57,12 +59,10 @@ puente_acd_img = PhotoImage(file="Imagenes/PuenteACD.png")  # ACD
 puente_bcd_img = PhotoImage(file="Imagenes/PuenteBCD.png")  # BCD
 
 # -- -- -- Frame
-
 pantalla = Frame(root, width=ancho, height=alto, bg=c_pantalla)
 pantalla.pack()
 
 # -- -- -- Canvas
-
 graficos = Canvas(pantalla, width=ancho, height=alto, bg=c_pantalla,
                   borderwidth=0, highlightthickness=0)
 graficos.pack()
@@ -71,6 +71,9 @@ graficos.pack()
 
 
 class Menu:  # Menu principal
+
+    def __init__(self):   # __init__ para cancelar la selecciones de puentes
+        graficos.unbind("<Button-1>")
 
     def crear_menu(self):
 
@@ -142,8 +145,10 @@ class Menu:  # Menu principal
 
 class Seleccion:  # Seleccionador de Niveles.
 
-    def abrir_selector(self):
+    def __init__(self):  # __init__ para cancelar la selecciones de puentes
+        graficos.unbind("<Button-1>")
 
+    def abrir_selector(self):
         self.volver = Button(graficos, text="Volver al menu principal",
                              width=19, font=("Comic Sans MS", 15),
                              bg=c_bg_se, fg=c_fg,
@@ -199,7 +204,7 @@ class Seleccion:  # Seleccionador de Niveles.
         # Candados:
         # graficos.create_image(ancho/1.955, alto/4.5)
 
-    def cerrar_selector(self, nivel):  # 0 = Menu | >= 1 y <=9 = X nivel
+    def cerrar_selector(self, nivel):  # 0 = Menu | >= 1 y <=9 = X Nivel
         graficos.delete("all")
         del self.volver, self.nivel_1, self.nivel_2, self.nivel_3,
         self.nivel_4, self.nivel_5, self.nivel_6,
@@ -210,7 +215,7 @@ class Seleccion:  # Seleccionador de Niveles.
         else:  # Else para activar la clase Partída con método para el nivel.
             for lvl in ("1", "2", "3", "4", "5", "6", "7", "8", "9"):
                 if nivel == lvl:
-                    exec('Partida().nivel_{0}("init")'.format(lvl))
+                    exec('Partida().nivel_{0}()'.format(lvl))
                     break
 
 
@@ -218,38 +223,106 @@ class Partida:  # Ancho base = 154 | Alto base = 140
 
     def __init__(self):
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_img)
-        self.player = graficos.create_image(45, 71*6,
+        self.player = graficos.create_image(154*0.25, 71*6,
                                             image=player_img)
 
-    def nivel_1(self, act):  # "init" = Crear | "touch" = Acción del juego
+    def giro(self, cursor):
+        print("X = {}".format(cursor.x))
+        print("Y = {}".format(cursor.y))
 
-        if act == "init":
-            self.puente1 = [graficos.create_image(154, 140*2,
-                                                  image=puente_acd_img), "acd"]
-            self.puente2 = [graficos.create_image(154, 140*3,
-                                                  image=puente_y_img), "y"]
-            self.puente3 = [graficos.create_image(154*2, 140*2,
-                                                  image=puente_bc_img), "bc"]
-            self.puente4 = [graficos.create_image(154*2, 140*3,
-                                                  image=puente_bc_img), "bc"]
-            self.puente5 = [graficos.create_image(154*3, 140*2,
-                                                  image=puente_y_img), "y"]
-            self.puente6 = [graficos.create_image(154*4, 140*2,
-                                                  image=puente_bc_img), "bc"]
-            self.puente7 = [graficos.create_image(154*4, 140*3,
-                                                  image=puente_ac_img), "ac"]
-            self.puente8 = [graficos.create_image(154*5, 140*3,
-                                                  image=puente_y_img), "y"]
-            self.puente9 = [graficos.create_image(154*6, 140*3,
-                                                  image=puente_ac_img), "ac"]
-            self.puente10 = [graficos.create_image(154*6, 140*2,
-                                                   image=puente_x_img), "x"]
-            self.puente11 = [graficos.create_image(154*6, 140,
-                                                   image=puente_ad_img), "ad"]
+        if (cursor.x >= 70 and cursor.x <= 77 * 3 and
+           cursor.y >= 70 * 3 and cursor.y <= 70 * 5):
+            try:
+                return self.cambio(self.puente21)
+            except AttributeError:
+                print("No hay cuadro 21")  # Hacer Loop para generar el click
+
+    def cambio(self, dire):  # p = Posición
+        if dire[1] in all_p:
+            return dire
+
+        elif dire[1] in xy_p:
+            if dire[1] == "x":
+                dire[1] = "y"
+                graficos.itemconfig(dire[0], image=puente_y_img)
+            elif dire[1] == "y":
+                dire[1] = "x"
+                graficos.itemconfig(dire[0], image=puente_x_img)
+            return dire
+
+        elif dire[1] in dos_p:
+            if dire[1] == "ac":
+                dire[1] = "bc"
+                graficos.itemconfig(dire[0], image=puente_bc_img)
+            elif dire[1] == "bc":
+                dire[1] = "bd"
+                graficos.itemconfig(dire[0], image=puente_bd_img)
+            elif dire[1] == "bd":
+                dire[1] = "ad"
+                graficos.itemconfig(dire[0], image=puente_ad_img)
+            elif dire[1] == "ad":
+                dire[1] = "ac"
+                graficos.itemconfig(dire[0], image=puente_ac_img)
+            return dire
+
+        elif dire[1] in tres_p:
+            if dire[1] == "abd":
+                dire[1] = "acd"
+                graficos.itemconfig(dire[0], image=puente_acd_img)
+            elif dire[1] == "acd":
+                dire[1] = "abc"
+                graficos.itemconfig(dire[0], image=puente_abc_img)
+            elif dire[1] == "abc":
+                dire[1] = "bcd"
+                graficos.itemconfig(dire[0], image=puente_bcd_img)
+            elif dire[1] == "bcd":
+                dire[1] = "abd"
+                graficos.itemconfig(dire[0], image=puente_abd_img)
+            return dire
+
+    def nivel_1(self):
+        # for e in range(1, 4 + 1):
+        #     for i in range(1, 6 + 1):
+        #         graficos.create_image(154*int("{}".format(i)),
+        #                               140*int("{}".format(e)),
+        #                               image=puente_xy_img)
+
+        self.puente21 = [graficos.create_image(154, 140*2,
+                                               image=puente_acd_img),
+                         "acd", "self.puente21"]
+        self.puente32 = [graficos.create_image(154, 140*3,
+                                               image=puente_y_img),
+                         "y", "32"]
+        self.puente22 = [graficos.create_image(154*2, 140*2,
+                                               image=puente_bc_img),
+                         "bc", "22"]
+        self.puente32 = [graficos.create_image(154*2, 140*3,
+                                               image=puente_bc_img),
+                         "bc", "32"]
+        self.puente23 = [graficos.create_image(154*3, 140*2,
+                                               image=puente_y_img),
+                         "y", "23"]
+        self.puente24 = [graficos.create_image(154*4, 140*2,
+                                               image=puente_bc_img),
+                         "bc", "24"]
+        self.puente23 = [graficos.create_image(154*4, 140*3,
+                                               image=puente_ac_img),
+                         "ac", "23"]
+        self.puente35 = [graficos.create_image(154*5, 140*3,
+                                               image=puente_y_img),
+                         "y", "35"]
+        self.puente36 = [graficos.create_image(154*6, 140*3,
+                                               image=puente_ac_img),
+                         "ac", "36"]
+        self.puente26 = [graficos.create_image(154*6, 140*2,
+                                               image=puente_x_img),
+                         "x", "26"]
+        self.puente16 = [(graficos.create_image(154*6, 140,
+                                                image=puente_ad_img)),
+                         "ad", "16"]
 
         graficos.lift(self.player)
-
-# root.bind("<Button-1>", ) # Continuar con el giro de los puentes
+        graficos.bind("<Button-1>", self.giro)  # Giro de los caminos
 
 
 jojer = Menu()
