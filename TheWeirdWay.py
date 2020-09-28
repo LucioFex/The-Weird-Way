@@ -23,7 +23,7 @@ c_bg_win = "#d7b64c"  # Color de niveles superados
 c_bg_press_win = "#cbab47"  # Color de niveles ganados siendo presionados
 
 # Direcciones
-all_p = ("xy")  # Cantidad de direcciones: 1
+all_p = ("full")  # Cantidad de direcciones: 1
 xy_p = ("x", "y")  # Cantidad de direcciones: 2
 dos_p = ("ac", "bc", "bd", "ad")  # Cantidad de direcciones: 4
 tres_p = ("abd", "acd", "abc", "bcd")  # Cantidad de direcciones: 4
@@ -43,10 +43,11 @@ menu_img = PhotoImage(file="Imagenes/Inicio3.png")
 fondo_img = PhotoImage(file="Imagenes/Fondo6.png")
 player_img = PhotoImage(file="Imagenes/Red_Skull2.png")
 candado_img = PhotoImage(file="Imagenes/Candado2.png")
+home_img = PhotoImage(file="Imagenes/Retorno_Menu.png")
 
 puente_x_img = PhotoImage(file="Imagenes/PuenteX.png")  # X
 puente_y_img = PhotoImage(file="Imagenes/PuenteY.png")  # Y
-puente_xy_img = PhotoImage(file="Imagenes/PuenteXY.png")  # XY
+puente_full_img = PhotoImage(file="Imagenes/PuenteFULL.png")  # XY
 
 puente_ac_img = PhotoImage(file="Imagenes/PuenteAC.png")  # AC
 puente_ad_img = PhotoImage(file="Imagenes/PuenteAD.png")  # AD
@@ -71,15 +72,10 @@ graficos.pack()
 
 
 class Menu:  # Menu principal
-
-    def __init__(self):   # __init__ para cancelar la selecciones de puentes
-        graficos.unbind("<Button-1>")
-
     def crear_menu(self):
 
         self.num = alto  # Reseteo del numerador de la animación de cerrado.
         self.imagen = graficos.create_image(ancho/2, alto/2, image=menu_img)
-
         self.logo2 = graficos.create_image(ancho/2, alto/2 - alto/4,
                                            image=logo_img)
         self.ani_menu = graficos.create_rectangle(-1, 0, ancho, 0,
@@ -144,9 +140,6 @@ class Menu:  # Menu principal
 
 
 class Seleccion:  # Seleccionador de Niveles.
-
-    def __init__(self):  # __init__ para cancelar la selecciones de puentes
-        graficos.unbind("<Button-1>")
 
     def abrir_selector(self):
         self.volver = Button(graficos, text="Volver al menu principal",
@@ -222,26 +215,198 @@ class Seleccion:  # Seleccionador de Niveles.
 class Partida:  # Ancho base = 154 | Alto base = 140
 
     def __init__(self):
-        self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_img)
+        self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_img)  # Continuar
         self.player = graficos.create_image(154*0.25, 71*6,
                                             image=player_img)
+        self.home = Button(graficos, font=("Century Gothic", 15), bg="#23272d",
+                           width=50, bd=0, activebackground="#23272d",
+                           highlightthickness=0, image=home_img,
+                           cursor="hand2", command=self.regresar)
+
+        self.home = graficos.create_window(35, 35, window=self.home)
+        graficos.bind("<Button-1>", self.giro)  # Giro de los caminos
 
     def giro(self, cursor):
-        print("X = {}".format(cursor.x))
-        print("Y = {}".format(cursor.y))
+        # Condicionales a corto plazo, tratar de arreglarlo con bucles luego.
 
-        if (cursor.x >= 70 and cursor.x <= 77 * 3 and
-           cursor.y >= 70 * 3 and cursor.y <= 70 * 5):
+        if (cursor.x >= 17.5 and cursor.x < 52.5 and  # HOME (Regreso al menu)
+                cursor.y >= 17.5 and cursor.y < 52.5):
+            return self.regresar()
+        # ------------------------------------------------------
+        if (cursor.x >= 77 and cursor.x < 77 * 3 and  # Cuadro 11
+                cursor.y >= 69 and cursor.y < 69 * 3):
+            try:
+                return self.cambio(self.puente11)
+            except AttributeError:
+                print("No hay cuadro 11")
+
+        elif (cursor.x >= 77 and cursor.x < 77 * 3 and  # Cuadro 21
+              cursor.y >= 69 * 3 and cursor.y < 69 * 5):
             try:
                 return self.cambio(self.puente21)
             except AttributeError:
-                print("No hay cuadro 21")  # Hacer Loop para generar el click
+                print("No hay cuadro 21")
+
+        elif (cursor.x >= 77 and cursor.x < 77 * 3 and  # Cuadro 31
+              cursor.y >= 69 * 5 and cursor.y < 69 * 7):
+            try:
+                return self.cambio(self.puente31)
+            except AttributeError:
+                print("No hay cuadro 31")
+
+        elif (cursor.x >= 77 and cursor.x < 77 * 3 and  # Cuadro 41
+              cursor.y >= 69 * 7 and cursor.y < (69 * 9) + 11):
+            try:
+                return self.cambio(self.puente41)
+            except AttributeError:
+                print("No hay cuadro 41")
+
+        elif (cursor.x >= 77 * 3 and cursor.x < 77 * 5 and  # Cuadro 12
+              cursor.y >= 69 and cursor.y < 69 * 3):
+            try:
+                return self.cambio(self.puente12)
+            except AttributeError:
+                print("No hay cuadro 12")
+
+        elif (cursor.x >= 77 * 3 and cursor.x < 77 * 5 and  # Cuadro 22
+              cursor.y >= 69 * 3 and cursor.y < 69 * 5):
+            try:
+                return self.cambio(self.puente22)
+            except AttributeError:
+                print("No hay cuadro 22")
+
+        elif (cursor.x >= 77 * 3 and cursor.x < 77 * 5 and  # Cuadro 32
+              cursor.y >= 69 * 5 and cursor.y < 69 * 7):
+            try:
+                return self.cambio(self.puente32)
+            except AttributeError:
+                print("No hay cuadro 32")
+
+        elif (cursor.x >= 77 * 3 and cursor.x < 77 * 5 and  # Cuadro 42
+              cursor.y >= 69 * 7 and cursor.y < (69 * 9) + 11):
+            try:
+                return self.cambio(self.puente42)
+            except AttributeError:
+                print("No hay cuadro 42")
+
+        elif (cursor.x >= 77 * 5 and cursor.x < 77 * 7 and  # Cuadro 13
+              cursor.y >= 69 and cursor.y < 69 * 3):
+            try:
+                return self.cambio(self.puente13)
+            except AttributeError:
+                print("No hay cuadro 13")
+
+        elif (cursor.x >= 77 * 5 and cursor.x < 77 * 7 and  # Cuadro 23
+              cursor.y >= 69 * 3 and cursor.y < 69 * 5):
+            try:
+                return self.cambio(self.puente23)
+            except AttributeError:
+                print("No hay cuadro 23")
+
+        elif (cursor.x >= 77 * 5 and cursor.x < 77 * 7 and  # Cuadro 33
+              cursor.y >= 69 * 5 and cursor.y < 69 * 7):
+            try:
+                return self.cambio(self.puente33)
+            except AttributeError:
+                print("No hay cuadro 33")
+
+        elif (cursor.x >= 77 * 5 and cursor.x < 77 * 7 and  # Cuadro 43
+              cursor.y >= 69 * 7 and cursor.y < (69 * 9) + 11):
+            try:
+                return self.cambio(self.puente43)
+            except AttributeError:
+                print("No hay cuadro 43")
+
+        elif (cursor.x >= 77 * 7 and cursor.x < 77 * 9 and  # Cuadro 14
+              cursor.y >= 69 and cursor.y < 69 * 3):
+            try:
+                return self.cambio(self.puente14)
+            except AttributeError:
+                print("No hay cuadro 14")
+
+        elif (cursor.x >= 77 * 7 and cursor.x < 77 * 9 and  # Cuadro 24
+              cursor.y >= 69 * 3 and cursor.y < 69 * 5):
+            try:
+                return self.cambio(self.puente24)
+            except AttributeError:
+                print("No hay cuadro 24")
+
+        elif (cursor.x >= 77 * 7 and cursor.x < 77 * 9 and  # Cuadro 34
+              cursor.y >= 69 * 5 and cursor.y < 69 * 7):
+            try:
+                return self.cambio(self.puente34)
+            except AttributeError:
+                print("No hay cuadro 34")
+
+        elif (cursor.x >= 77 * 7 and cursor.x < 77 * 9 and  # Cuadro 44
+              cursor.y >= 69 * 7 and cursor.y < (69 * 9) + 11):
+            try:
+                return self.cambio(self.puente44)
+            except AttributeError:
+                print("No hay cuadro 44")
+
+        elif (cursor.x >= 77 * 9 and cursor.x < 77 * 11 and  # Cuadro 15
+              cursor.y >= 69 and cursor.y < 69 * 3):
+            try:
+                return self.cambio(self.puente15)
+            except AttributeError:
+                print("No hay cuadro 15")
+
+        elif (cursor.x >= 77 * 9 and cursor.x < 77 * 11 and  # Cuadro 25
+              cursor.y >= 69 * 3 and cursor.y < 69 * 5):
+            try:
+                return self.cambio(self.puente25)
+            except AttributeError:
+                print("No hay cuadro 25")
+
+        elif (cursor.x >= 77 * 9 and cursor.x < 77 * 11 and  # Cuadro 35
+              cursor.y >= 69 * 5 and cursor.y < 69 * 7):
+            try:
+                return self.cambio(self.puente35)
+            except AttributeError:
+                print("No hay cuadro 35")
+
+        elif (cursor.x >= 77 * 9 and cursor.x < 77 * 11 and  # Cuadro 45
+              cursor.y >= 69 * 7 and cursor.y < (69 * 9) + 11):
+            try:
+                return self.cambio(self.puente45)
+            except AttributeError:
+                print("No hay cuadro 45")
+
+        elif (cursor.x >= 77 * 11 and cursor.x < 77 * 13 and  # Cuadro 16
+              cursor.y >= 69 and cursor.y < 69 * 3):
+            try:
+                return self.cambio(self.puente16)
+            except AttributeError:
+                print("No hay cuadro 16")
+
+        elif (cursor.x >= 77 * 11 and cursor.x < 77 * 13 and  # Cuadro 26
+              cursor.y >= 69 * 3 and cursor.y < 69 * 5):
+            try:
+                return self.cambio(self.puente26)
+            except AttributeError:
+                print("No hay cuadro 26")
+
+        elif (cursor.x >= 77 * 11 and cursor.x < 77 * 13 and  # Cuadro 36
+              cursor.y >= 69 * 5 and cursor.y < 69 * 7):
+            try:
+                return self.cambio(self.puente36)
+            except AttributeError:
+                print("No hay cuadro 36")
+
+        elif (cursor.x >= 77 * 11 and cursor.x < 77 * 13 and  # Cuadro 46
+              cursor.y >= 69 * 7 and cursor.y < (69 * 9) + 11):
+            try:
+                return self.cambio(self.puente46)
+            except AttributeError:
+                print("No hay cuadro 46")
 
     def cambio(self, dire):  # p = Posición
-        if dire[1] in all_p:
+
+        if dire[1] in all_p:  # XY
             return dire
 
-        elif dire[1] in xy_p:
+        elif dire[1] in xy_p:  # X | Y
             if dire[1] == "x":
                 dire[1] = "y"
                 graficos.itemconfig(dire[0], image=puente_y_img)
@@ -250,7 +415,7 @@ class Partida:  # Ancho base = 154 | Alto base = 140
                 graficos.itemconfig(dire[0], image=puente_x_img)
             return dire
 
-        elif dire[1] in dos_p:
+        elif dire[1] in dos_p:  # AC | BC | BD | AD
             if dire[1] == "ac":
                 dire[1] = "bc"
                 graficos.itemconfig(dire[0], image=puente_bc_img)
@@ -265,7 +430,7 @@ class Partida:  # Ancho base = 154 | Alto base = 140
                 graficos.itemconfig(dire[0], image=puente_ac_img)
             return dire
 
-        elif dire[1] in tres_p:
+        elif dire[1] in tres_p:  # ABD | ACD | ABC | BCD
             if dire[1] == "abd":
                 dire[1] = "acd"
                 graficos.itemconfig(dire[0], image=puente_acd_img)
@@ -281,48 +446,37 @@ class Partida:  # Ancho base = 154 | Alto base = 140
             return dire
 
     def nivel_1(self):
-        # for e in range(1, 4 + 1):
-        #     for i in range(1, 6 + 1):
-        #         graficos.create_image(154*int("{}".format(i)),
-        #                               140*int("{}".format(e)),
-        #                               image=puente_xy_img)
 
         self.puente21 = [graficos.create_image(154, 140*2,
-                                               image=puente_acd_img),
-                         "acd", "self.puente21"]
-        self.puente32 = [graficos.create_image(154, 140*3,
-                                               image=puente_y_img),
-                         "y", "32"]
+                                               image=puente_bd_img), "bd"]
+        self.puente31 = [graficos.create_image(154, 140*3,
+                                               image=puente_y_img), "y"]
         self.puente22 = [graficos.create_image(154*2, 140*2,
-                                               image=puente_bc_img),
-                         "bc", "22"]
+                                               image=puente_bc_img), "bc"]
         self.puente32 = [graficos.create_image(154*2, 140*3,
-                                               image=puente_bc_img),
-                         "bc", "32"]
+                                               image=puente_bc_img), "bc"]
         self.puente23 = [graficos.create_image(154*3, 140*2,
-                                               image=puente_y_img),
-                         "y", "23"]
+                                               image=puente_y_img), "y"]
         self.puente24 = [graficos.create_image(154*4, 140*2,
-                                               image=puente_bc_img),
-                         "bc", "24"]
-        self.puente23 = [graficos.create_image(154*4, 140*3,
-                                               image=puente_ac_img),
-                         "ac", "23"]
+                                               image=puente_bc_img), "bc"]
+        self.puente34 = [graficos.create_image(154*4, 140*3,
+                                               image=puente_ac_img), "ac"]
         self.puente35 = [graficos.create_image(154*5, 140*3,
-                                               image=puente_y_img),
-                         "y", "35"]
+                                               image=puente_y_img), "y"]
         self.puente36 = [graficos.create_image(154*6, 140*3,
-                                               image=puente_ac_img),
-                         "ac", "36"]
+                                               image=puente_ac_img), "ac"]
         self.puente26 = [graficos.create_image(154*6, 140*2,
-                                               image=puente_x_img),
-                         "x", "26"]
+                                               image=puente_x_img), "x"]
         self.puente16 = [(graficos.create_image(154*6, 140,
-                                                image=puente_ad_img)),
-                         "ad", "16"]
+                                                image=puente_ad_img)), "ad"]
 
         graficos.lift(self.player)
-        graficos.bind("<Button-1>", self.giro)  # Giro de los caminos
+
+    def regresar(self):  # Retorno al menu principal
+        graficos.unbind("<Button-1>")
+        graficos.delete("all")
+        Menu().crear_menu()
+
 
 
 jojer = Menu()
