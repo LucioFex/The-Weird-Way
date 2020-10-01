@@ -28,6 +28,9 @@ xy_p = ("x", "y")  # Cantidad de direcciones: 2
 dos_p = ("ac", "bc", "bd", "ad")  # Cantidad de direcciones: 4
 tres_p = ("abd", "acd", "abc", "bcd")  # Cantidad de direcciones: 4
 
+# Nivel Máximo alcanzado
+maximo = 1  # Predeterminado
+
 # -- -- -- Root
 root = Tk()
 root.title(titulo)
@@ -141,7 +144,11 @@ class Menu:  # Menu principal
 
 class Seleccion:  # Seleccionador de Niveles.
 
-    def abrir_selector(self, desbloqueados=1):  # Continuar con cuidado a partír de aca
+    def abrir_selector(self, desbloqueados=1):
+        global maximo
+        if desbloqueados >= maximo:
+            maximo = desbloqueados
+        print("jojo:", maximo)
         self.volver = Button(graficos, text="Volver al menu principal",
                              width=19, font=("Comic Sans MS", 15),
                              bg=c_bg_se, fg=c_fg,
@@ -153,81 +160,44 @@ class Seleccion:  # Seleccionador de Niveles.
         for nivel in ("self.nivel_1", "self.nivel_2", "self.nivel_3",
                       "self.nivel_4", "self.nivel_5", "self.nivel_6",
                       "self.nivel_7", "self.nivel_8", "self.nivel_9"):
-
+            # Botones generandose
             exec("""{0} = Button(graficos, text='       Nivel {1} ',
                  width=276,font=('Comic Sans MS', 20),
                  bg=c_bg_se, fg=c_fg,
                  activebackground=c_bg_press,
                  activeforeground=c_fg, cursor='hand2')""".
                  format(nivel, nivel[-1]))
-
-            if int(nivel[-1]) <= desbloqueados:
+            # Botones seleccionables dependiendo de los niveles desbloqueados
+            if int(nivel[-1]) <= maximo:
                 exec("""{0}.config(command=lambda: self.cerrar_selec('{0}'),
                     activebackground=c_bg_press_si, bg=c_bg_si,
                     width=17, height=2, text="Nivel {1}")"""
                      .format(nivel, nivel[-1]))
-
+            # Botones bloqueados por niveles injugables
             else:
                 exec("{}.config(image=candado_img, compound='right')"
                      .format(nivel))
 
         # Solución con IFs (solo para corto plazo)
-        if desbloqueados == 1:
+        if maximo >= 1:
             self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
-        elif desbloqueados == 2:
-            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+        if maximo >= 2:
             self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
-        elif desbloqueados == 3:
-            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
-            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
+        if maximo >= 3:
             self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
-        elif desbloqueados == 4:
-            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
-            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
-            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
+        if maximo >= 4:
             self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
-        elif desbloqueados == 5:
-            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
-            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
-            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
-            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
+        if maximo >= 5:
             self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
-        elif desbloqueados == 6:
-            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
-            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
-            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
-            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
-            self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
+        if maximo >= 6:
             self.nivel_6.config(command=lambda: self.cerrar_selec("6"))
-        elif desbloqueados == 7:
-            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
-            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
-            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
-            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
-            self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
-            self.nivel_6.config(command=lambda: self.cerrar_selec("6"))
+        if maximo >= 7:
             self.nivel_7.config(command=lambda: self.cerrar_selec("7"))
-        elif desbloqueados == 8:
-            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
-            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
-            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
-            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
-            self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
-            self.nivel_6.config(command=lambda: self.cerrar_selec("6"))
-            self.nivel_7.config(command=lambda: self.cerrar_selec("7"))
+        if maximo >= 8:
             self.nivel_8.config(command=lambda: self.cerrar_selec("8"))
-        elif desbloqueados == 9:
-            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
-            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
-            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
-            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
-            self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
-            self.nivel_6.config(command=lambda: self.cerrar_selec("6"))
-            self.nivel_7.config(command=lambda: self.cerrar_selec("7"))
-            self.nivel_8.config(command=lambda: self.cerrar_selec("8"))
+        if maximo >= 9:
             self.nivel_9.config(command=lambda: self.cerrar_selec("9"))
         # ---------------------------------------------------------------------
-
         # Fila 0
         graficos.create_window(ancho/8, 30, window=self.volver)
         # Fila 1
@@ -278,6 +248,7 @@ class Partida:  # Ancho base = 154 (77 X) | Alto base = 140 (140 Y)
         if (cursor.x >= 17.5 and cursor.x < 52.5 and  # HOME (Regreso al menu)
                 cursor.y >= 17.5 and cursor.y < 52.5):
             return self.regresar()
+
         # ------------------------------------------------------
         if (cursor.x >= 77 and cursor.x < 77 * 3 and  # Cuadro 11
                 cursor.y >= 69 and cursor.y < 69 * 3):
@@ -578,7 +549,6 @@ class Partida:  # Ancho base = 154 (77 X) | Alto base = 140 (140 Y)
 
     def regresar(self, desbloqueado=1):  # Retorno al menu principal
         graficos.unbind("<Button-1>")
-        # del self.home
         graficos.delete("all")
         return Seleccion().abrir_selector(desbloqueado)
 
