@@ -134,7 +134,7 @@ class Menu:  # Menu principal
         else:  # Acciones tras animación. Eliminación de todo.
             graficos.delete("all")
             if selected != "salir":
-                return Seleccion().abrir_selector()
+                return Seleccion().abrir_selector(1)
             else:
                 root.destroy()
 
@@ -147,7 +147,7 @@ class Seleccion:  # Seleccionador de Niveles.
                              bg=c_bg_se, fg=c_fg,
                              activebackground=c_bg_press,
                              activeforeground=c_fg, cursor="hand2",
-                             command=lambda: self.cerrar_selector("0"))
+                             command=lambda: self.cerrar_selec("0"))
 
         # Loop para generar los botones de los niveles:
         for nivel in ("self.nivel_1", "self.nivel_2", "self.nivel_3",
@@ -161,30 +161,71 @@ class Seleccion:  # Seleccionador de Niveles.
                  activeforeground=c_fg, cursor='hand2')""".
                  format(nivel, nivel[-1]))
 
-            for ganado in range(desbloqueados):
-                if ganado <= int(nivel[-1]):
+            if int(nivel[-1]) <= desbloqueados:
+                exec("""{0}.config(command=lambda: self.cerrar_selec('{0}'),
+                    activebackground=c_bg_press_si, bg=c_bg_si,
+                    width=17, height=2, text="Nivel {1}")"""
+                     .format(nivel, nivel[-1]))
 
-                    exec("{0}.config(command=lambda: self.cerrar_selector('{0}'))"
-                         .format(nivel))
-                else:
-                    exec("{}.config(image=candado_img, compound='right')"
-                         .format(nivel))
-
-            if nivel != "self.nivel_1":
+            else:
                 exec("{}.config(image=candado_img, compound='right')"
                      .format(nivel))
 
-        self.nivel_1.config(bg=c_bg_si, width=17, height=2, text="Nivel 1",
-                            activebackground=c_bg_press_si,
-                            command=lambda: self.cerrar_selector("1"))
-        # self.nivel_2.config(command=lambda: self.cerrar_selector("2"))
-        # self.nivel_3.config(command=lambda: self.cerrar_selector("3"))
-        # self.nivel_4.config(command=lambda: self.cerrar_selector("4"))
-        # self.nivel_5.config(command=lambda: self.cerrar_selector("5"))
-        # self.nivel_6.config(command=lambda: self.cerrar_selector("6"))
-        # self.nivel_7.config(command=lambda: self.cerrar_selector("7"))
-        # self.nivel_8.config(command=lambda: self.cerrar_selector("8"))
-        # self.nivel_9.config(command=lambda: self.cerrar_selector("9"))
+        # Solución con IFs (solo para corto plazo)
+        if desbloqueados == 1:
+            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+        elif desbloqueados == 2:
+            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
+        elif desbloqueados == 3:
+            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
+            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
+        elif desbloqueados == 4:
+            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
+            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
+            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
+        elif desbloqueados == 5:
+            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
+            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
+            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
+            self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
+        elif desbloqueados == 6:
+            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
+            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
+            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
+            self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
+            self.nivel_6.config(command=lambda: self.cerrar_selec("6"))
+        elif desbloqueados == 7:
+            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
+            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
+            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
+            self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
+            self.nivel_6.config(command=lambda: self.cerrar_selec("6"))
+            self.nivel_7.config(command=lambda: self.cerrar_selec("7"))
+        elif desbloqueados == 8:
+            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
+            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
+            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
+            self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
+            self.nivel_6.config(command=lambda: self.cerrar_selec("6"))
+            self.nivel_7.config(command=lambda: self.cerrar_selec("7"))
+            self.nivel_8.config(command=lambda: self.cerrar_selec("8"))
+        elif desbloqueados == 9:
+            self.nivel_1.config(command=lambda: self.cerrar_selec("1"))
+            self.nivel_2.config(command=lambda: self.cerrar_selec("2"))
+            self.nivel_3.config(command=lambda: self.cerrar_selec("3"))
+            self.nivel_4.config(command=lambda: self.cerrar_selec("4"))
+            self.nivel_5.config(command=lambda: self.cerrar_selec("5"))
+            self.nivel_6.config(command=lambda: self.cerrar_selec("6"))
+            self.nivel_7.config(command=lambda: self.cerrar_selec("7"))
+            self.nivel_8.config(command=lambda: self.cerrar_selec("8"))
+            self.nivel_9.config(command=lambda: self.cerrar_selec("9"))
         # ---------------------------------------------------------------------
 
         # Fila 0
@@ -200,12 +241,13 @@ class Seleccion:  # Seleccionador de Niveles.
         # Fila 3
         graficos.create_window(ancho/5.5, alto/1.27, window=self.nivel_7)
         graficos.create_window(ancho/1.955, alto/1.27, window=self.nivel_8)
+        graficos.create_window(ancho/1.20, alto/1.27, window=self.nivel_9)
 
-    def cerrar_selector(self, nivel):  # 0 = Menu | >= 1 y <=9 = X Nivel
+    def cerrar_selec(self, nivel):  # 0 = Menu | >= 1 y <=9 = X Nivel
         graficos.delete("all")
-        del self.volver, self.nivel_1, self.nivel_2, self.nivel_3,
-        self.nivel_4, self.nivel_5, self.nivel_6,
-        self.nivel_7, self.nivel_8, self.nivel_9
+        # del self.volver, self.nivel_1, self.nivel_2, self.nivel_3,
+        # self.nivel_4, self.nivel_5, self.nivel_6,
+        # self.nivel_7, self.nivel_8, self.nivel_9
 
         if nivel == "0":  # If por si se quiere volver al menu principal.
             return Menu().crear_menu()
@@ -216,7 +258,7 @@ class Seleccion:  # Seleccionador de Niveles.
                     break
 
 
-class Partida:  # Ancho base = 154 | Alto base = 140
+class Partida:  # Ancho base = 154 (77 X) | Alto base = 140 (140 Y)
 
     def __init__(self):
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_img)
@@ -227,7 +269,7 @@ class Partida:  # Ancho base = 154 | Alto base = 140
                            highlightthickness=0, image=home_img,
                            cursor="hand2", command=self.regresar)
 
-        self.home = graficos.create_window(35, 35, window=self.home)
+        graficos.create_window(35, 35, window=self.home)
         graficos.bind("<Button-1>", self.giro)  # Giro de los caminos
 
     def giro(self, cursor):
@@ -488,8 +530,7 @@ class Partida:  # Ancho base = 154 | Alto base = 140
                 root.update()
 
         if self.paso >= 2020:
-            print("NACÍ LUEGO DEL ERROR")
-            self.regresar(nivel + 1)
+            return self.regresar(nivel + 1)
 
         graficos.after(20, lambda: self.mov_animacion(nivel))
 
@@ -537,7 +578,7 @@ class Partida:  # Ancho base = 154 | Alto base = 140
 
     def regresar(self, desbloqueado=1):  # Retorno al menu principal
         graficos.unbind("<Button-1>")
-        del self.home
+        # del self.home
         graficos.delete("all")
         return Seleccion().abrir_selector(desbloqueado)
 
