@@ -17,7 +17,7 @@ c_fg_win = "#615637"  # Letras de los niveles ganados
 c_bg_se = "#1a1820"  # Color de cuadros de inicio
 c_bg_no = "#1e1c24"  # Color de niveles bloqueados
 c_bg_si = "#272430"  # Color de niveles desbloqueados
-c_bg_press = "#1c1b20"  # Color de botones comúnes siendo presionados
+c_bg_press = "#1a1920"  # Color de botones comúnes siendo presionados
 c_bg_press_si = "#221f2a"  # Color de niveles desbloqueados siendo presionados
 c_bg_win = "#d7b64c"  # Color de niveles superados
 c_bg_press_win = "#cbab47"  # Color de niveles ganados siendo presionados
@@ -137,18 +137,18 @@ class Menu:  # Menu principal
         else:  # Acciones tras animación. Eliminación de todo.
             graficos.delete("all")
             if selected != "salir":
-                return Seleccion().abrir_selector(1)
+                return Seleccion().abrir_selector()
             else:
                 root.destroy()
 
 
 class Seleccion:  # Seleccionador de Niveles.
 
-    def abrir_selector(self, desbloqueados=1):
+    def abrir_selector(self, desbloqueados=1):  # Predeterminado: 1
         global maximo
-        if desbloqueados >= maximo:
+        if desbloqueados >= maximo:  # Guardado del nivel aumentado
             maximo = desbloqueados
-        print("jojo:", maximo)
+
         self.volver = Button(graficos, text="Volver al menu principal",
                              width=19, font=("Comic Sans MS", 15),
                              bg=c_bg_se, fg=c_fg,
@@ -201,23 +201,23 @@ class Seleccion:  # Seleccionador de Niveles.
         # Fila 0
         graficos.create_window(ancho/8, 30, window=self.volver)
         # Fila 1
-        graficos.create_window(ancho/5.5, alto/4.5, window=self.nivel_1)
-        graficos.create_window(ancho/1.955, alto/4.5, window=self.nivel_2)
-        graficos.create_window(ancho/1.20, alto/4.5, window=self.nivel_3)
+        graficos.create_window((ancho/5.5), (alto/4.5), window=self.nivel_1)
+        graficos.create_window((ancho/1.955), (alto/4.5), window=self.nivel_2)
+        graficos.create_window((ancho/1.20), (alto/4.5), window=self.nivel_3)
         # Fila 2
-        graficos.create_window(ancho/5.5, alto/2, window=self.nivel_4)
-        graficos.create_window(ancho/1.955, alto/2, window=self.nivel_5)
-        graficos.create_window(ancho/1.20, alto/2, window=self.nivel_6)
+        graficos.create_window((ancho/5.5), (alto/2), window=self.nivel_4)
+        graficos.create_window((ancho/1.955), (alto/2), window=self.nivel_5)
+        graficos.create_window((ancho/1.20), (alto/2), window=self.nivel_6)
         # Fila 3
-        graficos.create_window(ancho/5.5, alto/1.27, window=self.nivel_7)
-        graficos.create_window(ancho/1.955, alto/1.27, window=self.nivel_8)
-        graficos.create_window(ancho/1.20, alto/1.27, window=self.nivel_9)
+        graficos.create_window((ancho/5.5), (alto/1.27), window=self.nivel_7)
+        graficos.create_window((ancho/1.955), (alto/1.27), window=self.nivel_8)
+        graficos.create_window((ancho/1.20), (alto/1.27), window=self.nivel_9)
 
     def cerrar_selec(self, nivel):  # 0 = Menu | >= 1 y <=9 = X Nivel
         graficos.delete("all")
-        # del self.volver, self.nivel_1, self.nivel_2, self.nivel_3,
-        # self.nivel_4, self.nivel_5, self.nivel_6,
-        # self.nivel_7, self.nivel_8, self.nivel_9
+        del self.volver, self.nivel_1, self.nivel_2, self.nivel_3,
+        self.nivel_4, self.nivel_5, self.nivel_6,
+        self.nivel_7, self.nivel_8, self.nivel_9
 
         if nivel == "0":  # If por si se quiere volver al menu principal.
             return Menu().crear_menu()
@@ -232,7 +232,7 @@ class Partida:  # Ancho base = 154 (77 X) | Alto base = 140 (140 Y)
 
     def __init__(self):
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_img)
-        self.player = graficos.create_image(154*0.25, 69*6,
+        self.player = graficos.create_image(-100, -100,
                                             image=player_img)
         self.home = Button(graficos, font=("Century Gothic", 15), bg="#23272d",
                            width=50, bd=0, activebackground="#23272d",
@@ -463,14 +463,27 @@ class Partida:  # Ancho base = 154 (77 X) | Alto base = 140 (140 Y)
             and self.puente34[1] == "bc" and self.puente35[1] == "x"
             and self.puente36[1] == "ac" and self.puente26[1] == "y"
                 and self.puente16[1] == "bd"):
-
             self.paso = 0
             return self.mov_animacion(1)
+        # -- Nivel 2 Ganado:
+        if (self.piso == 2 and self.puente11[1] == "bd"
+           and self.puente21[1] == "ac" and self.puente22[1] == "y"
+           and self.puente32[1] == "bc" and self.puente33[1] == "full"
+           and self.puente25[1] == "x" and self.puente25[1] == "x"
+           and self.puente26[1] == "ad" and self.puente36[1] == "bc"):
+            # Puentes Triples
+            if self.puente12[1] == "abd" or self.puente12[1] == "acd":
+                if self.puente24[1] == "bcd" or self.puente24[1] == "abd":
+                    if self.puente34[1] == "abc" or self.puente34[1] == "acd":
 
-    def mov_animacion(self, nivel):
+                        self.paso = 0
+                        return self.mov_animacion(2)
+
+    def mov_animacion(self, nivel):  # Animación del personaje moviendose
         graficos.unbind("<Button-1>")
+        self.home.config(command=lambda: None)
 
-        if nivel == 1:
+        if nivel == 1:  # Nivel 1 Ganado
             if self.paso >= 0 and self.paso < 265:  # Paso 1
                 graficos.move(self.player, 12.2, 0)
                 self.paso += 12.2
@@ -500,14 +513,64 @@ class Partida:  # Ancho base = 154 (77 X) | Alto base = 140 (140 Y)
                 self.paso += 12.2
                 root.update()
 
-        if self.paso >= 2020:
-            return self.regresar(nivel + 1)
+            if self.paso >= 2020:
+                return self.regresar(nivel + 1)
+
+        if nivel == 2:  # Nivel 2 Ganado
+            if self.paso >= 0 and self.paso < 115:  # Paso 1
+                graficos.move(self.player, 12.2, 0)
+                self.paso += 12.2
+                root.update()
+
+            elif self.paso >= 105 and self.paso < 250:  # Paso 2
+                graficos.move(self.player, 0, -12.2)
+                self.paso += 12.2
+                root.update()
+
+            elif self.paso >= 250 and self.paso < 400:  # Paso 3
+                graficos.move(self.player, 12.2, 0)
+                self.paso += 12.2
+                root.update()
+
+            elif self.paso >= 400 and self.paso < 660:  # Paso 4
+                graficos.move(self.player, 0, 12.2)
+                self.paso += 12.2
+                root.update()
+
+            elif self.paso >= 650 and self.paso < 975:  # Paso 5
+                graficos.move(self.player, 12.2, 0)
+                self.paso += 12.2
+                root.update()
+
+            elif self.paso >= 975 and self.paso < 1100:  # Paso 6
+                graficos.move(self.player, 0, -12.2)
+                self.paso += 12.2
+                root.update()
+
+            elif self.paso >= 1100 and self.paso < 1425:  # Paso 7
+                graficos.move(self.player, 12.2, 0)
+                self.paso += 12.2
+                root.update()
+
+            elif self.paso >= 1425 and self.paso < 1550:  # Paso 8
+                graficos.move(self.player, 0, 12.2)
+                self.paso += 12.2
+                root.update()
+
+            elif self.paso >= 1550 and self.paso < 2140:  # Paso 9
+                graficos.move(self.player, 12.2, 0)
+                self.paso += 12.2
+                root.update()
+
+            if self.paso >= 2140:
+                return self.regresar(nivel + 1)
 
         graficos.after(20, lambda: self.mov_animacion(nivel))
 
     def nivel_1(self):
 
         self.piso = 1
+        graficos.coords(self.player, 154*0.25, 69*6)
 
         self.puente21 = [graficos.create_image(154, 140*2,
                                                image=puente_bd_img), "bd"]
@@ -537,13 +600,44 @@ class Partida:  # Ancho base = 154 (77 X) | Alto base = 140 (140 Y)
     def nivel_2(self):
 
         self.piso = 2
+        graficos.coords(self.player, 154*0.25, 69*4)
 
+        self.puente11 = [graficos.create_image(154, 140,
+                                               image=puente_ad_img), "ad"]
         self.puente21 = [graficos.create_image(154, 140*2,
-                                               image=puente_bd_img), "bd"]
-        self.puente31 = [graficos.create_image(154, 140*3,
-                                               image=puente_y_img), "y"]
+                                               image=puente_ad_img), "ad"]
+        self.puente41 = [graficos.create_image(154, 140*4,
+                                               image=puente_abd_img), "abd"]
+        self.puente12 = [graficos.create_image(154*2, 140,
+                                               image=puente_abc_img), "abc"]
         self.puente22 = [graficos.create_image(154*2, 140*2,
+                                               image=puente_y_img), "y"]
+        self.puente32 = [graficos.create_image(154*2, 140*3,
+                                               image=puente_ac_img), "ac"]
+        self.puente23 = [graficos.create_image(154*3, 140*2,
+                                               image=puente_x_img), "x"]
+        self.puente33 = [graficos.create_image(154*3, 140*3,
+                                               image=puente_full_img), "full"]
+        self.puente24 = [graficos.create_image(154*4, 140*2,
+                                               image=puente_acd_img), "acd"]
+        self.puente34 = [graficos.create_image(154*4, 140*3,
+                                               image=puente_abc_img), "abc"]
+        self.puente25 = [graficos.create_image(154*5, 140*2,
+                                               image=puente_x_img), "x"]
+        self.puente26 = [graficos.create_image(154*6, 140*2,
                                                image=puente_bc_img), "bc"]
+        self.puente36 = [graficos.create_image(154*6, 140*3,
+                                               image=puente_ac_img), "ac"]
+
+        graficos.lift(self.player)
+
+    def nivel_3(self):  # Continuar desarrollando este nivel
+
+        self.piso = 2
+        graficos.coords(self.player, 154*0.25, 69*4)
+
+        self.puente11 = [graficos.create_image(154, 140,
+                                               image=puente_ad_img), "ad"]
 
         graficos.lift(self.player)
 
