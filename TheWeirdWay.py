@@ -262,7 +262,6 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         if (cursor.x >= 17.5 and cursor.x < 52.5 and  # HOME (Regreso al menu)
                 cursor.y >= 17.5 and cursor.y < 52.5):
             return self.regresar()
-
         # ------------------------------------------------------
         if (cursor.x >= 77 and cursor.x < 77 * 3 and  # Cuadro 11
                 cursor.y >= 69 and cursor.y < 69 * 3):
@@ -477,8 +476,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             and self.puente34[1] == "bc" and self.puente35[1] == "x"
             and self.puente36[1] == "ac" and self.puente26[1] == "y"
                 and self.puente16[1] == "bd"):
-            self.paso = 0
-            return self.mov_animacion(1)
+            self.paso = [0, 1, 4, 1, 1, 3, 1, 1, 4, 4, 1, 1]
+            return self.mov_animacion(1, self.paso)
         # -- Nivel 2 Ganado:
         elif (self.piso == 2 and self.puente11[1] == "bd"
               and self.puente21[1] == "ac" and self.puente22[1] == "y"
@@ -490,8 +489,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 if self.puente24[1] == "bcd" or self.puente24[1] == "abd":
                     if self.puente34[1] == "abc" or self.puente34[1] == "acd":
 
-                        self.paso = 0
-                        return self.mov_animacion(2)
+                        self.paso = [0, 4, 1, 3, 3, 1, 1, 4, 1, 1, 3, 1, 1]
+                        return self.mov_animacion(1, self.paso)
         # -- Nivel 3 Ganado:
         elif (self.piso == 3 and self.puente31[1] == "x"
               and self.puente32[1] == "ad" and self.puente43[1] == "x"
@@ -502,8 +501,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 and self.puente16[1] == "ad" and self.puente26[1] == "bc"):
 
             if self.puente42[1] == "abc" or self.puente42[1] == "bcd":
-                self.paso = 0
-                return self.mov_animacion(3)
+                self.paso = [0, 1, 3, 1, 1, 1, 4, 2, 2, 4, 4, 1, 1, 1, 3, 1, 1]
+                return self.mov_animacion(1, self.paso)  # (Punto)
 
         elif (self.piso == 3 and self.puente31[1] == "x"
               and self.puente32[1] == "ad" and self.puente43[1] == "x"
@@ -511,16 +510,16 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
               and self.puente35[1] == "bd" and self.puente26[1] == "bd"):
 
             if self.puente42[1] == "abc" or self.puente42[1] == "bcd":
-                self.paso = 0
-                return self.mov_animacion(3, 2)  # (Punto)
+                self.paso = [0, 1, 3, 1, 1, 1, 4, 1, 4, 1, 1]
+                return self.mov_animacion(1, self.paso)
         # -- Nivel 4 Ganado:
         elif (self.piso == 4 and self.puente31[1] == "ac"
               and self.puente22[1] == "x" and self.puente23[1] == "ac"
               and self.puente13[1] == "bd" and self.puente15[1] == "x"
               and self.puente16[1] == "ad" and self.puente26[1] == "y"):
 
-            self.paso = 0
-            return print("Con punto")  # PUNTO
+            self.paso = [0, 4, 1, 1, 4, 1, 1, 1, 3, 3, 1, 1]
+            return self.mov_animacion(1, self.paso)  # PUNTO
 
             # return self.mov_animacion(4)
 
@@ -528,186 +527,47 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 and self.puente42[1] == "x" and self.puente43[1] == "x"
                 and self.puente44[1] == "ac" and self.puente35[1] == "x"):
 
-            self.paso = 0
-            return print("Sin punto")
+            self.paso = [0, 3, 1, 1, 1, 4, 1, 1, 1, 1]
+            return self.mov_animacion(1, self.paso)
 
             # return self.mov_animacion(4)
 
-    def mov_animacion(self, nivel, camino=1):  # Animación del personaje
+    def mov_personaje(self, direccion, iter=0):  # iter = Iteraciones
+        # 1 = DER | 2 = IZQ | 3 = ABA | 4 = ARR | 0 = Primer DER #
+
+        if iter == 13 and direccion != 0:  # Pasos post 0 (END Regular)
+            return print("END Regular")
+        elif iter == 10 and direccion == 0:  # Pasos pre 0 (END Inicial)
+            return print("END Inicial")
+        else:
+
+            graficos.move(self.player, 11.7, 0) if direccion == 0 else None
+            graficos.move(self.player, 11.9, 0) if direccion == 1 else None
+            graficos.move(self.player, -11.9, 0) if direccion == 2 else None
+            graficos.move(self.player, 0, 10.7) if direccion == 3 else None
+            graficos.move(self.player, 0, -10.7) if direccion == 4 else None
+
+            graficos.update()
+            graficos.after(24, lambda: self.mov_personaje(direccion, iter+1))
+
+    def mov_animacion(self, nivel, paso, camino=1):  # Animación del char
         graficos.unbind("<Button-1>")
         self.home.config(command=lambda: None)
 
-        if nivel == 1:  # Nivel 1 Ganado -- -- -- -- -- -- --
-            if self.paso >= 0 and self.paso < 265:  # Paso 1
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-            elif self.paso >= 265 and self.paso < 400:  # Paso 2
-                graficos.move(self.player, 0, -12.2)
-                self.paso += 12.2
-                root.update()
-            elif self.paso >= 400 and self.paso < 715:  # Paso 3
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-            elif self.paso >= 715 and self.paso < 850:  # Paso 4
-                graficos.move(self.player, 0, 12.2)
-                self.paso += 12.2
-                root.update()
-            elif self.paso >= 850 and self.paso < 1150:  # Paso 5
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-            elif self.paso >= 1150 and self.paso < 1430:  # Paso 6
-                graficos.move(self.player, 0, -12.2)
-                self.paso += 12.2
-                root.update()
-            elif self.paso >= 1430 and self.paso < 2020:  # Paso 7
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
+        print(paso)
 
-            if self.paso >= 2020:
-                return self.regresar(nivel + 1)
+        try:  # Forma de chequear si la lista esta vacía o no
+            self.mov_personaje(paso[0])
+        except IndexError:  # Si esta vacía, se termino la animación
+            return self.regresar(nivel + 1)
 
-        if nivel == 2:  # Nivel 2 Ganado -- -- -- -- -- -- --
-            if self.paso >= 0 and self.paso < 115:  # Paso 1
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 105 and self.paso < 250:  # Paso 2
-                graficos.move(self.player, 0, -12.2)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 250 and self.paso < 400:  # Paso 3
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 400 and self.paso < 660:  # Paso 4
-                graficos.move(self.player, 0, 12.2)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 650 and self.paso < 975:  # Paso 5
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 975 and self.paso < 1100:  # Paso 6
-                graficos.move(self.player, 0, -12.2)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 1100 and self.paso < 1425:  # Paso 7
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 1425 and self.paso < 1550:  # Paso 8
-                graficos.move(self.player, 0, 12.2)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 1550 and self.paso < 2140:  # Paso 9
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-
-            if self.paso >= 2140:
-                return self.regresar(nivel + 1)
-
-        if nivel == 3:  # Nivel 3 Ganado -- -- -- -- -- -- --
-            if self.paso >= 0 and self.paso < 265:  # Paso 1
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 265 and self.paso < 400:  # Paso 2
-                graficos.move(self.player, 0, 12.2)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 400 and self.paso < 865:  # Paso 3
-                graficos.move(self.player, 12.2, 0)
-                self.paso += 12.2
-                root.update()
-
-            elif self.paso >= 865 and self.paso < 995:  # Paso 4
-                graficos.move(self.player, 0, -12.2)
-                self.paso += 12.2
-                root.update()
-
-            if camino == 2:  # (Punto)
-                if self.paso >= 995 and self.paso < 1150:  # Paso 5
-                    graficos.move(self.player, 12.2, 0)
-                    self.paso += 12.2
-                    root.update()
-
-                elif self.paso >= 1150 and self.paso < 1285:  # Paso 6
-                    graficos.move(self.player, 0, -12.2)
-                    self.paso += 12.2
-                    root.update()
-
-                elif self.paso >= 1285 and self.paso < 1875:  # Paso 7
-                    graficos.move(self.player, 12.2, 0)
-                    self.paso += 12.2
-                    root.update()
-
-                if self.paso >= 1875:
-                    return self.regresar(nivel + 1)
-
-            elif camino == 1:
-                if self.paso >= 995 and self.paso < 1300:  # Paso 5
-                    graficos.move(self.player, -12.2, 0)
-                    self.paso += 12.2
-                    root.update()
-
-                elif self.paso >= 1300 and self.paso < 1575:  # Paso 6
-                    graficos.move(self.player, 0, -12.2)
-                    self.paso += 12.2
-                    root.update()
-
-                elif self.paso >= 1575 and self.paso < 2040:  # Paso 7
-                    graficos.move(self.player, 12.2, 0)
-                    self.paso += 12.2
-                    root.update()
-
-                elif self.paso >= 2040 and self.paso < 2180:  # Paso 8
-                    graficos.move(self.player, 0, 12.2)
-                    self.paso += 12.2
-                    root.update()
-
-                elif self.paso >= 2180 and self.paso < 2770:  # Paso 9
-                    graficos.move(self.player, 12.2, 0)
-                    self.paso += 12.2
-                    root.update()
-
-                if self.paso >= 2770:
-                    return self.regresar(nivel + 1)
-
-        if nivel == 4:  # Nivel 4 Ganado -- -- -- -- -- -- --
-            if camino == 1:
-                if self.paso >= 0 and self.paso < 120:  # Paso 1
-                    graficos.move(self.player, 12.2, 0)
-                    self.paso += 12.2
-                    root.update()
-                elif self.paso >= 0 and self.paso < 120:  # Paso 2  # Continuar a partír de acá
-                    graficos.move(self.player, 12.2, 0)
-                    self.paso += 12.2
-                    root.update()
-
-            if self.paso >= 2770:
-                return self.regresar(nivel + 1)
-
-        graficos.after(23, lambda: self.mov_animacion(nivel, camino))
+        paso.pop(0)
+        graficos.after(500, lambda: self.mov_animacion(nivel, paso, camino))
 
     def nivel_1(self):  # --- --- --- ---
 
         self.piso = 1
-        graficos.coords(self.player, 154.5*0.25, 69*6)
+        graficos.coords(self.player, 154.5*0.25, 140*3)
 
         self.puente21 = [graficos.create_image(154.5, 140*2,
                                                image=puente_bd_im), "bd"]
@@ -736,7 +596,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
     def nivel_2(self):  # --- --- --- ---
 
         self.piso = 2
-        graficos.coords(self.player, 154.5*0.25, 69*4)
+        graficos.coords(self.player, 154.5*0.25, 140*2)
 
         self.puente11 = [graficos.create_image(154.5, 140,
                                                image=puente_ad_im), "ad"]
@@ -769,7 +629,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
     def nivel_3(self):  # --- --- --- ---
 
         self.piso = 3
-        graficos.coords(self.player, 154.5*0.25, 69*6)
+        graficos.coords(self.player, 154.5*0.25, 140*3)
 
         self.puente21 = [graficos.create_image(154.5, 140*2,
                                                image=puente_abd_im), "abd"]
@@ -812,7 +672,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
     def nivel_4(self):  # --- --- --- --- 17 Puentes
 
         self.piso = 4
-        graficos.coords(self.player, 154.5*0.25, 69*6)
+        graficos.coords(self.player, 154.5*0.25, 140*3)
 
         self.puente21 = [graficos.create_image(154.5, 140*2,
                                                image=puente_bd2_im), "bd2"]
