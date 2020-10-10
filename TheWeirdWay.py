@@ -158,7 +158,7 @@ class Menu:  # Menu principal
 
 class Seleccion:  # Seleccionador de Niveles.
 
-    def abrir_selector(self, desbloqueados=4):  # Predeterminado: 1
+    def abrir_selector(self, desbloqueados=1):  # Predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
             maximo = desbloqueados
@@ -490,7 +490,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                     if self.puente34[1] == "abc" or self.puente34[1] == "acd":
 
                         self.paso = [0, 4, 1, 3, 3, 1, 1, 4, 1, 1, 3, 1, 1]
-                        return self.mov_animacion(1, self.paso)
+                        return self.mov_animacion(2, self.paso)
         # -- Nivel 3 Ganado:
         elif (self.piso == 3 and self.puente31[1] == "x"
               and self.puente32[1] == "ad" and self.puente43[1] == "x"
@@ -502,7 +502,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
             if self.puente42[1] == "abc" or self.puente42[1] == "bcd":
                 self.paso = [0, 1, 3, 1, 1, 1, 4, 2, 2, 4, 4, 1, 1, 1, 3, 1, 1]
-                return self.mov_animacion(1, self.paso)  # (Punto)
+                return self.mov_animacion(3, self.paso)  # (Punto)
 
         elif (self.piso == 3 and self.puente31[1] == "x"
               and self.puente32[1] == "ad" and self.puente43[1] == "x"
@@ -511,7 +511,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
             if self.puente42[1] == "abc" or self.puente42[1] == "bcd":
                 self.paso = [0, 1, 3, 1, 1, 1, 4, 1, 4, 1, 1]
-                return self.mov_animacion(1, self.paso)
+                return self.mov_animacion(3, self.paso)
         # -- Nivel 4 Ganado:
         elif (self.piso == 4 and self.puente31[1] == "ac"
               and self.puente22[1] == "x" and self.puente23[1] == "ac"
@@ -519,28 +519,23 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
               and self.puente16[1] == "ad" and self.puente26[1] == "y"):
 
             self.paso = [0, 4, 1, 1, 4, 1, 1, 1, 3, 3, 1, 1]
-            return self.mov_animacion(1, self.paso)  # PUNTO
-
-            # return self.mov_animacion(4)
+            return self.mov_animacion(4, self.paso)  # PUNTO
 
         elif (self.piso == 4 and self.puente31[1] == "ad"
                 and self.puente42[1] == "x" and self.puente43[1] == "x"
                 and self.puente44[1] == "ac" and self.puente35[1] == "x"):
 
             self.paso = [0, 3, 1, 1, 1, 4, 1, 1, 1, 1]
-            return self.mov_animacion(1, self.paso)
-
-            # return self.mov_animacion(4)
+            return self.mov_animacion(4, self.paso)
 
     def mov_personaje(self, direccion, iter=0):  # iter = Iteraciones
         # 1 = DER | 2 = IZQ | 3 = ABA | 4 = ARR | 0 = Primer DER #
 
         if iter == 13 and direccion != 0:  # Pasos post 0 (END Regular)
-            return print("END Regular")
+            return None
         elif iter == 10 and direccion == 0:  # Pasos pre 0 (END Inicial)
-            return print("END Inicial")
+            return None
         else:
-
             graficos.move(self.player, 11.7, 0) if direccion == 0 else None
             graficos.move(self.player, 11.9, 0) if direccion == 1 else None
             graficos.move(self.player, -11.9, 0) if direccion == 2 else None
@@ -548,21 +543,19 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             graficos.move(self.player, 0, -10.7) if direccion == 4 else None
 
             graficos.update()
-            graficos.after(24, lambda: self.mov_personaje(direccion, iter+1))
+            graficos.after(25, lambda: self.mov_personaje(direccion, iter+1))
 
     def mov_animacion(self, nivel, paso, camino=1):  # Animación del char
         graficos.unbind("<Button-1>")
         self.home.config(command=lambda: None)
 
-        print(paso)
-
-        try:  # Forma de chequear si la lista esta vacía o no
+        try:  # Forma de chequear si la lista esta vacía o no:
             self.mov_personaje(paso[0])
-        except IndexError:  # Si esta vacía, se termino la animación
+        except IndexError:  # Si esta vacía, se termino la animación:
             return self.regresar(nivel + 1)
 
         paso.pop(0)
-        graficos.after(500, lambda: self.mov_animacion(nivel, paso, camino))
+        graficos.after(400, lambda: self.mov_animacion(nivel, paso, camino))
 
     def nivel_1(self):  # --- --- --- ---
 
