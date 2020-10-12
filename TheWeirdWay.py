@@ -544,14 +544,31 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
             self.paso = [0, 3, 1, 1, 1, 4, 1, 1, 1, 1]
             return self.mov_animacion(4, self.paso)
+        # -- Nivel 5 Ganado:
+        elif (self.piso == 5 and self.puente11[1] == "ad"
+              and self.puente32[1] == "x" and self.puente33[1] == "ac"
+              and self.puente23[1] == "ad" and self.puente22[1] == "bc"
+              and self.puente14[1] == "x" and self.puente16[1] == "ad"):
+            if self.puente31[1] == "abc" or self.puente31[1] == "bcd":
+                if self.puente13[1] == "abd" or self.puente13[1] == "abc":
+
+                    self.paso = [0, 3, 3, 1, 1, 4, 2, 4, 1, 1, 1, 1, 3, 1, 1]
+                    return self.mov_animacion(5, self.paso)  # PUNTO
+
+        elif (self.piso == 5 and self.puente11[1] == "ad"
+              and self.puente32[1] == "x" and self.puente33[1] == "ac"
+              and self.puente23[1] == "bd" and self.puente24[1] == "x"
+              and self.puente25[1] == "x"):
+            if self.puente31[1] == "abc" or self.puente31[1] == "bcd":
+
+                self.paso = [0, 3, 3, 1, 1, 4, 1, 1, 1, 1, 1]
+                return self.mov_animacion(5, self.paso)
 
     def mov_personaje(self, direccion, iter=0):  # iter = Iteraciones
         # 1 = DER | 2 = IZQ | 3 = ABA | 4 = ARR | 0 = Primer DER #
         print(iter)
-        if iter == 13:  # Pasos post 0 (END Regular)
+        if iter == 13:
             return None
-        # elif iter == 10 and direccion == 0:  # Pasos pre 0 (END Inicial)
-        #     return None
         else:
             graficos.move(self.player, 9, 0) if direccion == 0 else None
             graficos.move(self.player, 11.9, 0) if direccion == 1 else None
