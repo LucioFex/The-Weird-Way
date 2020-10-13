@@ -42,8 +42,8 @@ root.config(bg=c_fondo)
 # -- -- -- Imagenes
 # A = Izquierda | B = Derecha | C = Arriba | D = Abajo
 logo_im = PhotoImage(file="Imagenes/Logo.png")
-menu_im = PhotoImage(file="Imagenes/Inicio3.png")
-fondo_im = PhotoImage(file="Imagenes/Fondo7.png")
+menu_im = PhotoImage(file="Imagenes/Inicio5.png")
+fondo_im = PhotoImage(file="Imagenes/Fondo12.png")
 player_im = PhotoImage(file="Imagenes/Red_Skull2.png")
 candado_im = PhotoImage(file="Imagenes/Candado2.png")
 home_im = PhotoImage(file="Imagenes/Retorno_Menu.png")
