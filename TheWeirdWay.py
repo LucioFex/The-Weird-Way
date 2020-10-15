@@ -511,60 +511,52 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
               and self.puente32[1] == "bc" and self.puente33[1] == "f1ll"
               and self.puente25[1] == "x" and self.puente25[1] == "x"
               and self.puente24[1] == "bd" and self.puente26[1] == "ad"
-              and self.puente36[1] == "bc"):
-            # Puentes Triples
-            if self.puente12[1] == "abd" or self.puente12[1] == "acd":
-                if self.puente34[1] == "abc" or self.puente34[1] == "acd":
+              and self.puente36[1] == "bc" and (self.puente12[1] == "abd"
+              or self.puente12[1] == "acd") and (self.puente34[1] == "abc"
+              or self.puente34[1] == "acd")):
 
-                    self.paso = [0, 4, 1, 3, 3, 1, 1, 4, 1, 1, 3, 1, 1]
-                    self.walk.config(image=walk2_im,
-                                     command=lambda:
-                                     self.mov_animacion(2, self.paso))
-                else:  # Desabilitación del botón de PLAY (walk)
-                    self.walk.config(image=walk0_im, command=lambda: None)
-            else:  # Desabilitación del botón de PLAY (walk)
-                self.walk.config(image=walk0_im, command=lambda: None)
+            self.paso = [0, 4, 1, 3, 3, 1, 1, 4, 1, 1, 3, 1, 1]
+            self.walk.config(image=walk2_im,
+                             command=lambda:
+                             self.mov_animacion(2, self.paso))
+
         elif (self.piso == 2 and self.puente11[1] == "bd"
               and self.puente21[1] == "ac" and self.puente24[1] == "bc"
               and self.puente25[1] == "x" and self.puente26[1] == "ad"
-              and self.puente36[1] == "bc"):
-            if self.puente12[1] == "abd" or self.puente12[1] == "abc":
-                self.paso = [0, 4, 1, 1, 1, 3, 1, 1, 3, 1, 1]
-                self.walk.config(image=walk1_im,
-                                 command=lambda:
-                                 self.mov_animacion(2, self.paso))
-            else:  # Desabilitación del botón de PLAY (walk)
-                self.walk.config(image=walk0_im, command=lambda: None)
+              and self.puente36[1] == "bc" and (self.puente12[1] == "abd"
+              or self.puente12[1] == "abc")):
+
+            self.paso = [0, 4, 1, 1, 1, 3, 1, 1, 3, 1, 1]
+            self.walk.config(image=walk1_im,
+                             command=lambda:
+                             self.mov_animacion(2, self.paso))
 
         # -- Nivel 3 Ganado:
-        elif (self.piso == 3 and self.puente31[1] == "x"
+        elif (self.piso == 3 and self.puente31[1] == "x"  # (Punto)
               and self.puente32[1] == "ad" and self.puente43[1] == "x"
               and self.puente44[1] == "x" and self.puente45[1] == "ac"
               and self.puente35[1] == "ad" and self.puente33[1] == "bc"
               and self.puente23[1] == "y" and self.puente13[1] == "bd"
               and self.puente14[1] == "x" and self.puente15[1] == "x"
-                and self.puente16[1] == "ad" and self.puente26[1] == "bc"):
+              and self.puente16[1] == "ad" and self.puente26[1] == "bc"
+              or (self.puente42[1] == "abc" or self.puente42[1] == "bcd")):
 
-            if self.puente42[1] == "abc" or self.puente42[1] == "bcd":
-                self.paso = [0, 1, 3, 1, 1, 1, 4, 2, 2, 4, 4, 1, 1, 1, 3, 1, 1]
-                self.walk.config(image=walk2_im,
-                                 command=lambda:
-                                 self.mov_animacion(3, self.paso))  # (Punto)
-            else:  # Desabilitación del botón de PLAY (walk)
-                self.walk.config(image=walk0_im, command=lambda: None)
+            self.paso = [0, 1, 3, 1, 1, 1, 4, 2, 2, 4, 4, 1, 1, 1, 3, 1, 1]
+            self.walk.config(image=walk2_im,
+                             command=lambda:
+                             self.mov_animacion(3, self.paso))
 
         elif (self.piso == 3 and self.puente31[1] == "x"
               and self.puente32[1] == "ad" and self.puente43[1] == "x"
               and self.puente44[1] == "x" and self.puente45[1] == "ac"
-              and self.puente35[1] == "bd" and self.puente26[1] == "bd"):
+              and self.puente35[1] == "bd" and self.puente26[1] == "bd"
+              or (self.puente42[1] == "abc" or self.puente42[1] == "bcd")):
 
-            if self.puente42[1] == "abc" or self.puente42[1] == "bcd":
-                self.paso = [0, 1, 3, 1, 1, 1, 4, 1, 4, 1, 1]
-                self.walk.config(image=walk1_im,
-                                 command=lambda:
-                                 self.mov_animacion(3, self.paso))
-            else:  # Desabilitación del botón de PLAY (walk)
-                self.walk.config(image=walk0_im, command=lambda: None)
+            self.paso = [0, 1, 3, 1, 1, 1, 4, 1, 4, 1, 1]
+            self.walk.config(image=walk1_im,
+                             command=lambda:
+                             self.mov_animacion(3, self.paso))
+
         # -- Nivel 4 Ganado:
         elif (self.piso == 4 and self.puente31[1] == "ac"
               and self.puente22[1] == "x" and self.puente23[1] == "ac"
@@ -588,60 +580,48 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         elif (self.piso == 5 and self.puente11[1] == "ad"
               and self.puente32[1] == "x" and self.puente33[1] == "ac"
               and self.puente23[1] == "ad" and self.puente22[1] == "bc"
-              and self.puente14[1] == "x" and self.puente16[1] == "ad"):
-            if self.puente31[1] == "abc" or self.puente31[1] == "bcd":
-                if self.puente13[1] == "abd" or self.puente13[1] == "abc":
+              and self.puente14[1] == "x" and self.puente16[1] == "ad"
+              or (self.puente31[1] == "abc" or self.puente31[1] == "bcd")
+              and (self.puente13[1] == "abd" or self.puente13[1] == "abc")):
 
-                    self.paso = [0, 3, 3, 1, 1, 4, 2, 4, 1, 1, 1, 1, 3, 1, 1]
-                    self.walk.config(image=walk2_im,
-                                     command=lambda:
-                                     self.mov_animacion(5, self.paso))  # PUNTO
-                else:  # Desabilitación del botón de PLAY (walk)
-                    self.walk.config(image=walk0_im, command=lambda: None)
-            else:  # Desabilitación del botón de PLAY (walk)
-                self.walk.config(image=walk0_im, command=lambda: None)
+            self.paso = [0, 3, 3, 1, 1, 4, 2, 4, 1, 1, 1, 1, 3, 1, 1]
+            self.walk.config(image=walk2_im,
+                             command=lambda:
+                             self.mov_animacion(5, self.paso))  # PUNTO
 
         elif (self.piso == 5 and self.puente11[1] == "ad"
               and self.puente32[1] == "x" and self.puente33[1] == "ac"
               and self.puente23[1] == "bd" and self.puente24[1] == "x"
-              and self.puente25[1] == "x"):
-            if self.puente31[1] == "abc" or self.puente31[1] == "bcd":
+              and self.puente25[1] == "x" and (self.puente31[1] == "abc"
+              or self.puente31[1] == "bcd")):
 
-                self.paso = [0, 3, 3, 1, 1, 4, 1, 1, 1, 1, 1]
-                self.walk.config(image=walk1_im,
-                                 command=lambda:
-                                 self.mov_animacion(5, self.paso))
-            else:  # Desabilitación del botón de PLAY (walk)
-                self.walk.config(image=walk0_im, command=lambda: None)
+            self.paso = [0, 3, 3, 1, 1, 4, 1, 1, 1, 1, 1]
+            self.walk.config(image=walk1_im,
+                             command=lambda:
+                             self.mov_animacion(5, self.paso))
 
         # -- Nivel 6 Ganado:
         elif (self.piso == 6 and self.puente21[1] == "ad"
               and self.puente41[1] == "bc" and self.puente42[1] == "x"
-                and self.puente43[1] == "x"):
-            if self.puente45[1] == "abc" or self.puente45[1] == "abd":
-                if self.puente36[1] == "bcd" or self.puente36[1] == "abd":
-                    self.paso = [0, 3, 3, 1, 1, 1, 1, 1, 4, 1, 1]
-                    self.walk.config(image=walk1_im,
-                                     command=lambda:
-                                     self.mov_animacion(1, self.paso))
-                else:  # Desabilitación del botón de PLAY (walk)
-                    self.walk.config(image=walk0_im, command=lambda: None)
-            else:  # Desabilitación del botón de PLAY (walk)
-                self.walk.config(image=walk0_im, command=lambda: None)
+              and self.puente43[1] == "x" and (self.puente45[1] == "abc"
+              or self.puente45[1] == "abd") and (self.puente36[1] == "bcd"
+              or self.puente36[1] == "abd")):
+
+            self.paso = [0, 3, 3, 1, 1, 1, 1, 1, 4, 1, 1]
+            self.walk.config(image=walk1_im,
+                             command=lambda:
+                             self.mov_animacion(1, self.paso))
 
         elif (self.piso == 6 and self.puente11[1] == "bd"  # (Punto)
               and self.puente21[1] == "ac" and self.puente22[1] == "bc"
-                and self.puente34[1] == "bc" and self.puente35[1] == "x"):
-            if self.puente36[1] == "acd" or self.puente36[1] == "abd":
+              and self.puente34[1] == "bc" and self.puente35[1] == "x"
+              and (self.puente36[1] == "abc" or self.puente36[1] == "abd")):
 
-                self.paso = [0, 4, 1, 3, 1, 1, 3, 1, 1, 1, 1]
-                self.walk.config(image=walk2_im,
-                                 command=lambda:
-                                 self.mov_animacion(1, self.paso))
-            else:  # Desabilitación del botón de PLAY (walk)
-                self.walk.config(image=walk0_im, command=lambda: None)
+            self.paso = [0, 4, 1, 3, 1, 1, 3, 1, 1, 1, 1]
+            self.walk.config(image=walk2_im,
+                             command=lambda:
+                             self.mov_animacion(1, self.paso))
 
-        #  Solución con elses (POR AHORA, PERO NO CONVIENE A LARGO PLAZO)
         else:  # Desabilitación del botón de PLAY (walk)
             self.walk.config(image=walk0_im, command=lambda: None)
 
@@ -700,7 +680,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                 image=puente_ad_im)), "ad"]
         graficos.lift(self.player)
 
-    def nivel_2(self):  # --- --- --- --- 13 Puentes
+    def nivel_2(self):  # --- --- --- --- 15 Puentes
 
         self.piso = 2
         graficos.coords(self.player, 154.5*0.25, 140*2)
