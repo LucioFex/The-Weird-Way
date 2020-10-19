@@ -41,12 +41,16 @@ root.config(bg=c_fondo)
 
 # -- -- -- Imagenes
 # A = Izquierda | B = Derecha | C = Arriba | D = Abajo
-logo_im = PhotoImage(file="Imagenes/Logo.png")
+logo_im = PhotoImage(file="Imagenes/Logo.png")  # Logo del juego en el menu
 menu_im = PhotoImage(file="Imagenes/Inicio5.png")  # Fondo Menu
-selec_im = PhotoImage(file="Imagenes/Selector.png") # Fondo Selector
+selec_im = PhotoImage(file="Imagenes/Selector.png")  # Fondo Selector
 fondo_im = PhotoImage(file="Imagenes/Fondo12.png")  # Escenario del juego
-player_im = PhotoImage(file="Imagenes/Red_Skull2.png")
-candado_im = PhotoImage(file="Imagenes/Candado2.png")
+candado_im = PhotoImage(file="Imagenes/Candado2.png")  # Niveles bloqueados
+# -- -- Personaje base
+char_aba = PhotoImage(file="Imagenes/Char1_aba.png")  # Dirección: Abajo
+char_izq = PhotoImage(file="Imagenes/Char1_izq.png")  # Dirección: Izquierda
+char_der = PhotoImage(file="Imagenes/Char1_der.png")  # Dirección: Derecha
+char_arr = PhotoImage(file="Imagenes/Char1_arr.png")  # Dirección: Arriba
 # -- -- Botones In-Game
 home_im = PhotoImage(file="Imagenes/Retorno_Menu.png")  # Regreso al menu
 walk0_im = PhotoImage(file="Imagenes/Moverse0.png")  # Caminar desactivado
@@ -166,7 +170,7 @@ class Menu:  # Menu principal
 
 class Seleccion:  # Seleccionador de Niveles.
 
-    def abrir_selector(self, desbloqueados=7):  # Predeterminado: 1
+    def abrir_selector(self, desbloqueados=9):  # Predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
             maximo = desbloqueados
@@ -257,7 +261,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
     def __init__(self):
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_im)
         self.player = graficos.create_image(-100, -100,
-                                            image=player_im)
+                                            image=char_der)
         self.home = Button(graficos, font=("Century Gothic", 15),
                            bd=0, highlightthickness=0, image=home_im,
                            activebackground='#23272d',
@@ -647,6 +651,83 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                              command=lambda:
                              self.mov_animacion(7, self.paso))
 
+        # -- Nivel 8 Ganado:
+        elif (self.piso == 8 and self.puente11[1] == "ad"  # (Punto)
+              and self.puente21[1] == "bc" and self.puente22[1] == "ad"
+              and self.puente32[1] == "y" and self.puente42[1] == "bc"
+              and self.puente43[1] == "x" and self.puente34[1] == "bd"
+              and self.puente35[1] == "ad" and self.puente45[1] == "bc"
+              and self.puente46[1] == "ac"):
+
+            self.paso = [0, 3, 1, 3, 3, 1, 1, 4, 1, 3, 1, 4, 1, 1, 1]
+            self.walk.config(image=walk2_im,
+                             command=lambda:
+                             self.mov_animacion(8, self.paso))
+
+        elif (self.piso == 8 and self.puente11[1] == "ad"
+              and self.puente21[1] == "bc" and self.puente22[1] == "ac"
+              and (self.puente13[1] == "abd" or self.puente13[1] == "acd")
+              and self.puente24[1] == "x" and self.puente25[1] == "ad"
+              and self.puente35[1] == "bc"):
+
+            self.paso = [0, 3, 1, 4, 1, 3, 1, 1, 3, 1, 1, 1]
+            self.walk.config(image=walk1_im,
+                             command=lambda:
+                             self.mov_animacion(8, self.paso))
+        # -- Nivel 9 Ganado / FINAL:
+        elif (self.piso == 9 and self.puente31[1] == "ac"  # Op 1 / Si Punto
+              and self.puente21[1] == "y" and self.puente12[1] == "ad"
+              and self.puente22[1] == "bc" and self.puente23[1] == "ac"
+              and self.puente14[1] == "x" and self.puente15[1] == "ad"
+              and (self.puente25[1] == "acd" or self.puente25[1] == "bcd")
+              and self.puente34[1] == "bd" and self.puente44[1] == "bc"
+              and self.puente45[1] == "x" and self.puente36[1] == "y"
+              and self.puente16[1] == "bd"):
+
+            self.paso = [0, 4, 4, 1, 3, 1, 4, 1, 1, 3, 3,
+                         2, 3, 1, 1, 4, 4, 4, 1, 1, 1, 1]
+            self.walk.config(image=walk2_im,
+                             command=lambda:
+                             self.mov_animacion(9, self.paso))
+
+        elif (self.piso == 9 and self.puente31[1] == "ad"  # Op 2
+              and self.puente41[1] == "bc" and self.puente42[1] == "x"
+              and self.puente34[1] == "ad" and self.puente44[1] == "bc"
+              and self.puente45[1] == "x" and self.puente36[1] == "y"
+              and self.puente36[1] == "y" and self.puente16[1] == "bd"):
+
+            self.paso = [0, 3, 1, 1, 4, 1, 3, 1, 1, 4, 4, 4, 1, 1, 1]
+            self.walk.config(image=walk1_im,
+                             command=lambda:
+                             self.mov_animacion(9, self.paso))
+
+        elif (self.piso == 9 and self.puente31[1] == "ac"  # Op 3
+              and self.puente21[1] == "y" and self.puente12[1] == "ad"
+              and self.puente22[1] == "bc" and self.puente23[1] == "ad"
+              and self.puente34[1] == "ad" and self.puente44[1] == "bc"
+              and self.puente45[1] == "x" and self.puente36[1] == "y"
+              and self.puente16[1] == "bd"):
+
+            self.paso = [0, 4, 4, 1, 3, 1, 3, 1, 3, 1, 1, 4, 4, 4, 1, 1, 1]
+            self.walk.config(image=walk1_im,
+                             command=lambda:
+                             self.mov_animacion(9, self.paso))
+
+        elif (self.piso == 9 and self.puente31[1] == "ad"
+              and self.puente41[1] == "bc" and self.puente42[1] == "x"
+              and self.puente22[1] == "bd" and self.puente23[1] == "ac"
+              and self.puente14[1] == "x" and self.puente15[1] == "ad"
+              and (self.puente25[1] == "acd" or self.puente25[1] == "bcd")
+              and self.puente34[1] == "bd" and self.puente44[1] == "bc"
+              and self.puente45[1] == "x" and self.puente36[1] == "y"
+              and self.puente16[1] == "bd"):
+
+            self.paso = [0, 3, 1, 1, 4, 2, 4, 1, 4, 1, 1, 3,
+                         3, 2, 3, 1, 1, 4, 4, 4, 1, 1, 1, 1]
+            self.walk.config(image=walk2_im,
+                             command=lambda:
+                             self.mov_animacion(9, self.paso))
+
         else:  # Desabilitación del botón de PLAY (walk)
             self.walk.config(image=walk0_im, command=lambda: None)
 
@@ -655,14 +736,24 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         if iter == 13:
             return None
         else:
-            graficos.move(self.player, 9, 0) if direccion == 0 else None
-            graficos.move(self.player, 11.9, 0) if direccion == 1 else None
-            graficos.move(self.player, -11.9, 0) if direccion == 2 else None
-            graficos.move(self.player, 0, 10.7) if direccion == 3 else None
-            graficos.move(self.player, 0, -10.7) if direccion == 4 else None
+            if direccion == 0:
+                graficos.itemconfig(self.player, image=char_der)
+                graficos.move(self.player, 9, 0)
+            elif direccion == 1:
+                graficos.itemconfig(self.player, image=char_der)
+                graficos.move(self.player, 11.9, 0)
+            elif direccion == 2:
+                graficos.itemconfig(self.player, image=char_izq)
+                graficos.move(self.player, -11.9, 0)
+            elif direccion == 3:
+                graficos.itemconfig(self.player, image=char_aba)
+                graficos.move(self.player, 0, 10.7)
+            elif direccion == 4:
+                graficos.itemconfig(self.player, image=char_arr)
+                graficos.move(self.player, 0, -10.7)
 
             graficos.update()
-            graficos.after(25, lambda: self.mov_personaje(direccion, iter+1))
+            graficos.after(27, lambda: self.mov_personaje(direccion, iter+1))
 
     def mov_animacion(self, nivel, paso, camino=1):  # Animación del char
         graficos.unbind("<Button-1>")
@@ -670,7 +761,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.home.config(command=lambda: None)
         try:  # Forma de chequear si la lista esta vacía o no:
             self.mov_personaje(paso[0])
-        except IndexError:  # Si esta vacía, se termino la animación:
+        except IndexError:  # Si esta vacía, se terminó la animación:
             return self.regresar(nivel + 1)
 
         paso.pop(0)
@@ -953,6 +1044,111 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ac2_im), "ac2"]
         self.puente26 = [graficos.create_image(154.5*6, 140*2,
                                                image=puente_x2_im), "x2"]
+        graficos.lift(self.player)
+
+    def nivel_8(self):  # --- --- --- --- 22 Puentes
+
+        self.piso = 8
+        graficos.coords(self.player, 154.5*0.25, 140)
+
+        self.puente11 = [graficos.create_image(154.5, 140,
+                                               image=puente_bd_im), "bd"]
+        self.puente21 = [graficos.create_image(154.5, 140*2,
+                                               image=puente_ad_im), "ad"]
+        self.puente41 = [graficos.create_image(154.5, 140*4,
+                                               image=puente_bd_im), "bd"]
+        self.puente12 = [graficos.create_image(154.5*2, 140,
+                                               image=puente_abd2_im), "abd2"]
+        self.puente22 = [graficos.create_image(154.5*2, 140*2,
+                                               image=puente_ac_im), "ac"]
+        self.puente32 = [graficos.create_image(154.5*2, 140*3,
+                                               image=puente_x_im), "x"]
+        self.puente42 = [graficos.create_image(154.5*2, 140*4,
+                                               image=puente_ad_im), "ad"]
+        self.puente13 = [graficos.create_image(154.5*3, 140,
+                                               image=puente_bcd_im), "bcd"]
+        self.puente23 = [graficos.create_image(154.5*3, 140*2,
+                                               image=puente_bc2_im), "bc2"]
+        self.puente43 = [graficos.create_image(154.5*3, 140*4,
+                                               image=puente_y_im), "y"]
+        self.puente14 = [graficos.create_image(154.5*4, 140,
+                                               image=puente_x_im), "x"]
+        self.puente24 = [graficos.create_image(154.5*4, 140*2,
+                                               image=puente_y_im), "y"]
+        self.puente34 = [graficos.create_image(154.5*4, 140*3,
+                                               image=puente_ad_im), "ad"]
+        self.puente44 = [graficos.create_image(154.5*4, 140*4,
+                                               image=puente_ac2_im), "ac2"]
+        self.puente15 = [graficos.create_image(154.5*5, 140,
+                                               image=puente_y_im), "y"]
+        self.puente25 = [graficos.create_image(154.5*5, 140*2,
+                                               image=puente_ac_im), "ac"]
+        self.puente35 = [graficos.create_image(154.5*5, 140*3,
+                                               image=puente_bd_im), "bd"]
+        self.puente45 = [graficos.create_image(154.5*5, 140*4,
+                                               image=puente_ac_im), "ac"]
+        self.puente16 = [graficos.create_image(154.5*6, 140,
+                                               image=puente_ad2_im), "ad2"]
+        self.puente26 = [graficos.create_image(154.5*6, 140*2,
+                                               image=puente_y_im), "y"]
+        self.puente36 = [graficos.create_image(154.5*6, 140*3,
+                                               image=puente_abd2_im), "abd2"]
+        self.puente46 = [graficos.create_image(154.5*6, 140*4,
+                                               image=puente_ad_im), "ad"]
+        graficos.lift(self.player)
+
+    def nivel_9(self):  # --- --- --- --- 23 Puentes / Final
+
+        self.piso = 9
+        graficos.coords(self.player, 154.5*0.25, 140*3)
+
+        self.puente11 = [graficos.create_image(154.5, 140,
+                                               image=puente_bd2_im), "bd2"]
+        self.puente21 = [graficos.create_image(154.5, 140*2,
+                                               image=puente_x_im), "x"]
+        self.puente31 = [graficos.create_image(154.5, 140*3,
+                                               image=puente_bd_im), "bd"]
+        self.puente41 = [graficos.create_image(154.5, 140*4,
+                                               image=puente_ad_im), "ad"]
+        self.puente12 = [graficos.create_image(154.5*2, 140,
+                                               image=puente_bc_im), "bc"]
+        self.puente22 = [graficos.create_image(154.5*2, 140*2,
+                                               image=puente_ad_im), "ad"]
+        self.puente32 = [graficos.create_image(154.5*2, 140*3,
+                                               image=puente_bc2_im), "bc2"]
+        self.puente42 = [graficos.create_image(154.5*2, 140*4,
+                                               image=puente_y_im), "y"]
+        self.puente13 = [graficos.create_image(154.5*3, 140,
+                                               image=puente_bd2_im), "bd2"]
+        self.puente23 = [graficos.create_image(154.5*3, 140*2,
+                                               image=puente_bd_im), "bd"]
+        self.puente33 = [graficos.create_image(154.5*3, 140*3,
+                                               image=puente_f1ll_im), "f1ll"]
+        self.puente43 = [graficos.create_image(154.5*3, 140*4,
+                                               image=puente_abc2_im), "abc2"]
+        self.puente14 = [graficos.create_image(154.5*4, 140,
+                                               image=puente_y_im), "y"]
+        self.puente34 = [graficos.create_image(154.5*4, 140*3,
+                                               image=puente_ac_im), "ac"]
+        self.puente44 = [graficos.create_image(154.5*4, 140*4,
+                                               image=puente_ad_im), "ad"]
+        self.puente15 = [graficos.create_image(154.5*5, 140,
+                                               image=puente_bc_im), "bc"]
+        self.puente25 = [graficos.create_image(154.5*5, 140*2,
+                                               image=puente_abc_im), "abc"]
+        self.puente35 = [graficos.create_image(154.5*5, 140*3,
+                                               image=puente_ac2_im), "ac2"]
+        self.puente45 = [graficos.create_image(154.5*5, 140*4,
+                                               image=puente_y_im), "y"]
+        self.puente16 = [graficos.create_image(154.5*6, 140,
+                                               image=puente_ac_im), "ac"]
+        self.puente26 = [graficos.create_image(154.5*6, 140*2,
+                                               image=puente_y2_im), "y2"]
+        self.puente36 = [graficos.create_image(154.5*6, 140*3,
+                                               image=puente_x_im), "x"]
+        self.puente46 = [graficos.create_image(154.5*6, 140*4,
+                                               image=puente_ac2_im), "ac2"]
+
         graficos.lift(self.player)
 
     def regresar(self, desbloqueado=1):  # Retorno al menu principal
