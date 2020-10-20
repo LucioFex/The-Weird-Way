@@ -44,7 +44,7 @@ root.config(bg=c_fondo)
 logo_im = PhotoImage(file="Imagenes/Logo.png")  # Logo del juego en el menu
 menu_im = PhotoImage(file="Imagenes/Inicio5.png")  # Fondo Menu
 selec_im = PhotoImage(file="Imagenes/Selector.png")  # Fondo Selector
-fondo_im = PhotoImage(file="Imagenes/Fondo12.png")  # Escenario del juego
+fondo_im = PhotoImage(file="Imagenes/Fondo13.png")  # Escenario del juego
 candado_im = PhotoImage(file="Imagenes/Candado2.png")  # Niveles bloqueados
 # -- -- Personaje base
 char_aba = PhotoImage(file="Imagenes/Char1_aba.png")  # Dirección: Abajo
@@ -56,6 +56,11 @@ home_im = PhotoImage(file="Imagenes/Retorno_Menu.png")  # Regreso al menu
 walk0_im = PhotoImage(file="Imagenes/Moverse0.png")  # Caminar desactivado
 walk1_im = PhotoImage(file="Imagenes/Moverse1.png")  # Caminar sin | punto |
 walk2_im = PhotoImage(file="Imagenes/Moverse2.png")  # Caminar con | punto |
+# -- -- Trampas
+trampa1_im = PhotoImage(file="Imagenes/Trap_1.png")  # Trampa de fondo 1
+trampa2_im = PhotoImage(file="Imagenes/Trap_2.png")  # Trampa de fondo 2
+trampa3_im = PhotoImage(file="Imagenes/Trap_3.png")  # Trampa de fondo 3
+trampa4_im = PhotoImage(file="Imagenes/Trap_4.png")  # Trampa de fondo 4
 # -- -- Puentes giratorios
 puente_x_im = PhotoImage(file="Imagenes/PuenteX.png")  # X
 puente_y_im = PhotoImage(file="Imagenes/PuenteY.png")  # Y
@@ -169,7 +174,6 @@ class Menu:  # Menu principal
 
 
 class Seleccion:  # Seleccionador de Niveles.
-
     def abrir_selector(self, desbloqueados=9):  # Predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
@@ -512,6 +516,15 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 1, 4, 1, 1, 3, 1, 1, 4, 4, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda: self.mov_animacion(1, self.paso))
+        elif (self.piso == 1 and self.puente31[1] == "x"  # Punto
+              and self.puente32[1] == "ad" and self.puente42[1] == "bc"
+              and self.puente43[1] == "x" and self.puente44[1] == "ac"
+              and self.puente34[1] == "bd" and self.puente35[1] == "x"
+              and self.puente36[1] == "ac" and self.puente26[1] == "y"
+              and self.puente16[1] == "bd"):
+            self.paso = [0, 1, 3, 1, 1, 4, 1, 1, 4, 4, 1, 1, 1]
+            self.walk.config(image=walk2_im,
+                             command=lambda: self.mov_animacion(1, self.paso))
         # -- Nivel 2 Ganado:
         elif (self.piso == 2 and self.puente11[1] == "bd"
               and self.puente21[1] == "ac" and self.puente22[1] == "y"
@@ -767,6 +780,18 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         paso.pop(0)
         graficos.after(415, lambda: self.mov_animacion(nivel, paso, camino))
 
+    def trampas(self, spin=1):  # Justificación de la meta
+        if spin > 4:  # Motívo del bucle / límite de Sprites
+            spin = 1
+        for sprite in range(1, 4 + 1):  # Ilusión / Animación
+            if spin == sprite:
+                for trampa in range(1, 3 + 1):
+                    exec("""graficos.itemconfig(self.trampaledo{0},
+                            image=trampa{1}_im)""".
+                         format(trampa, sprite))
+                break
+        return graficos.after(55, lambda: self.trampas(spin + 1))
+
     def nivel_1(self):  # --- --- --- --- 11 Puentes
 
         self.piso = 1
@@ -794,7 +819,18 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_x_im), "x"]
         self.puente16 = [(graficos.create_image(154.5*6, 140,
                                                 image=puente_ad_im)), "ad"]
+        self.puente42 = [(graficos.create_image(154.5*2, 140*4,
+                                                image=puente_ad_im)), "ad"]
+        self.puente43 = [(graficos.create_image(154.5*3, 140*4,
+                                                image=puente_x_im)), "x"]
+        self.puente44 = [(graficos.create_image(154.5*4, 140*4,
+                                                image=puente_bd_im)), "bd"]
         graficos.lift(self.player)
+
+        self.trampaledo1 = graficos.create_image(1035, 139*2, image=trampa1_im)
+        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
+        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        return self.trampas()
 
     def nivel_2(self):  # --- --- --- --- 15 Puentes
 
@@ -832,6 +868,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.puente36 = [graficos.create_image(154.5*6, 140*3,
                                                image=puente_ac_im), "ac"]
         graficos.lift(self.player)
+
+        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
+        self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
+        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        return self.trampas()
 
     def nivel_3(self):  # --- --- --- --- 18 Puentes
 
@@ -876,6 +917,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ac2_im), "ac2"]
         graficos.lift(self.player)
 
+        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
+        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
+        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        return self.trampas()
+
     def nivel_4(self):  # --- --- --- --- 17 Puentes
 
         self.piso = 4
@@ -917,6 +963,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_abc2_im), "abc2"]
         graficos.lift(self.player)
 
+        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
+        self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
+        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        return self.trampas()
+
     def nivel_5(self):  # --- --- --- --- 17 Puentes
 
         self.piso = 5
@@ -957,6 +1008,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.puente26 = [graficos.create_image(154.5*6, 140*2,
                                                image=puente_abc2_im), "abc2"]
         graficos.lift(self.player)
+
+        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
+        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
+        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        return self.trampas()
 
     def nivel_6(self):  # --- --- --- --- 18 Puentes
 
@@ -1000,6 +1056,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.puente46 = [graficos.create_image(154.5*6, 140*4,
                                                image=puente_ac2_im), "ac2"]
         graficos.lift(self.player)
+
+        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
+        self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
+        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        return self.trampas()
 
     def nivel_7(self):  # --- --- --- --- 19 Puentes
 
@@ -1045,6 +1106,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.puente26 = [graficos.create_image(154.5*6, 140*2,
                                                image=puente_x2_im), "x2"]
         graficos.lift(self.player)
+
+        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
+        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
+        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        return self.trampas()
 
     def nivel_8(self):  # --- --- --- --- 22 Puentes
 
@@ -1097,8 +1163,12 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ad_im), "ad"]
         graficos.lift(self.player)
 
-    def nivel_9(self):  # --- --- --- --- 23 Puentes / Final
+        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
+        self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
+        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        return self.trampas()
 
+    def nivel_9(self):  # --- --- --- --- 23 Puentes / Final
         self.piso = 9
         graficos.coords(self.player, 154.5*0.25, 140*3)
 
@@ -1148,13 +1218,17 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_x_im), "x"]
         self.puente46 = [graficos.create_image(154.5*6, 140*4,
                                                image=puente_ac2_im), "ac2"]
-
         graficos.lift(self.player)
+
+        self.trampaledo1 = graficos.create_image(1035, 139*2, image=trampa1_im)
+        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
+        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        return self.trampas()
 
     def regresar(self, desbloqueado=1):  # Retorno al menu principal
         graficos.unbind("<Button-1>")
         graficos.delete("all")
-        return Seleccion().abrir_selector(desbloqueado)
+        return Seleccion().abrir_selector(desbloqueado)  # Return + New Lvl
 
 
 videojuego = Menu()
