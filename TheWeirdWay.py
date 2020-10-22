@@ -44,8 +44,9 @@ root.config(bg=c_fondo)
 logo_im = PhotoImage(file="Imagenes/Logo.png")  # Logo del juego en el menu
 menu_im = PhotoImage(file="Imagenes/Inicio5.png")  # Fondo Menu
 selec_im = PhotoImage(file="Imagenes/Selector.png")  # Fondo Selector
-fondo_im = PhotoImage(file="Imagenes/Fondo13.png")  # Escenario del juego
+fondo_im = PhotoImage(file="Imagenes/Fondo12.png")  # Escenario del juego
 candado_im = PhotoImage(file="Imagenes/Candado2.png")  # Niveles bloqueados
+cuadro_im = PhotoImage(file="Imagenes/Menu_play.png")
 # -- -- Personaje base
 char_aba = PhotoImage(file="Imagenes/Char1_aba.png")  # Dirección: Abajo
 char_izq = PhotoImage(file="Imagenes/Char1_izq.png")  # Dirección: Izquierda
@@ -174,7 +175,7 @@ class Menu:  # Menu principal
 
 
 class Seleccion:  # Seleccionador de Niveles.
-    def abrir_selector(self, desbloqueados=9):  # Predeterminado: 1
+    def abrir_selector(self, desbloqueados=3):  # Predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
             maximo = desbloqueados
@@ -269,7 +270,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.home = Button(graficos, font=("Century Gothic", 15),
                            bd=0, highlightthickness=0, image=home_im,
                            activebackground='#23272d',
-                           cursor="hand2", command=self.regresar)
+                           cursor="hand2", command=self.pausa)
 
         self.walk = Button(graficos, font=("Century Gothic", 15),
                            bd=0, highlightthickness=0, image=walk0_im,
@@ -278,6 +279,36 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         graficos.create_window(35, 35, window=self.home)  # Botón de regreso
         graficos.create_window(1035, 35, window=self.walk)  # Botón de caminar
         graficos.bind("<Button-1>", self.giro)  # Giro de los caminos
+
+    def pausa(self):  # Ret = Return / Retorno
+        graficos.unbind("<Button-1>")
+        self.home.config(command=lambda: None)
+        self.walk.config(command=lambda: None)
+        self.reanudar = Button(graficos, text="Reanudar", bg="#22144f", bd=2,
+                               fg=c_fg, font=("Lucida Sans", 21), width=16,
+                               relief="raised", activebackground="#1a0d46",
+                               activeforeground=c_fg, highlightthickness=0,
+                               command=self.despausa)
+
+        self.sele = Button(graficos, text="Seleccionar nivel", bg="#22144f",
+                           fg=c_fg, font=("Lucida Sans", 21), relief="raised",
+                           width=16, activebackground="#1a0d46", bd=2,
+                           highlightthickness=0, activeforeground=c_fg,
+                           command=lambda: self.regresar(destino="selec"))
+
+        self.exit = Button(graficos, text="Volver al menu", bg="#22144f",
+                           fg=c_fg, font=("Lucida Sans", 21), relief="raised",
+                           width=16, activebackground="#1a0d46", bd=2,
+                           highlightthickness=0, activeforeground=c_fg,
+                           command=lambda: self.regresar(destino="menu"))
+
+        self.cuadro = graficos.create_image(ancho/2, alto/2, image=cuadro_im)
+        self.retorno = graficos.create_window(ancho/2, alto/3,
+                                              window=self.reanudar)
+        self.selector = graficos.create_window(ancho/2, alto/2,
+                                               window=self.sele)
+        self.salida = graficos.create_window(ancho/2, alto/1.5,
+                                             window=self.exit)
 
     def giro(self, cursor):
         # Condicionales a corto plazo, tratar de depurarlo con bucles o algo.
@@ -505,7 +536,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             elif dire[1] == "bcd":
                 dire[1] = "abd"
                 graficos.itemconfig(dire[0], image=puente_abd_im)
-        # -- -- -- Niveles Ganados
+
+        return self.nivel_ganado()
+
+    def nivel_ganado(self):  # -- -- -- Niveles Ganados
+
         # -- Nivel 1 Ganado:
         if (self.piso == 1 and self.puente31[1] == "x"
             and self.puente22[1] == "bd" and self.puente32[1] == "ac"
@@ -775,7 +810,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         try:  # Forma de chequear si la lista esta vacía o no:
             self.mov_personaje(paso[0])
         except IndexError:  # Si esta vacía, se terminó la animación:
-            return self.regresar(nivel + 1)
+            return self.regresar(desbloqueado=nivel + 1)
 
         paso.pop(0)
         graficos.after(415, lambda: self.mov_animacion(nivel, paso, camino))
@@ -1225,10 +1260,20 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas()
 
-    def regresar(self, desbloqueado=1):  # Retorno al menu principal
+    def despausa(self):
+        graficos.delete(self.cuadro, self.retorno, self.selector, self.salida)
+        del self.reanudar, self.sele, self.exit
+        graficos.bind("<Button-1>", self.giro)  # Giro de los caminos
+        self.home.config(command=self.pausa)
+        return self.nivel_ganado()  # Chequeo del nivel ganado
+
+    def regresar(self, destino="selec", desbloqueado=1, **kwargs):  # Retorno
         graficos.unbind("<Button-1>")
         graficos.delete("all")
-        return Seleccion().abrir_selector(desbloqueado)  # Return + New Lvl
+        if destino == "selec":
+            return Seleccion().abrir_selector(desbloqueado)  # Return + New Lvl
+        elif destino == "menu":
+            return Menu().crear_menu()
 
 
 videojuego = Menu()
