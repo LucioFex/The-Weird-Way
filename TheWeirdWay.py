@@ -284,23 +284,20 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         graficos.unbind("<Button-1>")
         self.home.config(command=lambda: None)
         self.walk.config(command=lambda: None)
-        self.reanudar = Button(graficos, text="Reanudar", bg="#22144f", bd=2,
-                               fg=c_fg, font=("Lucida Sans", 21), width=16,
-                               relief="raised", activebackground="#1a0d46",
-                               activeforeground=c_fg, highlightthickness=0,
-                               command=self.despausa)
 
-        self.sele = Button(graficos, text="Seleccionar nivel", bg="#22144f",
-                           fg=c_fg, font=("Lucida Sans", 21), relief="raised",
-                           width=16, activebackground="#1a0d46", bd=2,
-                           highlightthickness=0, activeforeground=c_fg,
-                           command=lambda: self.regresar(destino="selec"))
+        for boton in ("reanudar", "sele", "exit"):  # Generación de botones
+            exec("""self.{} = Button(graficos, bg="#22144f", bd=2, fg=c_fg,
+                                     font=("Lucida Sans", 21),
+                                     width=16, relief="raised",
+                                     activebackground="#1a0d46",
+                                     activeforeground=c_fg,
+                                     highlightthickness=0)""".format(boton))
 
-        self.exit = Button(graficos, text="Volver al menu", bg="#22144f",
-                           fg=c_fg, font=("Lucida Sans", 21), relief="raised",
-                           width=16, activebackground="#1a0d46", bd=2,
-                           highlightthickness=0, activeforeground=c_fg,
-                           command=lambda: self.regresar(destino="menu"))
+        self.reanudar.config(text="Reanudar", command=self.despausa)
+        self.sele.config(text="Seleccionar nivel",
+                         command=lambda: self.regresar(destino="selec"))
+        self.exit.config(text="Volver al menu",
+                         command=lambda: self.regresar(destino="menu"))
 
         self.cuadro = graficos.create_image(ancho/2, alto/2, image=cuadro_im)
         self.retorno = graficos.create_window(ancho/2, alto/3,
