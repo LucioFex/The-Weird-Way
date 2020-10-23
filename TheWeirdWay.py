@@ -52,10 +52,20 @@ lava1_im = PhotoImage(file="Imagenes/Fondo_b1.png")  # Frame de lava 1
 lava2_im = PhotoImage(file="Imagenes/Fondo_b2.png")  # Frame de lava 2
 lava3_im = PhotoImage(file="Imagenes/Fondo_b3.png")  # Frame de lava 3
 # -- -- Personaje base
-char_aba = PhotoImage(file="Imagenes/Char1_aba.png")  # Dirección: Abajo
-char_izq = PhotoImage(file="Imagenes/Char1_izq.png")  # Dirección: Izquierda
-char_der = PhotoImage(file="Imagenes/Char1_der.png")  # Dirección: Derecha
-char_arr = PhotoImage(file="Imagenes/Char1_arr.png")  # Dirección: Arriba
+char1_aba = PhotoImage(file="Imagenes/Personajes/Dross/Char1_aba.png")  # ABA 1
+char1_izq = PhotoImage(file="Imagenes/Personajes/Dross/Char1_izq.png")  # IZQ 1
+char1_der = PhotoImage(file="Imagenes/Personajes/Dross/Char1_der.png")  # DER 1
+char1_arr = PhotoImage(file="Imagenes/Personajes/Dross/Char1_arr.png")  # ARR 1
+
+char2_aba = PhotoImage(file="Imagenes/Personajes/Dross/Char2_aba.png")  # ABA 2
+char2_izq = PhotoImage(file="Imagenes/Personajes/Dross/Char2_izq.png")  # IZQ 2
+char2_der = PhotoImage(file="Imagenes/Personajes/Dross/Char2_der.png")  # DER 2
+char2_arr = PhotoImage(file="Imagenes/Personajes/Dross/Char2_arr.png")  # ARR 2
+
+char3_aba = PhotoImage(file="Imagenes/Personajes/Dross/Char3_aba.png")  # ABA 3
+char3_izq = PhotoImage(file="Imagenes/Personajes/Dross/Char3_izq.png")  # IZQ 3
+char3_der = PhotoImage(file="Imagenes/Personajes/Dross/Char3_der.png")  # DER 3
+char3_arr = PhotoImage(file="Imagenes/Personajes/Dross/Char3_arr.png")  # ARR 3
 # -- -- Botones In-Game
 home_im = PhotoImage(file="Imagenes/Retorno_Menu.png")  # Regreso al menu
 walk0_im = PhotoImage(file="Imagenes/Moverse0.png")  # Caminar desactivado
@@ -107,9 +117,8 @@ graficos = Canvas(pantalla, width=ancho, height=alto, bg=c_pantalla,
                   borderwidth=0, highlightthickness=0)
 graficos.pack()
 
+
 # -- -- -- Botones Menu
-
-
 class Menu:  # Menu principal
     def crear_menu(self):
 
@@ -179,7 +188,7 @@ class Menu:  # Menu principal
 
 
 class Seleccion:  # Seleccionador de Niveles.
-    def abrir_selector(self, desbloqueados=5):  # Predeterminado: 1
+    def abrir_selector(self, desbloqueados=9):  # Predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
             maximo = desbloqueados
@@ -266,13 +275,12 @@ class Seleccion:  # Seleccionador de Niveles.
 
 
 class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
-
     def __init__(self):
         self.lava = graficos.create_image(ancho/2, alto/2, image=lava1_im)
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_im)
 
         self.player = graficos.create_image(-100, -100,
-                                            image=char_der)
+                                            image=char1_der)
         self.home = Button(graficos, font=("Century Gothic", 15),
                            bd=0, highlightthickness=0, image=home_im,
                            activebackground='#23272d',
@@ -805,20 +813,60 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         if iter == 13:
             return None
         else:
-            if direccion == 0:
-                graficos.itemconfig(self.player, image=char_der)
+
+            if direccion == 0:  # Dirección = Derecha Inicial
+                if iter >= 0 and iter < 3:
+                    graficos.itemconfig(self.player, image=char1_der)
+                elif iter >= 3 and iter < 6:
+                    graficos.itemconfig(self.player, image=char2_der)
+                elif iter >= 6 and iter < 9:
+                    graficos.itemconfig(self.player, image=char1_der)
+                elif iter >= 9 and iter < 13:
+                    graficos.itemconfig(self.player, image=char3_der)
                 graficos.move(self.player, 9, 0)
-            elif direccion == 1:
-                graficos.itemconfig(self.player, image=char_der)
+
+            elif direccion == 1:  # Dirección = Derecha
+                if iter >= 0 and iter < 3:
+                    graficos.itemconfig(self.player, image=char1_der)
+                elif iter >= 3 and iter < 6:
+                    graficos.itemconfig(self.player, image=char2_der)
+                elif iter >= 6 and iter < 9:
+                    graficos.itemconfig(self.player, image=char1_der)
+                elif iter >= 9 and iter < 13:
+                    graficos.itemconfig(self.player, image=char3_der)
                 graficos.move(self.player, 11.9, 0)
-            elif direccion == 2:
-                graficos.itemconfig(self.player, image=char_izq)
+
+            elif direccion == 2:  # Dirección = Izquierda
+                if iter >= 0 and iter < 3:
+                    graficos.itemconfig(self.player, image=char1_izq)
+                elif iter >= 3 and iter < 6:
+                    graficos.itemconfig(self.player, image=char2_izq)
+                elif iter >= 6 and iter < 9:
+                    graficos.itemconfig(self.player, image=char1_izq)
+                elif iter >= 9 and iter < 13:
+                    graficos.itemconfig(self.player, image=char3_izq)
                 graficos.move(self.player, -11.9, 0)
-            elif direccion == 3:
-                graficos.itemconfig(self.player, image=char_aba)
+
+            elif direccion == 3:  # Dirección = Abajo
+                if iter >= 0 and iter < 3:
+                    graficos.itemconfig(self.player, image=char1_aba)
+                elif iter >= 3 and iter < 6:
+                    graficos.itemconfig(self.player, image=char2_aba)
+                elif iter >= 6 and iter < 9:
+                    graficos.itemconfig(self.player, image=char1_aba)
+                elif iter >= 9 and iter < 13:
+                    graficos.itemconfig(self.player, image=char3_aba)
                 graficos.move(self.player, 0, 10.7)
-            elif direccion == 4:
-                graficos.itemconfig(self.player, image=char_arr)
+
+            elif direccion == 4:  # Dirección = Arriba
+                if iter >= 0 and iter < 3:
+                    graficos.itemconfig(self.player, image=char1_arr)
+                elif iter >= 3 and iter < 6:
+                    graficos.itemconfig(self.player, image=char2_arr)
+                elif iter >= 6 and iter < 9:
+                    graficos.itemconfig(self.player, image=char1_arr)
+                elif iter >= 9 and iter < 13:
+                    graficos.itemconfig(self.player, image=char3_arr)
                 graficos.move(self.player, 0, -10.7)
 
             graficos.update()
