@@ -52,6 +52,7 @@ lava1_im = PhotoImage(file="Imagenes/Fondo_b1.png")  # Frame de lava 1
 lava2_im = PhotoImage(file="Imagenes/Fondo_b2.png")  # Frame de lava 2
 lava3_im = PhotoImage(file="Imagenes/Fondo_b3.png")  # Frame de lava 3
 # -- -- Personaje base
+char = PhotoImage(file="Imagenes/Personajes/Dross/Char.png")
 char1_aba = PhotoImage(file="Imagenes/Personajes/Dross/Char1_aba.png")  # ABA 1
 char1_izq = PhotoImage(file="Imagenes/Personajes/Dross/Char1_izq.png")  # IZQ 1
 char1_der = PhotoImage(file="Imagenes/Personajes/Dross/Char1_der.png")  # DER 1
@@ -199,6 +200,12 @@ class Seleccion:  # Seleccionador de Niveles.
                              activebackground=c_bg_press,
                              activeforeground=c_fg, cursor="hand2",
                              command=lambda: self.cerrar_selec("0"))
+        self.char_sec = Button(graficos, text="Personajes",
+                               font=("Comic Sans MS", 15),
+                               bg=c_bg_se, fg=c_fg, command=self.personajes,
+                               activebackground=c_bg_press, cursor="hand2",
+                               activeforeground=c_fg, image=char,
+                               compound="right")
 
         # Loop para generar los botones de los niveles:
         for nivel in ("self.nivel_1", "self.nivel_2", "self.nivel_3",
@@ -206,16 +213,16 @@ class Seleccion:  # Seleccionador de Niveles.
                       "self.nivel_7", "self.nivel_8", "self.nivel_9"):
             # Botones generandose
             exec("""{0} = Button(graficos, text='       Nivel {1} ',
-                 width=276,font=('Comic Sans MS', 20),
-                 bg=c_bg_se, fg=c_fg,
-                 activebackground=c_bg_press,
-                 activeforeground=c_fg, cursor='hand2')""".
+                    width=276,font=('Comic Sans MS', 20),
+                    bg=c_bg_se, fg=c_fg,
+                    activebackground=c_bg_press,
+                    activeforeground=c_fg, cursor='hand2')""".
                  format(nivel, nivel[-1]))
             # Botones seleccionables dependiendo de los niveles desbloqueados
             if int(nivel[-1]) <= maximo:
                 exec("""{0}.config(command=lambda: self.cerrar_selec('{0}'),
-                    activebackground=c_bg_press_si, bg=c_bg_si,
-                    width=17, height=2, text="Nivel {1}")"""
+                     activebackground=c_bg_press_si, bg=c_bg_si,
+                     width=17, height=2, text="Nivel {1}")"""
                      .format(nivel, nivel[-1]))
             # Botones bloqueados por niveles injugables
             else:
@@ -245,7 +252,8 @@ class Seleccion:  # Seleccionador de Niveles.
         # Fondo
         graficos.create_image(ancho/2, alto/2, image=selec_im)
         # Fila 0
-        graficos.create_window(ancho/8, 30, window=self.volver)
+        graficos.create_window(ancho/5.75, 35, window=self.volver)
+        graficos.create_window(ancho/1.205, 35, window=self.char_sec)
         # Fila 1
         graficos.create_window((ancho/5.5), (alto/4.5), window=self.nivel_1)
         graficos.create_window((ancho/1.955), (alto/4.5), window=self.nivel_2)
@@ -258,6 +266,9 @@ class Seleccion:  # Seleccionador de Niveles.
         graficos.create_window((ancho/5.5), (alto/1.27), window=self.nivel_7)
         graficos.create_window((ancho/1.955), (alto/1.27), window=self.nivel_8)
         graficos.create_window((ancho/1.20), (alto/1.27), window=self.nivel_9)
+
+    def personajes(self):
+        graficos.delete("all")
 
     def cerrar_selec(self, nivel):  # 0 = Menu | >= 1 y <=9 = X Nivel
         graficos.delete("all")
@@ -569,7 +580,6 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         return self.nivel_ganado()
 
     def nivel_ganado(self):  # -- -- -- Niveles Ganados
-
         # -- Nivel 1 Ganado:
         if (self.piso == 1 and self.puente31[1] == "x"
             and self.puente22[1] == "bd" and self.puente32[1] == "ac"
@@ -813,7 +823,6 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         if iter == 13:
             return None
         else:
-
             if direccion == 0:  # Dirección = Derecha Inicial
                 if iter >= 0 and iter < 3:
                     graficos.itemconfig(self.player, image=char1_der)
@@ -1373,8 +1382,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             return Menu().crear_menu()
 
 
-videojuego = Menu()
-videojuego.crear_menu()
+Menu().crear_menu()
 
 # -- -- -- Mainloop
 if __name__ == "__main__":
