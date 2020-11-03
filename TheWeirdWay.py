@@ -1,3 +1,10 @@
+"""                     Programa hecho por: Luciano Esteban
+    -------------------------------------------------------------------------
+    Aviso previo: Es normal encontrarse con variables que parezcan no
+    asignadas, realmente lo están. Esto es debido al uso de la función exec(),
+    donde las defíno con un formato String, por lo que muchos IDEs y editores
+    de texto no la van a reconocer como ya asignada. Pero si estan. """
+
 from tkinter import Canvas, Frame, Tk, PhotoImage, Button
 
 # -- -- -- Titulo
@@ -30,6 +37,7 @@ tres_p = ("abd", "acd", "abc", "bcd")  # Cantidad de direcciones: 4
 
 # Extras
 maximo = 1  # Mayor nivel alcanzado en el regístro del juego
+caminador = "Dross"  # Caminador seleccionado / Predeterminado
 
 # -- -- -- Root
 root = Tk()
@@ -39,75 +47,71 @@ root.geometry("{}x{}+{}+{}".format(ancho, alto, 200, 45))
 root.iconbitmap("LucioPalIco.ico")
 root.config(bg=c_fondo)
 
-# -- -- -- Imagenes
+# -- -- -- Imgs
 # A = Izquierda | B = Derecha | C = Arriba | D = Abajo
-logo_im = PhotoImage(file="Imagenes/Logo.png")  # Logo del juego en el menu
-menu_im = PhotoImage(file="Imagenes/Inicio5.png")  # Fondo Menu
-selec_im = PhotoImage(file="Imagenes/Selector.png")  # Fondo Selector
-fondo_im = PhotoImage(file="Imagenes/Fondo_a.png")  # Escenario del juego
-candado_im = PhotoImage(file="Imagenes/Candado2.png")  # Niveles bloqueados
-cuadro_im = PhotoImage(file="Imagenes/Menu_play.png")  # Fondo de la Pausa
-red_orb_im = PhotoImage(file="Imagenes/RedOrb.png")  # Orbes Rojos / Puntos
-lava1_im = PhotoImage(file="Imagenes/Fondo_b1.png")  # Frame de lava 1
-lava2_im = PhotoImage(file="Imagenes/Fondo_b2.png")  # Frame de lava 2
-lava3_im = PhotoImage(file="Imagenes/Fondo_b3.png")  # Frame de lava 3
-# -- -- Personaje base
-char = PhotoImage(file="Imagenes/Personajes/Dross/Char.png")
-char1_aba = PhotoImage(file="Imagenes/Personajes/Dross/Char1_aba.png")  # ABA 1
-char1_izq = PhotoImage(file="Imagenes/Personajes/Dross/Char1_izq.png")  # IZQ 1
-char1_der = PhotoImage(file="Imagenes/Personajes/Dross/Char1_der.png")  # DER 1
-char1_arr = PhotoImage(file="Imagenes/Personajes/Dross/Char1_arr.png")  # ARR 1
-
-char2_aba = PhotoImage(file="Imagenes/Personajes/Dross/Char2_aba.png")  # ABA 2
-char2_izq = PhotoImage(file="Imagenes/Personajes/Dross/Char2_izq.png")  # IZQ 2
-char2_der = PhotoImage(file="Imagenes/Personajes/Dross/Char2_der.png")  # DER 2
-char2_arr = PhotoImage(file="Imagenes/Personajes/Dross/Char2_arr.png")  # ARR 2
-
-char3_aba = PhotoImage(file="Imagenes/Personajes/Dross/Char3_aba.png")  # ABA 3
-char3_izq = PhotoImage(file="Imagenes/Personajes/Dross/Char3_izq.png")  # IZQ 3
-char3_der = PhotoImage(file="Imagenes/Personajes/Dross/Char3_der.png")  # DER 3
-char3_arr = PhotoImage(file="Imagenes/Personajes/Dross/Char3_arr.png")  # ARR 3
+logo_im = PhotoImage(file="Imgs/Logo.png")  # Logo del juego en el menu
+menu_im = PhotoImage(file="Imgs/Inicio5.png")  # Fondo Menu
+selec_im = PhotoImage(file="Imgs/Selector.png")  # Fondo Selector
+fondo_im = PhotoImage(file="Imgs/Fondo_a.png")  # Escenario del juego
+candado_im = PhotoImage(file="Imgs/Candado2.png")  # Niveles bloqueados
+cuadro_im = PhotoImage(file="Imgs/Menu_play.png")  # Fondo de la Pausa
+red_orb_im = PhotoImage(file="Imgs/RedOrb.png")  # Orbes Rojos / Puntos
+for frame in range(1, 3 + 1):  # Material para la animación de lava
+    exec("lava{0}_im = PhotoImage(file='Imgs/Fondo_b{0}.png')".format(frame))
+# -- -- Personaje base más su fondo
+for img in ("aba", "izq", "der", "arr"):  # Generación de Sprites de 4 dires
+    for sprite in range(1, 3 + 1):  # Generación de los 3 sprites al caminar
+        exec("""char{0}_{1} = PhotoImage(
+                file='Imgs/Chars/Dross/Char{0}_{1}.png')""".
+             format(sprite, img))
+char = PhotoImage(file="Imgs/Chars/Dross/Char.png")
+escenario = PhotoImage(file="Imgs/Chars/Interfaz_Dross.png")
+elec_img = PhotoImage(file="Imgs/Chars/Marco.png")
+# -- -- Fotos de personajes
+for face in ("dross", "randolph", "dolar", "freud",
+             "milei", "seba", "franco", "menem"):
+    exec("{0}_img = PhotoImage(file='Imgs/Chars/Caras/{0}.png')".format(face))
 # -- -- Botones In-Game
-home_im = PhotoImage(file="Imagenes/Retorno_Menu.png")  # Regreso al menu
-walk0_im = PhotoImage(file="Imagenes/Moverse0.png")  # Caminar desactivado
-walk1_im = PhotoImage(file="Imagenes/Moverse1.png")  # Caminar sin | punto |
-walk2_im = PhotoImage(file="Imagenes/Moverse2.png")  # Caminar con | punto |
+home_im = PhotoImage(file="Imgs/Retorno_Menu.png")  # Regreso al menu
+walk0_im = PhotoImage(file="Imgs/Moverse0.png")  # Caminar desactivado
+walk1_im = PhotoImage(file="Imgs/Moverse1.png")  # Caminar sin | punto |
+walk2_im = PhotoImage(file="Imgs/Moverse2.png")  # Caminar con | punto |
 # -- -- Trampas
-trampa1_im = PhotoImage(file="Imagenes/Trap_1.png")  # Trampa de fondo 1
-trampa2_im = PhotoImage(file="Imagenes/Trap_2.png")  # Trampa de fondo 2
-trampa3_im = PhotoImage(file="Imagenes/Trap_3.png")  # Trampa de fondo 3
-trampa4_im = PhotoImage(file="Imagenes/Trap_4.png")  # Trampa de fondo 4
+trampa1_im = PhotoImage(file="Imgs/Trap_1.png")  # Trampa de fondo 1
+trampa2_im = PhotoImage(file="Imgs/Trap_2.png")  # Trampa de fondo 2
+trampa3_im = PhotoImage(file="Imgs/Trap_3.png")  # Trampa de fondo 3
+trampa4_im = PhotoImage(file="Imgs/Trap_4.png")  # Trampa de fondo 4
 # -- -- Puentes giratorios
-puente_x_im = PhotoImage(file="Imagenes/PuenteX.png")  # X
-puente_y_im = PhotoImage(file="Imagenes/PuenteY.png")  # Y
-puente_f1ll_im = PhotoImage(file="Imagenes/PuenteF1LL.png")  # XY
-puente_f2ll_im = PhotoImage(file="Imagenes/PuenteF2LL.png")  # XY
-puente_f3ll_im = PhotoImage(file="Imagenes/PuenteF3LL.png")  # XY
-puente_f4ll_im = PhotoImage(file="Imagenes/PuenteF4LL.png")  # XY
+puente_x_im = PhotoImage(file="Imgs/PuenteX.png")  # X
+puente_y_im = PhotoImage(file="Imgs/PuenteY.png")  # Y
+puente_f1ll_im = PhotoImage(file="Imgs/PuenteF1LL.png")  # XY
+puente_f2ll_im = PhotoImage(file="Imgs/PuenteF2LL.png")  # XY
+puente_f3ll_im = PhotoImage(file="Imgs/PuenteF3LL.png")  # XY
+puente_f4ll_im = PhotoImage(file="Imgs/PuenteF4LL.png")  # XY
 
-puente_ac_im = PhotoImage(file="Imagenes/PuenteAC.png")  # AC
-puente_ad_im = PhotoImage(file="Imagenes/PuenteAD.png")  # AD
-puente_bc_im = PhotoImage(file="Imagenes/PuenteBC.png")  # BC
-puente_bd_im = PhotoImage(file="Imagenes/PuenteBD.png")  # BD
+puente_ac_im = PhotoImage(file="Imgs/PuenteAC.png")  # AC
+puente_ad_im = PhotoImage(file="Imgs/PuenteAD.png")  # AD
+puente_bc_im = PhotoImage(file="Imgs/PuenteBC.png")  # BC
+puente_bd_im = PhotoImage(file="Imgs/PuenteBD.png")  # BD
 
-puente_abc_im = PhotoImage(file="Imagenes/PuenteABC.png")  # ABC
-puente_abd_im = PhotoImage(file="Imagenes/PuenteABD.png")  # ABD
-puente_acd_im = PhotoImage(file="Imagenes/PuenteACD.png")  # ACD
-puente_bcd_im = PhotoImage(file="Imagenes/PuenteBCD.png")  # BCD
+puente_abc_im = PhotoImage(file="Imgs/PuenteABC.png")  # ABC
+puente_abd_im = PhotoImage(file="Imgs/PuenteABD.png")  # ABD
+puente_acd_im = PhotoImage(file="Imgs/PuenteACD.png")  # ACD
+puente_bcd_im = PhotoImage(file="Imgs/PuenteBCD.png")  # BCD
 # -- -- Puentes no giratorios
-puente_x2_im = PhotoImage(file="Imagenes/PuenteX2.png")  # X
-puente_y2_im = PhotoImage(file="Imagenes/PuenteY2.png")  # Y
-puente_f1ll2_im = PhotoImage(file="Imagenes/PuenteF1LL2.png")  # XY
+puente_x2_im = PhotoImage(file="Imgs/PuenteX2.png")  # X
+puente_y2_im = PhotoImage(file="Imgs/PuenteY2.png")  # Y
+puente_f1ll2_im = PhotoImage(file="Imgs/PuenteF1LL2.png")  # XY
 
-puente_ac2_im = PhotoImage(file="Imagenes/PuenteAC2.png")  # AC
-puente_ad2_im = PhotoImage(file="Imagenes/PuenteAD2.png")  # AD
-puente_bc2_im = PhotoImage(file="Imagenes/PuenteBC2.png")  # BC
-puente_bd2_im = PhotoImage(file="Imagenes/PuenteBD2.png")  # BD
+puente_ac2_im = PhotoImage(file="Imgs/PuenteAC2.png")  # AC
+puente_ad2_im = PhotoImage(file="Imgs/PuenteAD2.png")  # AD
+puente_bc2_im = PhotoImage(file="Imgs/PuenteBC2.png")  # BC
+puente_bd2_im = PhotoImage(file="Imgs/PuenteBD2.png")  # BD
 
-puente_abc2_im = PhotoImage(file="Imagenes/PuenteABC2.png")  # ABC
-puente_abd2_im = PhotoImage(file="Imagenes/PuenteABD2.png")  # ABD
-puente_acd2_im = PhotoImage(file="Imagenes/PuenteACD2.png")  # ACD
-puente_bcd2_im = PhotoImage(file="Imagenes/PuenteBCD2.png")  # BCD
+puente_abc2_im = PhotoImage(file="Imgs/PuenteABC2.png")  # ABC
+puente_abd2_im = PhotoImage(file="Imgs/PuenteABD2.png")  # ABD
+puente_acd2_im = PhotoImage(file="Imgs/PuenteACD2.png")  # ACD
+puente_bcd2_im = PhotoImage(file="Imgs/PuenteBCD2.png")  # BCD
 
 # -- -- -- Frame
 pantalla = Frame(root, width=ancho, height=alto, bg=c_pantalla)
@@ -189,19 +193,20 @@ class Menu:  # Menu principal
 
 
 class Seleccion:  # Seleccionador de Niveles.
-    def abrir_selector(self, desbloqueados=9):  # Predeterminado: 1
+    def abrir_selector(self, desbloqueados=3):  # Predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
             maximo = desbloqueados
+        self.maximo = maximo  # Quitar esta variable cuando haya estrellas
 
         self.volver = Button(graficos, text="Volver al menu principal",
-                             width=19, font=("Comic Sans MS", 15),
+                             width=19, font=("Verdana", 15),
                              bg=c_bg_se, fg=c_fg,
                              activebackground=c_bg_press,
                              activeforeground=c_fg, cursor="hand2",
                              command=lambda: self.cerrar_selec("0"))
-        self.char_sec = Button(graficos, text="Personajes",
-                               font=("Comic Sans MS", 15),
+        self.char_sec = Button(graficos, text="Personajes ",
+                               font=("Verdana", 15),
                                bg=c_bg_se, fg=c_fg, command=self.personajes,
                                activebackground=c_bg_press, cursor="hand2",
                                activeforeground=c_fg, image=char,
@@ -213,7 +218,7 @@ class Seleccion:  # Seleccionador de Niveles.
                       "self.nivel_7", "self.nivel_8", "self.nivel_9"):
             # Botones generandose
             exec("""{0} = Button(graficos, text='       Nivel {1} ',
-                    width=276,font=('Comic Sans MS', 20),
+                    width=276,font=('Verdana', 20),
                     bg=c_bg_se, fg=c_fg,
                     activebackground=c_bg_press,
                     activeforeground=c_fg, cursor='hand2')""".
@@ -269,6 +274,65 @@ class Seleccion:  # Seleccionador de Niveles.
 
     def personajes(self):
         graficos.delete("all")
+        graficos.bind("<Button-1>", self.cambio_chars)
+
+        self.selec_menu = Button(graficos, text="Selector de niveles",
+                                 width=15, font=("Verdana", 15),
+                                 bg=c_bg_se, fg=c_fg,
+                                 activebackground=c_bg_press,
+                                 activeforeground=c_fg, cursor="hand2",
+                                 command=lambda: self.salir_chars())
+
+        # -- -- Colocación de Imgs
+        graficos.create_window(ancho/8.5, 50, window=self.selec_menu)
+        graficos.create_image(ancho/2, alto/2, image=escenario)
+        # -- -- Personajes desbloqueados
+        print(self.maximo)
+        graficos.create_image(208.4, 249, image=dross_img)
+        graficos.create_image(371, 251, image=randolph_img)
+        graficos.create_image(538, 252, image=dolar_img)
+        graficos.create_image(694, 252, image=freud_img)
+        graficos.create_image(856, 252, image=milei_img)
+        graficos.create_image(371, 447, image=seba_img)
+        graficos.create_image(531, 447, image=franco_img)
+        graficos.create_image(696, 447, image=menem_img)
+        # -- -- Posición del click para elegír un personaje
+
+    def cambio_chars(self, cursor):  # Selección de personajes
+        # 0=Dross|1=Randolph|2=Dolar|3=Freud|4=Milei|5=Seba|6=Franco|7=Menem #
+        print("X =", cursor.x, "| Y =", cursor.y)
+        for click in (("dross", 133, 161, 281, 339),
+                      ("randolph", 299, 162, 443, 339),
+                      ("dolar", 464, 163, 612, 339),
+                      ("freud", 622, 163, 767, 342),
+                      ("milei", 784, 161, 927, 339),
+                      ("seba", 299, 356, 444, 535),
+                      ("franco", 458, 357, 605, 535),
+                      ("menem", 623, 361, 767, 534)):
+            if (cursor.x >= click[1] and cursor.x <= click[3] and
+                    cursor.y >= click[2] and cursor.y <= click[4]):
+                char = click[0]
+
+        for elec in (("dross", 206, 253), ("randolph", 371, 253),
+                     ("dolar", 535, 253), ("freud", 696, 252),
+                     ("milei", 856, 252), ("seba", 369, 449),  # elec =Elección
+                     ("franco", 531, 447), ("menem", 696, 447)):
+            try:
+                if elec[0] == char:  # Si el click es sobre un personaje
+                    try:
+                        graficos.delete(self.marco)
+                        del self.marco
+                    except AttributeError:
+                        None
+                    self.marco = graficos.create_image(elec[1], elec[2],
+                                                       image=elec_img)
+            except UnboundLocalError:
+                break
+
+    def salir_chars(self):
+        graficos.delete("all")
+        graficos.unbind("<Button-1>")
+        return self.abrir_selector()
 
     def cerrar_selec(self, nivel):  # 0 = Menu | >= 1 y <=9 = X Nivel
         graficos.delete("all")
