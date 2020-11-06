@@ -58,11 +58,11 @@ red_orb_im = PhotoImage(file="Imgs/RedOrb.png")  # Orbes Rojos / Puntos
 for frame in range(1, 3 + 1):  # Material para la animación de lava
     exec("lava{0}_im = PhotoImage(file='Imgs/Fondo_b{0}.png')".format(frame))
 # -- -- Personaje base más su fondo
-for img in ("aba", "izq", "der", "arr"):  # Generación de Sprites de 4 dires
-    for sprite in range(1, 3 + 1):  # Generación de los 3 sprites al caminar
-        exec("""char{0}_{1} = PhotoImage(
-                file='Imgs/Chars/Dross/Char{0}_{1}.png')""".
-             format(sprite, img))
+# for img in ("aba", "izq", "der", "arr"):  # Generación de Sprites de 4 dires
+#     for sprite in range(1, 3 + 1):  # Generación de los 3 sprites al caminar
+#         exec("""char{0}_{1} = PhotoImage(
+#                 file='Imgs/Chars/Dross/Char{0}_{1}.png')""".
+#              format(sprite, img))
 elec_img = PhotoImage(file="Imgs/Chars/Marco.png")
 # -- -- Botones In-Game
 home_im = PhotoImage(file="Imgs/Retorno_Menu.png")  # Regreso al menu
@@ -267,6 +267,7 @@ class Seleccion:  # Seleccionador de Niveles.
         graficos.create_window((ancho/5.5), (alto/1.27), window=self.nivel_7)
         graficos.create_window((ancho/1.955), (alto/1.27), window=self.nivel_8)
         graficos.create_window((ancho/1.20), (alto/1.27), window=self.nivel_9)
+        # Generación de Sprites del personaje seleccionado:
 
     def personajes(self, per):
         graficos.delete("all")
@@ -313,6 +314,10 @@ class Seleccion:  # Seleccionador de Niveles.
         graficos.create_image(531, 447, image=self.franco_img)
         graficos.create_image(696, 447, image=self.menem_img)
 
+        self.presen = PhotoImage(file="Imgs/Chars/{}/Presentacion.png".
+                                 format(self.chara))  # Presentación
+        graficos.create_image(125, 575, image=self.presen)
+
     def cambio_chars(self, cursor):  # Selección de personajes
         # 0=Dross|1=Randolph|2=Dolar|3=Freud|4=Milei|5=Seba|6=Franco|7=Menem #
         print("X =", cursor.x, "| Y =", cursor.y)
@@ -328,7 +333,7 @@ class Seleccion:  # Seleccionador de Niveles.
                     cursor.y >= click[2] and cursor.y <= click[4]):
                 char = click[0]
 
-        # elec =Elección
+        # elec = Elección
         for elec in (("dross", 206, 253), ("randolph", 371, 253),
                      ("dolar", 535, 253), ("freud", 696, 252),
                      ("milei", 856, 252), ("seba", 369, 449),
@@ -344,6 +349,10 @@ class Seleccion:  # Seleccionador de Niveles.
                     graficos.lower(self.backg)
             except UnboundLocalError:
                 break
+
+        self.presen = PhotoImage(file="Imgs/Chars/{}/Presentacion.png".
+                                 format(self.chara))  # Presentación
+        graficos.create_image(125, 575, image=self.presen)
 
     def salir_chars(self):
         graficos.delete("all")
@@ -361,17 +370,16 @@ class Seleccion:  # Seleccionador de Niveles.
         else:  # Else para activar la clase Partída con método para el nivel.
             for lvl in ("1", "2", "3", "4", "5", "6", "7", "8", "9"):
                 if nivel == lvl:
-                    exec('Partida().nivel_{0}(per)'.format(lvl))
+                    exec('Partida(per).nivel_{0}()'.format(lvl))
                     break
 
 
 class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
-    def __init__(self):
+    def __init__(self, per):
+        self.char = per
         self.lava = graficos.create_image(ancho/2, alto/2, image=lava1_im)
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_im)
 
-        self.player = graficos.create_image(-100, -100,
-                                            image=char1_der)
         self.home = Button(graficos, font=("Century Gothic", 15),
                            bd=0, highlightthickness=0, image=home_im,
                            activebackground='#23272d',
@@ -386,6 +394,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         graficos.bind("<Button-1>", self.giro)  # Giro de los caminos
 
         self.interrupcion = False  # Pausa de las animaciones
+
+        for img in ("aba", "izq", "der", "arr"):  # Sprites de 4 dires
+            for sprite in range(1, 3 + 1):  # 3 sprites al caminar
+                exec("""self.char{1}_{2} = PhotoImage(
+                        file='Imgs/Chars/{0}/Char{1}_{2}.png')""".
+                     format(self.char, sprite, img))
+        self.player = graficos.create_image(-100, -100,
+                                            image=self.char1_der)
         return self.lava_mov()
 
     def lava_mov(self, intensidad=0):
@@ -902,57 +918,57 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         else:
             if direccion == 0:  # Dirección = Derecha Inicial
                 if iter >= 0 and iter < 3:
-                    graficos.itemconfig(self.player, image=char1_der)
+                    graficos.itemconfig(self.player, image=self.char1_der)
                 elif iter >= 3 and iter < 6:
-                    graficos.itemconfig(self.player, image=char2_der)
+                    graficos.itemconfig(self.player, image=self.char2_der)
                 elif iter >= 6 and iter < 9:
-                    graficos.itemconfig(self.player, image=char1_der)
+                    graficos.itemconfig(self.player, image=self.char1_der)
                 elif iter >= 9 and iter < 13:
-                    graficos.itemconfig(self.player, image=char3_der)
+                    graficos.itemconfig(self.player, image=self.char3_der)
                 graficos.move(self.player, 9, 0)
 
             elif direccion == 1:  # Dirección = Derecha
                 if iter >= 0 and iter < 3:
-                    graficos.itemconfig(self.player, image=char1_der)
+                    graficos.itemconfig(self.player, image=self.char1_der)
                 elif iter >= 3 and iter < 6:
-                    graficos.itemconfig(self.player, image=char2_der)
+                    graficos.itemconfig(self.player, image=self.char2_der)
                 elif iter >= 6 and iter < 9:
-                    graficos.itemconfig(self.player, image=char1_der)
+                    graficos.itemconfig(self.player, image=self.char1_der)
                 elif iter >= 9 and iter < 13:
-                    graficos.itemconfig(self.player, image=char3_der)
+                    graficos.itemconfig(self.player, image=self.char3_der)
                 graficos.move(self.player, 11.9, 0)
 
             elif direccion == 2:  # Dirección = Izquierda
                 if iter >= 0 and iter < 3:
-                    graficos.itemconfig(self.player, image=char1_izq)
+                    graficos.itemconfig(self.player, image=self.char1_izq)
                 elif iter >= 3 and iter < 6:
-                    graficos.itemconfig(self.player, image=char2_izq)
+                    graficos.itemconfig(self.player, image=self.char2_izq)
                 elif iter >= 6 and iter < 9:
-                    graficos.itemconfig(self.player, image=char1_izq)
+                    graficos.itemconfig(self.player, image=self.char1_izq)
                 elif iter >= 9 and iter < 13:
-                    graficos.itemconfig(self.player, image=char3_izq)
+                    graficos.itemconfig(self.player, image=self.char3_izq)
                 graficos.move(self.player, -11.9, 0)
 
             elif direccion == 3:  # Dirección = Abajo
                 if iter >= 0 and iter < 3:
-                    graficos.itemconfig(self.player, image=char1_aba)
+                    graficos.itemconfig(self.player, image=self.char1_aba)
                 elif iter >= 3 and iter < 6:
-                    graficos.itemconfig(self.player, image=char2_aba)
+                    graficos.itemconfig(self.player, image=self.char2_aba)
                 elif iter >= 6 and iter < 9:
-                    graficos.itemconfig(self.player, image=char1_aba)
+                    graficos.itemconfig(self.player, image=self.char1_aba)
                 elif iter >= 9 and iter < 13:
-                    graficos.itemconfig(self.player, image=char3_aba)
+                    graficos.itemconfig(self.player, image=self.char3_aba)
                 graficos.move(self.player, 0, 10.7)
 
             elif direccion == 4:  # Dirección = Arriba
                 if iter >= 0 and iter < 3:
-                    graficos.itemconfig(self.player, image=char1_arr)
+                    graficos.itemconfig(self.player, image=self.char1_arr)
                 elif iter >= 3 and iter < 6:
-                    graficos.itemconfig(self.player, image=char2_arr)
+                    graficos.itemconfig(self.player, image=self.char2_arr)
                 elif iter >= 6 and iter < 9:
-                    graficos.itemconfig(self.player, image=char1_arr)
+                    graficos.itemconfig(self.player, image=self.char1_arr)
                 elif iter >= 9 and iter < 13:
-                    graficos.itemconfig(self.player, image=char3_arr)
+                    graficos.itemconfig(self.player, image=self.char3_arr)
                 graficos.move(self.player, 0, -10.7)
 
             graficos.update()
@@ -994,10 +1010,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         if self.interrupcion is False:
             return graficos.after(200, lambda: self.orbe_mov(mov + 1))
 
-    def nivel_1(self, per):  # --- --- --- --- 11 Puentes
+    def nivel_1(self):  # --- --- --- --- 11 Puentes
 
         self.piso = 1
-        self.char = per
         graficos.coords(self.player, 154.5*0.25, 140*3)
 
         self.puente21 = [graficos.create_image(154.5, 140*2,
@@ -1037,10 +1052,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
         return self.trampas(), self.orbe_mov()
 
-    def nivel_2(self, per):  # --- --- --- --- 15 Puentes
+    def nivel_2(self):  # --- --- --- --- 15 Puentes
 
         self.piso = 2
-        self.char = per
         graficos.coords(self.player, 154.5*0.25, 140*2)
 
         self.puente11 = [graficos.create_image(154.5, 140,
@@ -1082,10 +1096,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
         return self.trampas(), self.orbe_mov()
 
-    def nivel_3(self, per):  # --- --- --- --- 18 Puentes
+    def nivel_3(self):  # --- --- --- --- 18 Puentes
 
         self.piso = 3
-        self.char = per
         graficos.coords(self.player, 154.5*0.25, 140*3)
 
         self.puente21 = [graficos.create_image(154.5, 140*2,
@@ -1132,10 +1145,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
-    def nivel_4(self, per):  # --- --- --- --- 17 Puentes
+    def nivel_4(self):  # --- --- --- --- 17 Puentes
 
         self.piso = 4
-        self.char = per
         graficos.coords(self.player, 154.5*0.25, 140*3)
 
         self.puente21 = [graficos.create_image(154.5, 140*2,
@@ -1180,10 +1192,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
-    def nivel_5(self, per):  # --- --- --- --- 17 Puentes
+    def nivel_5(self):  # --- --- --- --- 17 Puentes
 
         self.piso = 5
-        self.char = per
         graficos.coords(self.player, 154.5*0.25, 140)
 
         self.puente11 = [graficos.create_image(154.5, 140,
@@ -1228,10 +1239,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
-    def nivel_6(self, per):  # --- --- --- --- 18 Puentes
+    def nivel_6(self):  # --- --- --- --- 18 Puentes
 
         self.piso = 6
-        self.char = per
         graficos.coords(self.player, 154.5*0.25, 140*2)
 
         self.puente11 = [graficos.create_image(154.5, 140,
@@ -1278,10 +1288,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
-    def nivel_7(self, per):  # --- --- --- --- 19 Puentes
+    def nivel_7(self):  # --- --- --- --- 19 Puentes
 
         self.piso = 7
-        self.char = per
         graficos.coords(self.player, 154.5*0.25, 140*4)
 
         self.puente21 = [graficos.create_image(154.5, 140*2,
@@ -1330,10 +1339,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
-    def nivel_8(self, per):  # --- --- --- --- 22 Puentes
+    def nivel_8(self):  # --- --- --- --- 22 Puentes
 
         self.piso = 8
-        self.char = per
         graficos.coords(self.player, 154.5*0.25, 140)
 
         self.puente11 = [graficos.create_image(154.5, 140,
@@ -1388,10 +1396,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
-    def nivel_9(self, per):  # --- --- --- --- 23 Puentes / Final
+    def nivel_9(self):  # --- --- --- --- 23 Puentes / Final
 
         self.piso = 9
-        self.char = per
         graficos.coords(self.player, 154.5*0.25, 140*3)
 
         self.puente11 = [graficos.create_image(154.5, 140,
