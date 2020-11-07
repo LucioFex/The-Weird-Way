@@ -54,7 +54,9 @@ selec_im = PhotoImage(file="Imgs/Selector.png")  # Fondo Selector
 fondo_im = PhotoImage(file="Imgs/Fondo_a.png")  # Escenario del juego
 candado_im = PhotoImage(file="Imgs/Candado2.png")  # Niveles bloqueados
 cuadro_im = PhotoImage(file="Imgs/Menu_play.png")  # Fondo de la Pausa
-red_orb_im = PhotoImage(file="Imgs/RedOrb.png")  # Orbes Rojos / Puntos
+red_orb1_im = PhotoImage(file="Imgs/RedOrb1.png")  # Orbes Rojos / Puntos
+red_orb2_im = PhotoImage(file="Imgs/RedOrb2.png")  # Orbes Rojos / Puntos
+red_orb3_im = PhotoImage(file="Imgs/RedOrb3.png")  # Orbes Rojos / Puntos
 for frame in range(1, 3 + 1):  # Material para la animación de lava
     exec("lava{0}_im = PhotoImage(file='Imgs/Fondo_b{0}.png')".format(frame))
 # -- -- Personaje base más su fondo
@@ -911,7 +913,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         else:  # Desabilitación del botón de PLAY (walk)
             self.walk.config(image=walk0_im, command=lambda: None)
 
-    def mov_personaje(self, direccion, iter=0):  # iter = Iteraciones
+    def mov_personaje(self, direccion, iter=0):
+        # iter = Iteraciones
         # 1 = DER | 2 = IZQ | 3 = ABA | 4 = ARR | 0 = Primer DER #
         if iter == 13:
             return None
@@ -926,6 +929,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 elif iter >= 9 and iter < 13:
                     graficos.itemconfig(self.player, image=self.char3_der)
                 graficos.move(self.player, 9, 0)
+                if iter == 0:
+                    self.len_x += 1
 
             elif direccion == 1:  # Dirección = Derecha
                 if iter >= 0 and iter < 3:
@@ -937,6 +942,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 elif iter >= 9 and iter < 13:
                     graficos.itemconfig(self.player, image=self.char3_der)
                 graficos.move(self.player, 11.9, 0)
+                if iter == 0:
+                    self.len_x += 1
 
             elif direccion == 2:  # Dirección = Izquierda
                 if iter >= 0 and iter < 3:
@@ -948,6 +955,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 elif iter >= 9 and iter < 13:
                     graficos.itemconfig(self.player, image=self.char3_izq)
                 graficos.move(self.player, -11.9, 0)
+                if iter == 0:
+                    self.len_x -= 1
 
             elif direccion == 3:  # Dirección = Abajo
                 if iter >= 0 and iter < 3:
@@ -959,6 +968,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 elif iter >= 9 and iter < 13:
                     graficos.itemconfig(self.player, image=self.char3_aba)
                 graficos.move(self.player, 0, 10.7)
+                if iter == 0:
+                    self.len_y += 1
 
             elif direccion == 4:  # Dirección = Arriba
                 if iter >= 0 and iter < 3:
@@ -970,6 +981,21 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 elif iter >= 9 and iter < 13:
                     graficos.itemconfig(self.player, image=self.char3_arr)
                 graficos.move(self.player, 0, -10.7)
+                if iter == 0:
+                    self.len_y -= 1
+
+            # -- -- -- Obtención del punto / orbe:
+            if self.len_x == self.orbe_x and self.len_y == self.orbe_y:
+                if iter >= 8 and iter < 10:
+                    graficos.lift(self.orbe)
+                    print("LLEGUE 1")
+                    graficos.itemconfig(self.orbe, image=red_orb2_im)
+                elif iter >= 10 and iter < 12:
+                    print("LLEGUE 2")
+                    graficos.itemconfig(self.orbe, image=red_orb3_im)
+                elif iter >= 12:
+                    print("LLEGUE 3")
+                    graficos.delete(self.orbe)
 
             graficos.update()
             graficos.after(27, lambda: self.mov_personaje(direccion, iter+1))
@@ -1012,6 +1038,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
     def nivel_1(self):  # --- --- --- --- 11 Puentes
 
+        self.len_x = 0
+        self. len_y = 3
+        self.orbe_x = 3
+        self.orbe_y = 4
+
         self.piso = 1
         graficos.coords(self.player, 154.5*0.25, 140*3)
 
@@ -1043,9 +1074,10 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                 image=puente_x_im)), "x"]
         self.puente44 = [(graficos.create_image(154.5*4, 140*4,
                                                 image=puente_bd_im)), "bd"]
+
+        self.orbe = graficos.create_image(154.5*3, 140*4, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.orbe = graficos.create_image(154.5*3, 140*4, image=red_orb_im)
         self.trampaledo1 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
@@ -1053,6 +1085,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         return self.trampas(), self.orbe_mov()
 
     def nivel_2(self):  # --- --- --- --- 15 Puentes
+
+        self.len_x = 0
+        self. len_y = 2
+        self.orbe_x = 4
+        self.orbe_y = 3
 
         self.piso = 2
         graficos.coords(self.player, 154.5*0.25, 140*2)
@@ -1087,9 +1124,10 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_bc_im), "bc"]
         self.puente36 = [graficos.create_image(154.5*6, 140*3,
                                                image=puente_ac_im), "ac"]
+
+        self.orbe = graficos.create_image(154.5*4, 140*3, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.orbe = graficos.create_image(154.5*4, 140*3, image=red_orb_im)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
@@ -1097,6 +1135,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         return self.trampas(), self.orbe_mov()
 
     def nivel_3(self):  # --- --- --- --- 18 Puentes
+
+        self.len_x = 0
+        self. len_y = 3
+        self.orbe_x = 3
+        self.orbe_y = 1
 
         self.piso = 3
         graficos.coords(self.player, 154.5*0.25, 140*3)
@@ -1137,15 +1180,21 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ac_im), "ac"]
         self.puente36 = [graficos.create_image(154.5*6, 140*3,
                                                image=puente_ac2_im), "ac2"]
+
+        self.orbe = graficos.create_image(154.5*3, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.orbe = graficos.create_image(154.5*3, 140, image=red_orb_im)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
     def nivel_4(self):  # --- --- --- --- 17 Puentes
+
+        self.len_x = 0
+        self. len_y = 3
+        self.orbe_x = 6
+        self.orbe_y = 1
 
         self.piso = 4
         graficos.coords(self.player, 154.5*0.25, 140*3)
@@ -1184,15 +1233,21 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_x_im), "x"]
         self.puente36 = [graficos.create_image(154.5*6, 140*3,
                                                image=puente_abc2_im), "abc2"]
+
+        self.orbe = graficos.create_image(154.5*6, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.orbe = graficos.create_image(154.5*6, 140, image=red_orb_im)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
     def nivel_5(self):  # --- --- --- --- 17 Puentes
+
+        self.len_x = 0
+        self. len_y = 1
+        self.orbe_x = 2
+        self.orbe_y = 1
 
         self.piso = 5
         graficos.coords(self.player, 154.5*0.25, 140)
@@ -1231,15 +1286,21 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ac_im), "ac"]
         self.puente26 = [graficos.create_image(154.5*6, 140*2,
                                                image=puente_abc2_im), "abc2"]
+
+        self.orbe = graficos.create_image(154.5*2, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.orbe = graficos.create_image(154.5*2, 140, image=red_orb_im)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
     def nivel_6(self):  # --- --- --- --- 18 Puentes
+
+        self.len_x = 0
+        self. len_y = 2
+        self.orbe_x = 3
+        self.orbe_y = 2
 
         self.piso = 6
         graficos.coords(self.player, 154.5*0.25, 140*2)
@@ -1280,15 +1341,21 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_abc_im), "abc"]
         self.puente46 = [graficos.create_image(154.5*6, 140*4,
                                                image=puente_ac2_im), "ac2"]
+
+        self.orbe = graficos.create_image(154.5*3, 140*2, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.orbe = graficos.create_image(154.5*3, 140*2, image=red_orb_im)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
     def nivel_7(self):  # --- --- --- --- 19 Puentes
+
+        self.len_x = 0
+        self. len_y = 4
+        self.orbe_x = 5
+        self.orbe_y = 1
 
         self.piso = 7
         graficos.coords(self.player, 154.5*0.25, 140*4)
@@ -1331,15 +1398,21 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ac2_im), "ac2"]
         self.puente26 = [graficos.create_image(154.5*6, 140*2,
                                                image=puente_x2_im), "x2"]
+
+        self.orbe = graficos.create_image(154.5*5, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.orbe = graficos.create_image(154.5*5, 140, image=red_orb_im)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
     def nivel_8(self):  # --- --- --- --- 22 Puentes
+
+        self.len_x = 0
+        self. len_y = 1
+        self.orbe_x = 4
+        self.orbe_y = 4
 
         self.piso = 8
         graficos.coords(self.player, 154.5*0.25, 140)
@@ -1388,15 +1461,21 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_abd2_im), "abd2"]
         self.puente46 = [graficos.create_image(154.5*6, 140*4,
                                                image=puente_ad_im), "ad"]
+
+        self.orbe = graficos.create_image(154.5*4, 140*4, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.orbe = graficos.create_image(154.5*4, 140*4, image=red_orb_im)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
         return self.trampas(), self.orbe_mov()
 
     def nivel_9(self):  # --- --- --- --- 23 Puentes / Final
+
+        self.len_x = 0
+        self. len_y = 3
+        self.orbe_x = 5
+        self.orbe_y = 1
 
         self.piso = 9
         graficos.coords(self.player, 154.5*0.25, 140*3)
@@ -1447,9 +1526,10 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_x_im), "x"]
         self.puente46 = [graficos.create_image(154.5*6, 140*4,
                                                image=puente_ac2_im), "ac2"]
+
+        self.orbe = graficos.create_image(154.5*5, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.orbe = graficos.create_image(154.5*5, 140, image=red_orb_im)
         self.trampaledo1 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
