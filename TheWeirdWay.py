@@ -1,9 +1,10 @@
 """                     Programa hecho por: Luciano Esteban
     -------------------------------------------------------------------------
     Aviso previo: Es normal encontrarse con variables que parezcan no
-    asignadas, realmente lo están. Esto es debido al uso de la función exec(),
-    donde las defíno con un formato String, por lo que muchos IDEs y editores
-    de texto no la van a reconocer como ya asignada. Pero si lo estan.      """
+    asignadas en el caso de utilizar Kite, realmente lo están. Esto es
+    debido al uso de la función exec(), donde las defíno con un formato
+    String, por lo que muchos IDEs y editores de texto no la van a reconocer
+    como ya asignada. Pero si lo estan.                                     """
 
 from tkinter import Canvas, Frame, Tk, PhotoImage, Button
 
@@ -1121,9 +1122,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        self.tiempo = 16  # String para el tiempo del nivel
+        self.tiempo = 11  # String para el tiempo del nivel
         print(self.tiempo)
-        return self.trampas(), self.orbe_mov() #, self.tiempo_bonus()
+        return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_2(self):  # --- --- --- --- 15 Puentes
 
@@ -1173,7 +1174,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        self.tiempo = 15  # String para el tiempo del nivel
+        self.tiempo = 12  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_3(self):  # --- --- --- --- 18 Puentes
@@ -1230,7 +1231,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        self.tiempo = 15  # String para el tiempo del nivel
+        self.tiempo = 16  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_4(self):  # --- --- --- --- 17 Puentes
@@ -1285,7 +1286,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        self.tiempo = 15  # String para el tiempo del nivel
+        self.tiempo = 11  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_5(self):  # --- --- --- --- 17 Puentes
@@ -1340,7 +1341,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        self.tiempo = 15  # String para el tiempo del nivel
+        self.tiempo = 13  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_6(self):  # --- --- --- --- 18 Puentes
@@ -1397,7 +1398,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        self.tiempo = 15  # String para el tiempo del nivel
+        self.tiempo = 10  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_7(self):  # --- --- --- --- 19 Puentes
@@ -1456,7 +1457,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        self.tiempo = 15  # String para el tiempo del nivel
+        self.tiempo = 11  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_8(self):  # --- --- --- --- 22 Puentes
@@ -1521,7 +1522,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        self.tiempo = 15  # String para el tiempo del nivel
+        self.tiempo = 13  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_9(self):  # --- --- --- --- 23 Puentes / Final
@@ -1588,7 +1589,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        self.tiempo = 15  # String para el tiempo del nivel
+        self.tiempo = 18  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def despausa(self):
