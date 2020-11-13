@@ -57,15 +57,11 @@ cuadro_im = PhotoImage(file="Imgs/Menu_play.png")  # Fondo de la Pausa
 red_orb1_im = PhotoImage(file="Imgs/RedOrb1.png")  # Orbes Rojos / Puntos
 red_orb2_im = PhotoImage(file="Imgs/RedOrb2.png")  # Orbes Rojos / Puntos
 red_orb3_im = PhotoImage(file="Imgs/RedOrb3.png")  # Orbes Rojos / Puntos
+elec_im = PhotoImage(file="Imgs/Chars/Marco.png")  # Marco de selección de char
+star0_im = PhotoImage(file="Imgs/star0.png")  # Estrella inactiva
+star1_im = PhotoImage(file="Imgs/star1.png")  # Estrella activa
 for frame in range(1, 3 + 1):  # Material para la animación de lava
     exec("lava{0}_im = PhotoImage(file='Imgs/Fondo_b{0}.png')".format(frame))
-# -- -- Personaje base más su fondo
-# for img in ("aba", "izq", "der", "arr"):  # Generación de Sprites de 4 dires
-#     for sprite in range(1, 3 + 1):  # Generación de los 3 sprites al caminar
-#         exec("""char{0}_{1} = PhotoImage(
-#                 file='Imgs/Chars/Dross/Char{0}_{1}.png')""".
-#              format(sprite, img))
-elec_img = PhotoImage(file="Imgs/Chars/Marco.png")
 # -- -- Botones In-Game
 home_im = PhotoImage(file="Imgs/Retorno_Menu.png")  # Regreso al menu
 walk0_im = PhotoImage(file="Imgs/Moverse0.png")  # Caminar desactivado
@@ -189,7 +185,8 @@ class Menu:  # Menu principal
 
 
 class Seleccion:  # Seleccionador de Niveles.
-    def abrir_selector(self, per, desbloqueados=3):  # Predeterminado:1
+    def abrir_selector(self, per, desbloqueados=9, punto="na"):
+        # Nivel predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
             maximo = desbloqueados
@@ -270,6 +267,34 @@ class Seleccion:  # Seleccionador de Niveles.
         graficos.create_window((ancho/1.955), (alto/1.27), window=self.nivel_8)
         graficos.create_window((ancho/1.20), (alto/1.27), window=self.nivel_9)
         # Generación de Sprites del personaje seleccionado:
+        return self.puntaje(punto)
+
+    def puntaje(self, obtenido):
+        repe = 1  # Repetición
+
+        for star_x in (115, 200, 285):
+            for star_y in (245, 455, 655):
+                for col in (0, 350, 695):
+                    exec("""self.star_{} = graficos.create_image(
+                            star_x + col, star_y, image=star0_im)"""
+                         .format(repe))
+                    repe += 1
+        del repe
+
+        print("OBTENIDO", obtenido)
+
+        if obtenido != "na":
+            if obtenido[1] == "1":
+                exec("graficos.itemconfig(self.star_{}, image=star1_im)".
+                     format(int(obtenido[0])))
+            elif obtenido[1] == "2":
+                for punto in (0, 9):
+                    exec("graficos.itemconfig(self.star_{}, image=star1_im)".
+                         format(int(obtenido[0]) + punto))
+            elif obtenido[1] == "3":
+                for punto in (0, 9, 18):
+                    exec("graficos.itemconfig(self.star_{}, image=star1_im)".
+                         format(int(obtenido[0]) + punto))
 
     def personajes(self, per):
         graficos.delete("all")
@@ -300,7 +325,7 @@ class Seleccion:  # Seleccionador de Niveles.
                 self.backg = graficos.create_image(ancho/2, alto/2,
                                                    image=self.back_im)
                 self.marco = graficos.create_image(default[1], default[2],
-                                                   image=elec_img)
+                                                   image=elec_im)
                 break
 
         # -- -- Colocación de Imgs
@@ -381,6 +406,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.char = per
         self.lava = graficos.create_image(ancho/2, alto/2, image=lava1_im)
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_im)
+        self.tiempo = 0  # String para el tiempo del nivel
 
         self.home = Button(graficos, font=("Century Gothic", 15),
                            bd=0, highlightthickness=0, image=home_im,
@@ -390,6 +416,10 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.walk = Button(graficos, font=("Century Gothic", 15),
                            bd=0, highlightthickness=0, image=walk0_im,
                            activebackground='#23272d', cursor="hand2")
+
+        self.limite = graficos.create_text(ancho/2, 15, fill="white",
+                                           text=f"Bonus: {self.tiempo}",
+                                           font=("Century Gothic", 18))
 
         graficos.create_window(35, 35, window=self.home)  # Botón de regreso
         graficos.create_window(1035, 35, window=self.walk)  # Botón de caminar
@@ -414,11 +444,18 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 graficos.itemconfig(self.lava, image=lava2_im)
             elif intensidad == 2:
                 graficos.itemconfig(self.lava, image=lava3_im)
-            else:
+            elif intensidad == 3:
                 graficos.itemconfig(self.lava, image=lava2_im)
                 intensidad = -1
 
             graficos.after(1500, lambda: self.lava_mov(intensidad + 1))
+
+    def tiempo_bonus(self):  # CONTINUAR REVISANDO ESTO, AUNQUE PARECE QUE YA LA TERMINE A ESTA PARTE, POR LO QUE FALTA GUARDAR EL PROGRESO
+        if self.interrupcion is False and self.tiempo > 0:
+            self.tiempo -= 1
+            graficos.itemconfig(self.limite, text=f"Bonus: {self.tiempo}")
+
+            return graficos.after(1005, self.tiempo_bonus)
 
     def pausa(self):  # Ret = Return / Retorno
         self.interrupcion = True
@@ -684,8 +721,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 and self.puente16[1] == "bd"):
             self.paso = [0, 1, 4, 1, 1, 3, 1, 1, 4, 4, 1, 1, 1]
             self.walk.config(image=walk1_im,
-                             command=lambda: self.mov_animacion(1, self.paso))
-        elif (self.piso == 1 and self.puente31[1] == "x"  # Punto
+                             command=lambda: self.mov_animacion(1, self.paso,
+                                                                "11"))
+        elif (self.piso == 1 and self.puente31[1] == "x"  # PUNTO
               and self.puente32[1] == "ad" and self.puente42[1] == "bc"
               and self.puente43[1] == "x" and self.puente44[1] == "ac"
               and self.puente34[1] == "bd" and self.puente35[1] == "x"
@@ -693,7 +731,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
               and self.puente16[1] == "bd"):
             self.paso = [0, 1, 3, 1, 1, 4, 1, 1, 4, 4, 1, 1, 1]
             self.walk.config(image=walk2_im,
-                             command=lambda: self.mov_animacion(1, self.paso))
+                             command=lambda: self.mov_animacion(1, self.paso,
+                                                                "12"))
+            self.estrellas_1 += 2
         # -- Nivel 2 Ganado:
         elif (self.piso == 2 and self.puente11[1] == "bd"
               and self.puente21[1] == "ac" and self.puente22[1] == "y"
@@ -707,7 +747,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 4, 1, 3, 3, 1, 1, 4, 1, 1, 3, 1, 1, 1]
             self.walk.config(image=walk2_im,
                              command=lambda:
-                             self.mov_animacion(2, self.paso))
+                             self.mov_animacion(2, self.paso, "22"))  # PUNTO
 
         elif (self.piso == 2 and self.puente11[1] == "bd"
               and self.puente21[1] == "ac" and self.puente24[1] == "bc"
@@ -718,10 +758,10 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 4, 1, 1, 1, 3, 1, 1, 3, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda:
-                             self.mov_animacion(2, self.paso))
+                             self.mov_animacion(2, self.paso, "21"))
 
         # -- Nivel 3 Ganado:
-        elif (self.piso == 3 and self.puente31[1] == "x"  # (Punto)
+        elif (self.piso == 3 and self.puente31[1] == "x"
               and self.puente32[1] == "ad" and self.puente43[1] == "x"
               and self.puente44[1] == "x" and self.puente45[1] == "ac"
               and self.puente35[1] == "ad" and self.puente33[1] == "bc"
@@ -733,7 +773,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 1, 3, 1, 1, 1, 4, 2, 2, 4, 4, 1, 1, 1, 3, 1, 1, 1]
             self.walk.config(image=walk2_im,
                              command=lambda:
-                             self.mov_animacion(3, self.paso))
+                             self.mov_animacion(3, self.paso, "32"))  # PUNTO
 
         elif (self.piso == 3 and self.puente31[1] == "x"
               and self.puente32[1] == "ad" and self.puente43[1] == "x"
@@ -744,7 +784,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 1, 3, 1, 1, 1, 4, 1, 4, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda:
-                             self.mov_animacion(3, self.paso))
+                             self.mov_animacion(3, self.paso, "31"))
 
         # -- Nivel 4 Ganado:
         elif (self.piso == 4 and self.puente31[1] == "ac"
@@ -755,7 +795,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 4, 1, 1, 4, 1, 1, 1, 3, 3, 1, 1, 1]
             self.walk.config(image=walk2_im,
                              command=lambda:
-                             self.mov_animacion(4, self.paso))  # PUNTO
+                             self.mov_animacion(4, self.paso, "42"))  # PUNTO
 
         elif (self.piso == 4 and self.puente31[1] == "ad"
                 and self.puente42[1] == "x" and self.puente43[1] == "x"
@@ -764,7 +804,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 3, 1, 1, 1, 4, 1, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda:
-                             self.mov_animacion(4, self.paso))
+                             self.mov_animacion(4, self.paso, "41"))
         # -- Nivel 5 Ganado:
         elif (self.piso == 5 and self.puente11[1] == "ad"
               and self.puente32[1] == "x" and self.puente33[1] == "ac"
@@ -776,7 +816,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 3, 3, 1, 1, 4, 2, 4, 1, 1, 1, 1, 3, 1, 1, 1]
             self.walk.config(image=walk2_im,
                              command=lambda:
-                             self.mov_animacion(5, self.paso))  # PUNTO
+                             self.mov_animacion(5, self.paso, "52"))  # PUNTO
 
         elif (self.piso == 5 and self.puente11[1] == "ad"
               and self.puente32[1] == "x" and self.puente33[1] == "ac"
@@ -787,7 +827,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 3, 3, 1, 1, 4, 1, 1, 1, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda:
-                             self.mov_animacion(5, self.paso))
+                             self.mov_animacion(5, self.paso, "51"))
 
         # -- Nivel 6 Ganado:
         elif (self.piso == 6 and self.puente21[1] == "ad"
@@ -799,9 +839,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 3, 3, 1, 1, 1, 1, 1, 4, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda:
-                             self.mov_animacion(6, self.paso))
+                             self.mov_animacion(6, self.paso, "61"))
 
-        elif (self.piso == 6 and self.puente11[1] == "bd"  # (Punto)
+        elif (self.piso == 6 and self.puente11[1] == "bd"
               and self.puente21[1] == "ac" and self.puente22[1] == "bc"
               and self.puente34[1] == "bc" and self.puente35[1] == "x"
               and (self.puente36[1] == "abc" or self.puente36[1] == "abd")):
@@ -809,10 +849,10 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 4, 1, 3, 1, 1, 3, 1, 1, 1, 1, 1]
             self.walk.config(image=walk2_im,
                              command=lambda:
-                             self.mov_animacion(6, self.paso))
+                             self.mov_animacion(6, self.paso, "62"))  # PUNTO
 
         # -- Nivel 7 Ganado:
-        elif (self.piso == 7 and self.puente21[1] == "bd"  # (Punto)
+        elif (self.piso == 7 and self.puente21[1] == "bd"
               and self.puente31[1] == "y" and self.puente41[1] == "ac"
               and self.puente23[1] == "ad" and self.puente33[1] == "bc"
               and self.puente14[1] == "bd" and self.puente24[1] == "y"
@@ -820,7 +860,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 4, 4, 1, 1, 3, 1, 4, 4, 1, 3, 1, 1, 1, 1]
             self.walk.config(image=walk2_im,
                              command=lambda:
-                             self.mov_animacion(7, self.paso))
+                             self.mov_animacion(7, self.paso, "72"))  # PUNTO
 
         elif (self.piso == 7 and self.puente21[1] == "bd"
               and self.puente31[1] == "y" and self.puente41[1] == "ac"
@@ -831,8 +871,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 4, 4, 1, 1, 3, 2, 3, 1, 1, 1, 4, 4, 1, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda:
-                             self.mov_animacion(7, self.paso))
-
+                             self.mov_animacion(7, self.paso, "71"))
         # -- Nivel 8 Ganado:
         elif (self.piso == 8 and self.puente11[1] == "ad"  # (Punto)
               and self.puente21[1] == "bc" and self.puente22[1] == "ad"
@@ -844,7 +883,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 3, 1, 3, 3, 1, 1, 4, 1, 3, 1, 4, 1, 1, 1]
             self.walk.config(image=walk2_im,
                              command=lambda:
-                             self.mov_animacion(8, self.paso))
+                             self.mov_animacion(8, self.paso, "82"))
 
         elif (self.piso == 8 and self.puente11[1] == "ad"
               and self.puente21[1] == "bc" and self.puente22[1] == "ac"
@@ -855,7 +894,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 3, 1, 4, 1, 3, 1, 1, 3, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda:
-                             self.mov_animacion(8, self.paso))
+                             self.mov_animacion(8, self.paso, "81"))
         # -- Nivel 9 Ganado / FINAL:
         elif (self.piso == 9 and self.puente31[1] == "ac"  # Op 1 / Si Punto
               and self.puente21[1] == "y" and self.puente12[1] == "ad"
@@ -870,7 +909,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                          2, 3, 1, 1, 4, 4, 4, 1, 1, 1, 1]
             self.walk.config(image=walk2_im,
                              command=lambda:
-                             self.mov_animacion(9, self.paso))
+                             self.mov_animacion(9, self.paso, "92"))
 
         elif (self.piso == 9 and self.puente31[1] == "ad"  # Op 2
               and self.puente41[1] == "bc" and self.puente42[1] == "x"
@@ -881,7 +920,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 3, 1, 1, 4, 1, 3, 1, 1, 4, 4, 4, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda:
-                             self.mov_animacion(9, self.paso))
+                             self.mov_animacion(9, self.paso, "91"))
 
         elif (self.piso == 9 and self.puente31[1] == "ac"  # Op 3
               and self.puente21[1] == "y" and self.puente12[1] == "ad"
@@ -893,9 +932,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             self.paso = [0, 4, 4, 1, 3, 1, 3, 1, 3, 1, 1, 4, 4, 4, 1, 1, 1]
             self.walk.config(image=walk1_im,
                              command=lambda:
-                             self.mov_animacion(9, self.paso))
+                             self.mov_animacion(9, self.paso, "91"))
 
-        elif (self.piso == 9 and self.puente31[1] == "ad"
+        elif (self.piso == 9 and self.puente31[1] == "ad"  # Op 4
               and self.puente41[1] == "bc" and self.puente42[1] == "x"
               and self.puente22[1] == "bd" and self.puente23[1] == "ac"
               and self.puente14[1] == "x" and self.puente15[1] == "ad"
@@ -908,7 +947,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                          3, 2, 3, 1, 1, 4, 4, 4, 1, 1, 1, 1]
             self.walk.config(image=walk2_im,
                              command=lambda:
-                             self.mov_animacion(9, self.paso))
+                             self.mov_animacion(9, self.paso, "92"))
 
         else:  # Desabilitación del botón de PLAY (walk)
             self.walk.config(image=walk0_im, command=lambda: None)
@@ -988,26 +1027,26 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             if self.len_x == self.orbe_x and self.len_y == self.orbe_y:
                 if iter >= 8 and iter < 10:
                     graficos.lift(self.orbe)
-                    print("LLEGUE 1")
                     graficos.itemconfig(self.orbe, image=red_orb2_im)
                 elif iter >= 10 and iter < 12:
-                    print("LLEGUE 2")
                     graficos.itemconfig(self.orbe, image=red_orb3_im)
                 elif iter >= 12:
-                    print("LLEGUE 3")
                     graficos.delete(self.orbe)
 
             graficos.update()
             graficos.after(27, lambda: self.mov_personaje(direccion, iter+1))
 
-    def mov_animacion(self, nivel, paso, camino=1):  # Animación del char
+    def mov_animacion(self, nivel, paso, camino):  # Animación del char
         graficos.unbind("<Button-1>")
         self.walk.config(command=lambda: None)
         self.home.config(command=lambda: None)
         try:  # Forma de chequear si la lista esta vacía o no:
             self.mov_personaje(paso[0])
         except IndexError:  # Si esta vacía, se terminó la animación:
-            return self.regresar(desbloqueado=nivel + 1)
+            if self.tiempo > 0:
+                return self.regresar(desbloqueado=nivel + 1,
+                                     puntos=str(int(camino) + 1))
+            return self.regresar(desbloqueado=nivel + 1, puntos=camino)
 
         paso.pop(0)
         graficos.after(415, lambda: self.mov_animacion(nivel, paso, camino))
@@ -1082,7 +1121,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        return self.trampas(), self.orbe_mov()
+        self.tiempo = 16  # String para el tiempo del nivel
+        print(self.tiempo)
+        return self.trampas(), self.orbe_mov() #, self.tiempo_bonus()
 
     def nivel_2(self):  # --- --- --- --- 15 Puentes
 
@@ -1132,7 +1173,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
-        return self.trampas(), self.orbe_mov()
+        self.tiempo = 15  # String para el tiempo del nivel
+        return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_3(self):  # --- --- --- --- 18 Puentes
 
@@ -1187,7 +1229,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
-        return self.trampas(), self.orbe_mov()
+
+        self.tiempo = 15  # String para el tiempo del nivel
+        return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_4(self):  # --- --- --- --- 17 Puentes
 
@@ -1240,7 +1284,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
-        return self.trampas(), self.orbe_mov()
+
+        self.tiempo = 15  # String para el tiempo del nivel
+        return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_5(self):  # --- --- --- --- 17 Puentes
 
@@ -1293,7 +1339,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
-        return self.trampas(), self.orbe_mov()
+
+        self.tiempo = 15  # String para el tiempo del nivel
+        return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_6(self):  # --- --- --- --- 18 Puentes
 
@@ -1348,7 +1396,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
-        return self.trampas(), self.orbe_mov()
+
+        self.tiempo = 15  # String para el tiempo del nivel
+        return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_7(self):  # --- --- --- --- 19 Puentes
 
@@ -1405,7 +1455,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
-        return self.trampas(), self.orbe_mov()
+
+        self.tiempo = 15  # String para el tiempo del nivel
+        return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_8(self):  # --- --- --- --- 22 Puentes
 
@@ -1468,7 +1520,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
-        return self.trampas(), self.orbe_mov()
+
+        self.tiempo = 15  # String para el tiempo del nivel
+        return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_9(self):  # --- --- --- --- 23 Puentes / Final
 
@@ -1533,7 +1587,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo1 = graficos.create_image(1035, 139*2, image=trampa1_im)
         self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
-        return self.trampas(), self.orbe_mov()
+
+        self.tiempo = 15  # String para el tiempo del nivel
+        return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def despausa(self):
         self.interrupcion = False
@@ -1544,15 +1600,17 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         graficos.update()
         # self.nivel_ganado() = Chequeo del boton de avanzar en el nivel
         return (self.nivel_ganado(), self.lava_mov(),  # Despausa animaciones
-                self.trampas(), self.orbe_mov())
+                self.trampas(), self.orbe_mov(), self.tiempo_bonus())
 
-    def regresar(self, destino="selec", desbloqueado=1):  # Retorno
+    def regresar(self, destino="selec", desbloqueado=1, puntos="na"):  # Return
         self.interrupcion = True
         graficos.unbind("<Button-1>")
         graficos.delete("all")
 
         if destino == "selec":  # Retorno + New Lvl
-            return Seleccion().abrir_selector(self.char, desbloqueado)
+            return Seleccion().abrir_selector(self.char,
+                                              desbloqueados=desbloqueado,
+                                              punto=puntos)
         elif destino == "menu":
             return Menu().crear_menu(self.char)
 
