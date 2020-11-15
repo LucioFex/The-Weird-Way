@@ -117,7 +117,7 @@ graficos.pack()
 
 # -- -- -- Botones Menu
 class Menu:  # Menu principal
-    def crear_menu(self, per="dross"):
+    def crear_menu(self, per="seba"):
 
         self.num = alto  # Reseteo del numerador de la animación de cerrado.
         self.imagen = graficos.create_image(ancho/2, alto/2, image=menu_im)
@@ -186,7 +186,7 @@ class Menu:  # Menu principal
 
 
 class Seleccion:  # Seleccionador de Niveles.
-    def abrir_selector(self, per, desbloqueados=9, punto="na"):
+    def abrir_selector(self, per, desbloqueados=6, punto="00"):
         # Nivel predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
@@ -231,71 +231,80 @@ class Seleccion:  # Seleccionador de Niveles.
                      .format(nivel))
 
         # Solución con IFs (solo para corto plazo)
-        if maximo >= 1:
+        if self.maximo >= 1:
             self.nivel_1.config(command=lambda: self.cerrar_selec("1", per))
-        if maximo >= 2:
+        if self.maximo >= 2:
             self.nivel_2.config(command=lambda: self.cerrar_selec("2", per))
-        if maximo >= 3:
+        if self.maximo >= 3:
             self.nivel_3.config(command=lambda: self.cerrar_selec("3", per))
-        if maximo >= 4:
+        if self.maximo >= 4:
             self.nivel_4.config(command=lambda: self.cerrar_selec("4", per))
-        if maximo >= 5:
+        if self.maximo >= 5:
             self.nivel_5.config(command=lambda: self.cerrar_selec("5", per))
-        if maximo >= 6:
+        if self.maximo >= 6:
             self.nivel_6.config(command=lambda: self.cerrar_selec("6", per))
-        if maximo >= 7:
+        if self.maximo >= 7:
             self.nivel_7.config(command=lambda: self.cerrar_selec("7", per))
-        if maximo >= 8:
+        if self.maximo >= 8:
             self.nivel_8.config(command=lambda: self.cerrar_selec("8", per))
-        if maximo >= 9:
+        if self.maximo >= 9:
             self.nivel_9.config(command=lambda: self.cerrar_selec("9", per))
         # ---------------------------------------------------------------------
         # Fondo
         graficos.create_image(ancho/2, alto/2, image=selec_im)
-        # Fila 0
+        # Fila 0 / Botones de configuración
         graficos.create_window(ancho/5.75, 35, window=self.volver)
         graficos.create_window(ancho/1.205, 35, window=self.char_sec)
-        # Fila 1
-        graficos.create_window((ancho/5.5), (alto/4.5), window=self.nivel_1)
-        graficos.create_window((ancho/1.955), (alto/4.5), window=self.nivel_2)
-        graficos.create_window((ancho/1.20), (alto/4.5), window=self.nivel_3)
-        # Fila 2
-        graficos.create_window((ancho/5.5), (alto/2), window=self.nivel_4)
-        graficos.create_window((ancho/1.955), (alto/2), window=self.nivel_5)
-        graficos.create_window((ancho/1.20), (alto/2), window=self.nivel_6)
-        # Fila 3
-        graficos.create_window((ancho/5.5), (alto/1.27), window=self.nivel_7)
-        graficos.create_window((ancho/1.955), (alto/1.27), window=self.nivel_8)
-        graficos.create_window((ancho/1.20), (alto/1.27), window=self.nivel_9)
+
+        # Generación de filas de niveles
+        lvl = 0
+        for fila in (alto/4.5, alto/2, alto/1.27):
+            for colum in (ancho/5.5, ancho/1.955, ancho/1.20):
+                lvl += 1
+                exec(f"""graficos.create_window(colum, fila,
+                                                window=self.nivel_{lvl})""")
+        del lvl
+
         # Generación de Sprites del personaje seleccionado:
         return self.puntaje(punto)
 
     def puntaje(self, obtenido):
         repe = 1  # Repetición
+        try:
+            print(self.all_s)
+            print("Variable existente")
+        except AttributeError:  # Generación de la lista en caso que no existe
+            print("Gerenación completa")
+            self.all_s = ["10", "20", "30", "40", "50", "60", "70", "80", "90"]
 
-        for star_x in (115, 200, 285):
+        for star_x in (115, 200, 285):  # Generación de estrellas huecas
             for star_y in (245, 455, 655):
                 for col in (0, 350, 695):
-                    exec("""self.star_{} = graficos.create_image(
+                    exec("""self.est_{} = graficos.create_image(
                             star_x + col, star_y, image=star0_im)"""
                          .format(repe))
                     repe += 1
         del repe
 
-        print("OBTENIDO", obtenido)
+        print("OBTENIDO:", obtenido)
+        if obtenido != "00":  # "00" = Nada
+            for p in range(1, 9 + 1):
+                if (int(obtenido[0]) == p and
+                   int(obtenido[1]) > int(self.all_s[p-1][1])):
 
-        if obtenido != "na":
-            if obtenido[1] == "1":
-                exec("graficos.itemconfig(self.star_{}, image=star1_im)".
-                     format(int(obtenido[0])))
-            elif obtenido[1] == "2":
-                for punto in (0, 9):
-                    exec("graficos.itemconfig(self.star_{}, image=star1_im)".
-                         format(int(obtenido[0]) + punto))
-            elif obtenido[1] == "3":
-                for punto in (0, 9, 18):
-                    exec("graficos.itemconfig(self.star_{}, image=star1_im)".
-                         format(int(obtenido[0]) + punto))
+                    # Reemplazo por mayores puntos (++)
+                    self.all_s[p - 1] = self.all_s[p-1][0:-1] + obtenido[1]
+                    break
+
+            for p in self.all_s:
+                lista = []
+                lista.append(0) if p[1] == "1" else None
+                lista.extend([0, 9]) if p[1] == "2" else None
+                lista.extend([0, 9, 18]) if p[1] == "3" else None
+
+                for punto in lista:
+                    exec("graficos.itemconfig(self.est_{},image=star1_im)".
+                         format(int(p[0]) + punto))
 
     def personajes(self, per):
         graficos.delete("all")
@@ -390,8 +399,8 @@ class Seleccion:  # Seleccionador de Niveles.
     def cerrar_selec(self, nivel, per):  # 0 = Menu | >= 1 y <=9 = X Nivel
         graficos.delete("all")
         del self.volver, self.nivel_1, self.nivel_2, self.nivel_3,
-        self.nivel_4, self.nivel_5, self.nivel_6,
-        self.nivel_7, self.nivel_8, self.nivel_9
+        self.nivel_4, self.nivel_5, self.nivel_6, self.nivel_7,
+        self.nivel_8, self.nivel_9
 
         if nivel == "0":  # If por si se quiere volver al menu principal.
             return Menu().crear_menu(per)
@@ -451,7 +460,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
             graficos.after(1500, lambda: self.lava_mov(intensidad + 1))
 
-    def tiempo_bonus(self):  # CONTINUAR REVISANDO ESTO, AUNQUE PARECE QUE YA LA TERMINE A ESTA PARTE, POR LO QUE FALTA GUARDAR EL PROGRESO
+    def tiempo_bonus(self):
         if self.interrupcion is False and self.tiempo > 0:
             self.tiempo -= 1
             graficos.itemconfig(self.limite, text=f"Bonus: {self.tiempo}")
@@ -1123,7 +1132,6 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
 
         self.tiempo = 11  # String para el tiempo del nivel
-        print(self.tiempo)
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_2(self):  # --- --- --- --- 15 Puentes
@@ -1603,7 +1611,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         return (self.nivel_ganado(), self.lava_mov(),  # Despausa animaciones
                 self.trampas(), self.orbe_mov(), self.tiempo_bonus())
 
-    def regresar(self, destino="selec", desbloqueado=1, puntos="na"):  # Return
+    def regresar(self, destino="selec", desbloqueado=1, puntos="00"):  # Return
         self.interrupcion = True
         graficos.unbind("<Button-1>")
         graficos.delete("all")
