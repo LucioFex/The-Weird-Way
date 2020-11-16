@@ -38,7 +38,7 @@ tres_p = ("abd", "acd", "abc", "bcd")  # Cantidad de direcciones: 4
 
 # Extras
 maximo = 1  # Mayor nivel alcanzado en el regístro del juego
-
+all_s = ["10", "20", "30", "40", "50", "60", "70", "80", "90"]  # Stars | Lvl
 # -- -- -- Root
 root = Tk()
 root.title(titulo)
@@ -256,8 +256,7 @@ class Seleccion:  # Seleccionador de Niveles.
         graficos.create_window(ancho/5.75, 35, window=self.volver)
         graficos.create_window(ancho/1.205, 35, window=self.char_sec)
 
-        # Generación de filas de niveles
-        lvl = 0
+        lvl = 0  # Generación de filas de niveles
         for fila in (alto/4.5, alto/2, alto/1.27):
             for colum in (ancho/5.5, ancho/1.955, ancho/1.20):
                 lvl += 1
@@ -270,12 +269,6 @@ class Seleccion:  # Seleccionador de Niveles.
 
     def puntaje(self, obtenido):
         repe = 1  # Repetición
-        try:
-            print(self.all_s)
-            print("Variable existente")
-        except AttributeError:  # Generación de la lista en caso que no existe
-            print("Gerenación completa")
-            self.all_s = ["10", "20", "30", "40", "50", "60", "70", "80", "90"]
 
         for star_x in (115, 200, 285):  # Generación de estrellas huecas
             for star_y in (245, 455, 655):
@@ -287,24 +280,27 @@ class Seleccion:  # Seleccionador de Niveles.
         del repe
 
         print("OBTENIDO:", obtenido)
-        if obtenido != "00":  # "00" = Nada
-            for p in range(1, 9 + 1):
-                if (int(obtenido[0]) == p and
-                   int(obtenido[1]) > int(self.all_s[p-1][1])):
 
-                    # Reemplazo por mayores puntos (++)
-                    self.all_s[p - 1] = self.all_s[p-1][0:-1] + obtenido[1]
-                    break
+        # if obtenido != "00":  # "00" = Nada
+        for p in range(1, 9 + 1):  # Incremento de estrellas por avance en lvl
+            if (int(obtenido[0]) == p and
+               int(obtenido[1]) > int(all_s[p-1][1])):
 
-            for p in self.all_s:
-                lista = []
-                lista.append(0) if p[1] == "1" else None
-                lista.extend([0, 9]) if p[1] == "2" else None
-                lista.extend([0, 9, 18]) if p[1] == "3" else None
+                # Reemplazo por mayores puntos (++) si son (>) a los anteriores
+                all_s[p - 1] = all_s[p-1][0:-1] + obtenido[1]
+                break
 
-                for punto in lista:
-                    exec("graficos.itemconfig(self.est_{},image=star1_im)".
-                         format(int(p[0]) + punto))
+        for p in all_s:  # Estrellas obtenidas por nivel
+            lista = []
+            lista.append(0) if p[1] == "1" else None
+            lista.extend([0, 9]) if p[1] == "2" else None
+            lista.extend([0, 9, 18]) if p[1] == "3" else None
+
+            for punto in lista:
+                exec("graficos.itemconfig(self.est_{},image=star1_im)".
+                     format(int(p[0]) + punto))
+
+        print(all_s)
 
     def personajes(self, per):
         graficos.delete("all")
