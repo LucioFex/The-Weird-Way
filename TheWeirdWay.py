@@ -154,9 +154,9 @@ class Menu:  # Menu principal
                                              window=self.salir)
 
     def cerrar_menu(self, selected, per):  # 1ro: Animación, luego cerrado.
-        self.nueva.config(command=lambda: None)
-        self.continuar.config(command=lambda: None)
-        self.salir.config(command=lambda: None)
+        for boton in (self.nueva, self.continuar, self.salir):
+            boton.config(command=lambda: None)
+
         # Animaciones:
         self.num -= 50
         graficos.coords(self.ani_menu, -1, alto, ancho, self.num)
@@ -177,12 +177,11 @@ class Menu:  # Menu principal
         if self.num > -50:  # Bucle generado para repetír el método (Animación)
             root.after(60, lambda: self.cerrar_menu(selected, per))
 
-        else:  # Acciones tras animación. Eliminación de todo.
+        elif self.num <= -50:  # Acciones tras animación. Eliminación de todo.
             graficos.delete("all")
             if selected != "salir":
-                return Seleccion().abrir_selector(per)
-            else:
-                root.destroy()
+                return Seleccion().abrir_selector(per)  # Si no se quiere salir
+            return root.destroy()  # Si se quiere salir
 
 
 class Seleccion:  # Seleccionador de Niveles.
@@ -226,9 +225,8 @@ class Seleccion:  # Seleccionador de Niveles.
                      width=17, height=2, text="Nivel {1}")"""
                      .format(nivel, nivel[-1]))
             # Botones bloqueados por niveles injugables
-            else:
-                exec("{}.config(image=candado_im, compound='right')"
-                     .format(nivel))
+            elif int(nivel[-1]) > maximo:
+                exec(f"{nivel}.config(image=candado_im, compound='right')")
 
         # Solución con IFs (solo para corto plazo)
         if self.maximo >= 1:
@@ -396,9 +394,9 @@ class Seleccion:  # Seleccionador de Niveles.
         self.nivel_4, self.nivel_5, self.nivel_6, self.nivel_7,
         self.nivel_8, self.nivel_9
 
-        if nivel == "0":  # If por si se quiere volver al menu principal.
+        if nivel == "0":  # If por si se quiere volver al menu principal
             return Menu().crear_menu(per)
-        else:  # Else para activar la clase Partída con método para el nivel.
+        elif nivel != "0":  # Elif para buscar un nivel
             for lvl in ("1", "2", "3", "4", "5", "6", "7", "8", "9"):
                 if nivel == lvl:
                     exec('Partida(per).nivel_{0}()'.format(lvl))
@@ -1052,8 +1050,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
     def orbe_mov(self, mov=0):
         if mov <= 5:
             graficos.move(self.orbe, 0, -1)
-        else:
+        elif mov > 5:
             graficos.move(self.orbe, 0, 1)
+
         if mov >= 10:
             mov = 0
 
