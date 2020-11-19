@@ -61,18 +61,18 @@ red_orb3_im = PhotoImage(file="Imgs/RedOrb3.png")  # Orbes Rojos / Puntos
 elec_im = PhotoImage(file="Imgs/Chars/Marco.png")  # Marco de selección de char
 star0_im = PhotoImage(file="Imgs/star0.png")  # Estrella inactiva
 star1_im = PhotoImage(file="Imgs/star1.png")  # Estrella activa
-for frame in range(1, 3 + 1):  # Material para la animación de lava
-    exec("lava{0}_im = PhotoImage(file='Imgs/Fondo_b{0}.png')".format(frame))
+lava_imgs = [None, None, None]  # Material para la animación de lava
+for frame in range(3):
+    lava_imgs[frame] = PhotoImage(file=f"Imgs/Fondo_b{frame + 1}.png")
 # -- -- Botones In-Game
 home_im = PhotoImage(file="Imgs/Retorno_Menu.png")  # Regreso al menu
 walk0_im = PhotoImage(file="Imgs/Moverse0.png")  # Caminar desactivado
 walk1_im = PhotoImage(file="Imgs/Moverse1.png")  # Caminar sin | punto |
 walk2_im = PhotoImage(file="Imgs/Moverse2.png")  # Caminar con | punto |
 # -- -- Trampas
-trampa1_im = PhotoImage(file="Imgs/Trap_1.png")  # Trampa de fondo 1
-trampa2_im = PhotoImage(file="Imgs/Trap_2.png")  # Trampa de fondo 2
-trampa3_im = PhotoImage(file="Imgs/Trap_3.png")  # Trampa de fondo 3
-trampa4_im = PhotoImage(file="Imgs/Trap_4.png")  # Trampa de fondo 4
+trampa_im = [None, None, None, None]
+for img in range(4):  # Trampas de fondo
+    trampa_im[img] = PhotoImage(file=f"Imgs/Trap_{img + 1}.png")
 # -- -- Puentes giratorios
 puente_x_im = PhotoImage(file="Imgs/PuenteX.png")  # X
 puente_y_im = PhotoImage(file="Imgs/PuenteY.png")  # Y
@@ -185,7 +185,7 @@ class Menu:  # Menu principal
 
 
 class Seleccion:  # Seleccionador de Niveles.
-    def abrir_selector(self, per, desbloqueados=1, punto="00"):
+    def abrir_selector(self, per, desbloqueados=9, punto="00"):
         # Nivel predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
@@ -277,9 +277,6 @@ class Seleccion:  # Seleccionador de Niveles.
                     repe += 1
         del repe
 
-        print("OBTENIDO:", obtenido)
-
-        # if obtenido != "00":  # "00" = Nada
         for p in range(1, 9 + 1):  # Incremento de estrellas por avance en lvl
             if (int(obtenido[0]) == p and
                int(obtenido[1]) > int(all_s[p-1][1])):
@@ -406,7 +403,7 @@ class Seleccion:  # Seleccionador de Niveles.
 class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
     def __init__(self, per):
         self.char = per
-        self.lava = graficos.create_image(ancho/2, alto/2, image=lava1_im)
+        self.lava = graficos.create_image(ancho/2, alto/2, image=lava_imgs[0])
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_im)
         self.tiempo = 0  # String para el tiempo del nivel
 
@@ -436,18 +433,20 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                      format(self.char, sprite, img))
         self.player = graficos.create_image(-100, -100,
                                             image=self.char1_der)
+
+        self.trap = [None, None, None, None, None, None, None, None]
         return self.lava_mov()
 
     def lava_mov(self, intensidad=0):
         if self.interrupcion is False:
             if intensidad == 0:
-                graficos.itemconfig(self.lava, image=lava1_im)
+                graficos.itemconfig(self.lava, image=lava_imgs[0])
             elif intensidad == 1:
-                graficos.itemconfig(self.lava, image=lava2_im)
+                graficos.itemconfig(self.lava, image=lava_imgs[1])
             elif intensidad == 2:
-                graficos.itemconfig(self.lava, image=lava3_im)
+                graficos.itemconfig(self.lava, image=lava_imgs[2])
             elif intensidad == 3:
-                graficos.itemconfig(self.lava, image=lava2_im)
+                graficos.itemconfig(self.lava, image=lava_imgs[1])
                 intensidad = -1
 
             graficos.after(1500, lambda: self.lava_mov(intensidad + 1))
@@ -1034,15 +1033,15 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         paso.pop(0)
         graficos.after(415, lambda: self.mov_animacion(nivel, paso, camino))
 
-    def trampas(self, spin=1):  # Justificación de la meta
-        if spin > 4:  # Motívo del bucle / límite de Sprites
-            spin = 1
-        for sprite in range(1, 4 + 1):  # Ilusión / Animación
+    def trampas(self, spin=0):  # Justificación de la meta
+        if spin > 3:  # Motívo del bucle / límite de Sprites
+            spin = 0
+        for sprite in range(4):  # Ilusión / Animación
             if spin == sprite:
-                for trampa in range(1, 3 + 1):
-                    exec("""graficos.itemconfig(self.trampaledo{0},
-                            image=trampa{1}_im)""".format(trampa, sprite))
-                break
+                for trampa in range(len(self.trap)):  # 8 Trampas
+                    graficos.itemconfig(self.trap[trampa],
+                                        image=trampa_im[sprite])
+                break  # Seguir chequeando el asunto de las trampas
 
         if self.interrupcion is False:
             return graficos.after(55, lambda: self.trampas(spin + 1))
@@ -1101,9 +1100,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.orbe = graficos.create_image(154.5*3, 140*4, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.trampaledo1 = graficos.create_image(1035, 139*2, image=trampa1_im)
-        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
-        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        for p in range(4):  # Punto de partida
+            if p != 2:  # Punto sin trampa
+                self.trap[p+4] = graficos.create_image(40, 139*(p+1),
+                                                       image=trampa_im[0])
+        for i in range(4):  # Punto de llegada
+            if i != 0:  # Punto sin trampa
+                self.trap[i] = graficos.create_image(1035, 139*(i+1),
+                                                     image=trampa_im[0])
 
         self.tiempo = 11  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
@@ -1152,9 +1156,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.orbe = graficos.create_image(154.5*4, 140*3, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
-        self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
-        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        for p in range(4):  # Punto de partida
+            if p != 1:  # Punto sin trampa
+                self.trap[p+4] = graficos.create_image(40, 139*(p+1),
+                                                       image=trampa_im[0])
+        for i in range(4):  # Punto de llegada
+            if i != 2:  # Punto sin trampa
+                self.trap[i] = graficos.create_image(1035, 139*(i+1),
+                                                     image=trampa_im[0])
 
         self.tiempo = 12  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
@@ -1209,9 +1218,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.orbe = graficos.create_image(154.5*3, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
-        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
-        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        for p in range(4):  # Punto de partida
+            if p != 2:  # Punto sin trampa
+                self.trap[p+4] = graficos.create_image(40, 139*(p+1),
+                                                       image=trampa_im[0])
+        for i in range(4):  # Punto de llegada
+            if i != 1:  # Punto sin trampa
+                self.trap[i] = graficos.create_image(1035, 139*(i+1),
+                                                     image=trampa_im[0])
 
         self.tiempo = 16  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
@@ -1264,9 +1278,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.orbe = graficos.create_image(154.5*6, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
-        self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
-        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        for p in range(4):  # Punto de partida
+            if p != 2:  # Punto sin trampa
+                self.trap[p+4] = graficos.create_image(40, 139*(p+1),
+                                                       image=trampa_im[0])
+        for i in range(4):  # Punto de llegada
+            if i != 2:  # Punto sin trampa
+                self.trap[i] = graficos.create_image(1035, 139*(i+1),
+                                                     image=trampa_im[0])
 
         self.tiempo = 11  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
@@ -1319,9 +1338,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.orbe = graficos.create_image(154.5*2, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
-        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
-        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        for p in range(4):  # Punto de partida
+            if p != 0:  # Punto sin trampa
+                self.trap[p+4] = graficos.create_image(40, 139*(p+1),
+                                                       image=trampa_im[0])
+        for i in range(4):  # Punto de llegada
+            if i != 1:  # Punto sin trampa
+                self.trap[i] = graficos.create_image(1035, 139*(i+1),
+                                                     image=trampa_im[0])
 
         self.tiempo = 13  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
@@ -1376,9 +1400,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.orbe = graficos.create_image(154.5*3, 140*2, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
-        self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
-        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        for p in range(4):  # Punto de partida
+            if p != 1:  # Punto sin trampa
+                self.trap[p+4] = graficos.create_image(40, 139*(p+1),
+                                                       image=trampa_im[0])
+        for i in range(4):  # Punto de llegada
+            if i != 2:  # Punto sin trampa
+                self.trap[i] = graficos.create_image(1035, 139*(i+1),
+                                                     image=trampa_im[0])
 
         self.tiempo = 10  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
@@ -1435,9 +1464,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.orbe = graficos.create_image(154.5*5, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
-        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
-        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        for p in range(4):  # Punto de partida
+            if p != 3:  # Punto sin trampa
+                self.trap[p+4] = graficos.create_image(40, 139*(p+1),
+                                                       image=trampa_im[0])
+        for i in range(4):  # Punto de llegada
+            if i != 1:  # Punto sin trampa
+                self.trap[i] = graficos.create_image(1035, 139*(i+1),
+                                                     image=trampa_im[0])
 
         self.tiempo = 11  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
@@ -1500,9 +1534,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.orbe = graficos.create_image(154.5*4, 140*4, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.trampaledo1 = graficos.create_image(1035, 139*1, image=trampa1_im)
-        self.trampaledo2 = graficos.create_image(1035, 139*2, image=trampa1_im)
-        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        for p in range(4):  # Punto de partida
+            if p != 0:  # Punto sin trampa
+                self.trap[p+4] = graficos.create_image(40, 139*(p+1),
+                                                       image=trampa_im[0])
+        for i in range(4):  # Punto de llegada
+            if i != 2:  # Punto sin trampa
+                self.trap[i] = graficos.create_image(1035, 139*(i+1),
+                                                     image=trampa_im[0])
 
         self.tiempo = 13  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
@@ -1567,9 +1606,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.orbe = graficos.create_image(154.5*5, 140, image=red_orb1_im)
         graficos.lift(self.player)
 
-        self.trampaledo1 = graficos.create_image(1035, 139*2, image=trampa1_im)
-        self.trampaledo2 = graficos.create_image(1035, 139*3, image=trampa1_im)
-        self.trampaledo3 = graficos.create_image(1035, 139*4, image=trampa1_im)
+        for p in range(4):  # Punto de partida
+            if p != 2:  # Punto sin trampa
+                self.trap[p+4] = graficos.create_image(40, 139*(p+1),
+                                                       image=trampa_im[0])
+        for i in range(4):  # Punto de llegada
+            if i != 0:  # Punto sin trampa
+                self.trap[i] = graficos.create_image(1035, 139*(i+1),
+                                                     image=trampa_im[0])
 
         self.tiempo = 18  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
