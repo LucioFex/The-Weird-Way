@@ -43,7 +43,7 @@ all_s = ["10", "20", "30", "40", "50", "60", "70", "80", "90"]  # Stars | Lvl
 root = Tk()
 root.title(titulo)
 root.resizable(False, False)
-root.geometry("{}x{}+{}+{}".format(ancho, alto, 200, 45))
+root.geometry(f"{ancho}x{alto}+{200}+{45}")
 root.iconbitmap("LucioPalIco.ico")
 root.config(bg=c_fondo)
 
@@ -185,12 +185,11 @@ class Menu:  # Menu principal
 
 
 class Seleccion:  # Seleccionador de Niveles.
-    def abrir_selector(self, per, desbloqueados=9, punto="00"):
+    def abrir_selector(self, per, desbloqueados=1, punto="00"):
         # Nivel predeterminado: 1
         global maximo
         if desbloqueados >= maximo:  # Guardado del nivel aumentado
             maximo = desbloqueados
-        self.maximo = maximo  # Quitar esta variable cuando haya estrellas
 
         self.volver = Button(graficos, text="Volver al menu principal",
                              width=19, font=("Verdana", 15),
@@ -229,23 +228,23 @@ class Seleccion:  # Seleccionador de Niveles.
                 exec(f"{nivel}.config(image=candado_im, compound='right')")
 
         # Solución con IFs (solo para corto plazo)
-        if self.maximo >= 1:
+        if maximo >= 1:
             self.nivel_1.config(command=lambda: self.cerrar_selec("1", per))
-        if self.maximo >= 2:
+        if maximo >= 2:
             self.nivel_2.config(command=lambda: self.cerrar_selec("2", per))
-        if self.maximo >= 3:
+        if maximo >= 3:
             self.nivel_3.config(command=lambda: self.cerrar_selec("3", per))
-        if self.maximo >= 4:
+        if maximo >= 4:
             self.nivel_4.config(command=lambda: self.cerrar_selec("4", per))
-        if self.maximo >= 5:
+        if maximo >= 5:
             self.nivel_5.config(command=lambda: self.cerrar_selec("5", per))
-        if self.maximo >= 6:
+        if maximo >= 6:
             self.nivel_6.config(command=lambda: self.cerrar_selec("6", per))
-        if self.maximo >= 7:
+        if maximo >= 7:
             self.nivel_7.config(command=lambda: self.cerrar_selec("7", per))
-        if self.maximo >= 8:
+        if maximo >= 8:
             self.nivel_8.config(command=lambda: self.cerrar_selec("8", per))
-        if self.maximo >= 9:
+        if maximo >= 9:
             self.nivel_9.config(command=lambda: self.cerrar_selec("9", per))
         # ---------------------------------------------------------------------
         # Fondo
@@ -262,7 +261,7 @@ class Seleccion:  # Seleccionador de Niveles.
                                                 window=self.nivel_{lvl})""")
         del lvl
 
-        # Generación de Sprites del personaje seleccionado:
+        # Generación de Sprites del personajenaje seleccionado:
         return self.puntaje(punto)
 
     def puntaje(self, obtenido):
@@ -295,30 +294,39 @@ class Seleccion:  # Seleccionador de Niveles.
                 exec("graficos.itemconfig(self.est_{},image=star1_im)".
                      format(int(p[0]) + punto))
 
+        self.total_p = 0  # Todos los puntos obtenidos
+        for i in all_s:
+            self.total_p += int(i[1])
+        print(self.total_p)
+
+        return all_s  # Todas las estrellas
+
     def personajes(self, per):
         graficos.delete("all")
         graficos.bind("<Button-1>", self.cambio_chars)
-        self.chara = per  # Personaje pre-establecido
+        self.chara = per  # Personajenaje pre-establecido
 
         for face in ("dross", "randolph", "dolar", "freud",
                      "milei", "seba", "franco", "menem"):
-            exec("self.{0}_img = PhotoImage(file='Imgs/Chars/Caras/{0}.png')".
-                 format(face))
+            exec("self.{0}_img = PhotoImage(file='Imgs/Chars/Caras/{0}.png')"
+                 .format(face))
 
         self.selec_menu = Button(graficos, text="Selector de niveles",
                                  width=15, font=("Verdana", 15),
                                  bg=c_bg_se, fg=c_fg,
                                  activebackground=c_bg_press,
                                  activeforeground=c_fg, cursor="hand2",
-                                 command=lambda: self.salir_chars())
+                                 command=self.salir_chars)
 
-        # -- -- Posición del click para elegír un personaje
+        # -- -- Posición del click para elegír un personajenaje
         for default in (("dross", 206, 253), ("randolph", 371, 253),
                         ("dolar", 535, 253), ("freud", 696, 252),
                         ("milei", 856, 252), ("seba", 369, 449),
                         ("franco", 531, 447), ("menem", 696, 447)):
             print(f"DEFAULT = {default} | PER = {per}")
             if default[0] == per:
+                print("Hola")
+                #  back = Imagen de fondo
                 self.back_im = PhotoImage(file="Imgs/Chars/Inter_{}.png".
                                           format(default[0]))
                 self.backg = graficos.create_image(ancho/2, alto/2,
@@ -330,15 +338,41 @@ class Seleccion:  # Seleccionador de Niveles.
         # -- -- Colocación de Imgs
         graficos.create_window(ancho/8.5, 50, window=self.selec_menu)
         # -- -- Personajes desbloqueados
-        print(self.maximo)
-        graficos.create_image(208, 249, image=self.dross_img)
-        graficos.create_image(371, 251, image=self.randolph_img)
-        graficos.create_image(538, 252, image=self.dolar_img)
-        graficos.create_image(694, 252, image=self.freud_img)
-        graficos.create_image(856, 252, image=self.milei_img)
-        graficos.create_image(371, 447, image=self.seba_img)
-        graficos.create_image(531, 447, image=self.franco_img)
-        graficos.create_image(696, 447, image=self.menem_img)
+
+        # graficos.create_image(208, 249, image=self.dross_img)
+        # graficos.create_image(371, 251, image=self.randolph_img)
+        # graficos.create_image(538, 252, image=self.dolar_img)
+        # graficos.create_image(694, 252, image=self.freud_img)
+        # graficos.create_image(856, 252, image=self.milei_img)
+        # graficos.create_image(371, 447, image=self.seba_img)
+        # graficos.create_image(531, 447, image=self.franco_img)
+        # graficos.create_image(696, 447, image=self.menem_img)
+
+        star_min = 0
+        personaje = 1
+        for i in ((208, 249, self.dross_img),
+                  (371, 251, self.randolph_img),
+                  (538, 252, self.dolar_img),
+                  (694, 252, self.freud_img),
+                  (856, 252, self.milei_img),
+                  (371, 447, self.seba_img),
+                  (531, 447, self.franco_img),
+                  (696, 447, self.menem_img)):
+
+            if (personaje == int(all_s[personaje - 1][0]) and
+                    self.total_p >= star_min):
+                print("Hola")
+
+                graficos.create_image(i[0], i[1], image=i[2])
+                personaje += 1
+                star_min += 3
+
+            elif int(all_s[personaje - 1][1]) < star_min:
+                print("Chau")
+                break
+
+        print("ALL_S:", all_s)
+        print("Personaje:", personaje, "||| Star_min:", star_min)
 
         self.presen = PhotoImage(file="Imgs/Chars/{}/Presentacion.png".
                                  format(self.chara))  # Presentación
@@ -347,6 +381,7 @@ class Seleccion:  # Seleccionador de Niveles.
     def cambio_chars(self, cursor):  # Selección de personajes
         # 0=Dross|1=Randolph|2=Dolar|3=Freud|4=Milei|5=Seba|6=Franco|7=Menem #
         print("X =", cursor.x, "| Y =", cursor.y)
+
         for click in (("dross", 133, 161, 281, 339),
                       ("randolph", 299, 162, 443, 339),
                       ("dolar", 464, 163, 612, 339),
@@ -365,7 +400,7 @@ class Seleccion:  # Seleccionador de Niveles.
                      ("milei", 856, 252), ("seba", 369, 449),
                      ("franco", 531, 447), ("menem", 696, 447)):
             try:
-                if elec[0] == char:  # Si el click es sobre un personaje
+                if elec[0] == char:  # Si el click es sobre un personajenaje
                     self.chara = elec[0]
                     graficos.coords(self.marco, elec[1], elec[2])
                     self.back_im = PhotoImage(file="Imgs/Chars/Inter_{}.png".
@@ -383,7 +418,7 @@ class Seleccion:  # Seleccionador de Niveles.
     def salir_chars(self):
         graficos.delete("all")
         graficos.unbind("<Button-1>")
-        return self.abrir_selector(self.chara, self.maximo)
+        return self.abrir_selector(self.chara, maximo)
 
     def cerrar_selec(self, nivel, per):  # 0 = Menu | >= 1 y <=9 = X Nivel
         graficos.delete("all")
@@ -935,7 +970,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         # Desabilitación del botón de PLAY (walk)
         return self.walk.config(image=walk0_im, command=lambda: None)
 
-    def mov_personaje(self, direccion, iter=0):  # iter = Iteraciones
+    def mov_personajenaje(self, direccion, iter=0):  # iter = Iteraciones
         # 1 = DER | 2 = IZQ | 3 = ABA | 4 = ARR | 0 = Primer DER #
         if iter == 13:
             return None
@@ -1016,14 +1051,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 graficos.delete(self.orbe)
 
         graficos.update()
-        graficos.after(27, lambda: self.mov_personaje(direccion, iter+1))
+        graficos.after(27, lambda: self.mov_personajenaje(direccion, iter+1))
 
     def mov_animacion(self, nivel, paso, camino):  # Animación del char
         graficos.unbind("<Button-1>")
         self.walk.config(command=lambda: None)
         self.home.config(command=lambda: None)
         try:  # Forma de chequear si la lista esta vacía o no:
-            self.mov_personaje(paso[0])
+            self.mov_personajenaje(paso[0])
         except IndexError:  # Si esta vacía, se terminó la animación:
             if self.tiempo > 0:
                 return self.regresar(desbloqueado=nivel + 1,
