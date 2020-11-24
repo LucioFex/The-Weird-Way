@@ -1,4 +1,4 @@
-"""                     Programa hecho por: Luciano Esteban
+"""                    Programa hecho por: Luciano Esteban
     -------------------------------------------------------------------------
     Aviso previo: Es normal encontrarse con variables que parezcan no
     asignadas en el caso de utilizar Kite, realmente lo están. Esto es
@@ -261,7 +261,7 @@ class Seleccion:  # Seleccionador de Niveles.
                                                 window=self.nivel_{lvl})""")
         del lvl
 
-        # Generación de Sprites del personajenaje seleccionado:
+        # Generación de Sprites del personaje seleccionado:
         return self.puntaje(punto)
 
     def puntaje(self, obtenido):
@@ -318,14 +318,12 @@ class Seleccion:  # Seleccionador de Niveles.
                                  activeforeground=c_fg, cursor="hand2",
                                  command=self.salir_chars)
 
-        # -- -- Posición del click para elegír un personajenaje
         for default in (("dross", 206, 253), ("randolph", 371, 253),
                         ("dolar", 535, 253), ("freud", 696, 252),
                         ("milei", 856, 252), ("seba", 369, 449),
                         ("franco", 531, 447), ("menem", 696, 447)):
-            print(f"DEFAULT = {default} | PER = {per}")
+            # print(f"DEFAULT = {default} | PER = {per}")
             if default[0] == per:
-                print("Hola")
                 #  back = Imagen de fondo
                 self.back_im = PhotoImage(file="Imgs/Chars/Inter_{}.png".
                                           format(default[0]))
@@ -337,19 +335,9 @@ class Seleccion:  # Seleccionador de Niveles.
 
         # -- -- Colocación de Imgs
         graficos.create_window(ancho/8.5, 50, window=self.selec_menu)
+
         # -- -- Personajes desbloqueados
-
-        # graficos.create_image(208, 249, image=self.dross_img)
-        # graficos.create_image(371, 251, image=self.randolph_img)
-        # graficos.create_image(538, 252, image=self.dolar_img)
-        # graficos.create_image(694, 252, image=self.freud_img)
-        # graficos.create_image(856, 252, image=self.milei_img)
-        # graficos.create_image(371, 447, image=self.seba_img)
-        # graficos.create_image(531, 447, image=self.franco_img)
-        # graficos.create_image(696, 447, image=self.menem_img)
-
         star_min = 0
-        personaje = 1
         for i in ((208, 249, self.dross_img),
                   (371, 251, self.randolph_img),
                   (538, 252, self.dolar_img),
@@ -359,20 +347,12 @@ class Seleccion:  # Seleccionador de Niveles.
                   (531, 447, self.franco_img),
                   (696, 447, self.menem_img)):
 
-            if (personaje == int(all_s[personaje - 1][0]) and
-                    self.total_p >= star_min):
-                print("Hola")
+            if self.total_p >= star_min:
 
                 graficos.create_image(i[0], i[1], image=i[2])
-                personaje += 1
                 star_min += 3
 
-            elif int(all_s[personaje - 1][1]) < star_min:
-                print("Chau")
-                break
-
-        print("ALL_S:", all_s)
-        print("Personaje:", personaje, "||| Star_min:", star_min)
+        del star_min
 
         self.presen = PhotoImage(file="Imgs/Chars/{}/Presentacion.png".
                                  format(self.chara))  # Presentación
@@ -382,37 +362,43 @@ class Seleccion:  # Seleccionador de Niveles.
         # 0=Dross|1=Randolph|2=Dolar|3=Freud|4=Milei|5=Seba|6=Franco|7=Menem #
         print("X =", cursor.x, "| Y =", cursor.y)
 
-        for click in (("dross", 133, 161, 281, 339),
-                      ("randolph", 299, 162, 443, 339),
-                      ("dolar", 464, 163, 612, 339),
-                      ("freud", 622, 163, 767, 342),
-                      ("milei", 784, 161, 927, 339),
-                      ("seba", 299, 356, 444, 535),
-                      ("franco", 458, 357, 605, 535),
-                      ("menem", 623, 361, 767, 534)):
-            if (cursor.x >= click[1] and cursor.x <= click[3] and
-                    cursor.y >= click[2] and cursor.y <= click[4]):
-                char = click[0]
+        star_min = 0
+        # -- -- Posición del click al elegír un personaje
+        for click in (("dross", 133, 161, 281, 339, 206, 253, 0),
+                      ("randolph", 299, 162, 443, 339, 371, 253, 3),
+                      ("dolar", 464, 163, 612, 339, 535, 253, 6),
+                      ("freud", 622, 163, 767, 342, 696, 252, 9),
+                      ("milei", 784, 161, 927, 339, 856, 252, 12),
+                      ("seba", 299, 356, 444, 535, 369, 449, 15),
+                      ("franco", 458, 357, 605, 535, 531, 447, 18),
+                      ("menem", 623, 361, 767, 534, 696, 447, 21)):
 
-        # elec = Elección
-        for elec in (("dross", 206, 253), ("randolph", 371, 253),
-                     ("dolar", 535, 253), ("freud", 696, 252),
-                     ("milei", 856, 252), ("seba", 369, 449),
-                     ("franco", 531, 447), ("menem", 696, 447)):
-            try:
-                if elec[0] == char:  # Si el click es sobre un personajenaje
-                    self.chara = elec[0]
-                    graficos.coords(self.marco, elec[1], elec[2])
-                    self.back_im = PhotoImage(file="Imgs/Chars/Inter_{}.png".
-                                              format(elec[0]))
-                    self.backg = graficos.create_image(ancho/2, alto/2,
-                                                       image=self.back_im)
-                    graficos.lower(self.backg)
-            except UnboundLocalError:
+            if (cursor.x >= click[1] and cursor.x <= click[3] and
+                cursor.y >= click[2] and cursor.y <= click[4] and
+                    self.total_p >= click[7]):
+                self.chara = click[0]
+                graficos.coords(self.marco, click[5], click[6])
+                self.back_im = PhotoImage(file="Imgs/Chars/Inter_{}.png".
+                                          format(click[0]))
+                self.backg = graficos.create_image(ancho/2, alto/2,
+                                                   image=self.back_im)
+                graficos.lower(self.backg)
+                star_min += 3
                 break
 
+            elif self.total_p < click[7]:
+                aviso = (f"Mínimo {click[7]} " +
+                         "estrellas\n  para el próximo \n       personaje")
+                graficos.create_text(ancho - (ancho/4), alto-60,
+                                     text=aviso, fill="#a05ce8", 
+                                     font=("Century Gothic", 20))
+                break
+
+        del star_min
+
+        # Presentación
         self.presen = PhotoImage(file="Imgs/Chars/{}/Presentacion.png".
-                                 format(self.chara))  # Presentación
+                                 format(self.chara))
         graficos.create_image(125, 575, image=self.presen)
 
     def salir_chars(self):
@@ -970,7 +956,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         # Desabilitación del botón de PLAY (walk)
         return self.walk.config(image=walk0_im, command=lambda: None)
 
-    def mov_personajenaje(self, direccion, iter=0):  # iter = Iteraciones
+    def mov_personaje(self, direccion, iter=0):  # iter = Iteraciones
         # 1 = DER | 2 = IZQ | 3 = ABA | 4 = ARR | 0 = Primer DER #
         if iter == 13:
             return None
@@ -1051,14 +1037,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 graficos.delete(self.orbe)
 
         graficos.update()
-        graficos.after(27, lambda: self.mov_personajenaje(direccion, iter+1))
+        graficos.after(27, lambda: self.mov_personaje(direccion, iter+1))
 
     def mov_animacion(self, nivel, paso, camino):  # Animación del char
         graficos.unbind("<Button-1>")
         self.walk.config(command=lambda: None)
         self.home.config(command=lambda: None)
         try:  # Forma de chequear si la lista esta vacía o no:
-            self.mov_personajenaje(paso[0])
+            self.mov_personaje(paso[0])
         except IndexError:  # Si esta vacía, se terminó la animación:
             if self.tiempo > 0:
                 return self.regresar(desbloqueado=nivel + 1,
