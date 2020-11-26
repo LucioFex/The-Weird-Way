@@ -374,32 +374,48 @@ class Seleccion:  # Seleccionador de Niveles.
                       ("menem", 623, 361, 767, 534, 696, 447, 21)):
 
             if (cursor.x >= click[1] and cursor.x <= click[3] and
-                cursor.y >= click[2] and cursor.y <= click[4] and
-                    self.total_p >= click[7]):
-                self.chara = click[0]
-                graficos.coords(self.marco, click[5], click[6])
-                self.back_im = PhotoImage(file="Imgs/Chars/Inter_{}.png".
-                                          format(click[0]))
-                self.backg = graficos.create_image(ancho/2, alto/2,
-                                                   image=self.back_im)
-                graficos.lower(self.backg)
-                star_min += 3
-                break
+                    cursor.y >= click[2] and cursor.y <= click[4]):
 
-            elif self.total_p < click[7]:
-                aviso = (f"Mínimo {click[7]} " +
-                         "estrellas\n  para el próximo \n       personaje")
-                graficos.create_text(ancho - (ancho/4), alto-60,
-                                     text=aviso, fill="#a05ce8", 
-                                     font=("Century Gothic", 20))
-                break
+                if self.total_p >= click[7]:
+                    self.chara = click[0]
+                    self.cuadro_advertencia(click[7], True)
 
+                    self.back_im = PhotoImage(file="Imgs/Chars/Inter_{}.png".
+                                              format(click[0]))
+
+                    graficos.coords(self.marco, click[5], click[6]) 
+                    self.backg = graficos.create_image(ancho/2, alto/2,
+                                                       image=self.back_im)
+                    graficos.lower(self.backg)
+                    star_min += 3
+                    break
+
+                elif self.total_p < click[7]:
+                    self.cuadro_advertencia(click[7], False)
+                    break
         del star_min
 
         # Presentación
         self.presen = PhotoImage(file="Imgs/Chars/{}/Presentacion.png".
                                  format(self.chara))
         graficos.create_image(125, 575, image=self.presen)
+
+    def cuadro_advertencia(self, estrellas, limpiar):
+        aviso = (f"   Se requieren \n{estrellas} estrellas para\n" +
+                 " este personaje")
+
+        try:
+            graficos.delete(self.bg_texto)
+            graficos.delete(self.texto)
+        except AttributeError:
+            pass
+        finally:
+            if limpiar is not True:
+                self.bg_texto = graficos.create_rectangle(832, 450, 1069, 555,
+                                                          fill="#350b0b")
+                self.texto = graficos.create_text(950, 500, text=aviso,
+                                                  fill="#e5e5e5",
+                                                  font=("Century Gothic", 19))
 
     def salir_chars(self):
         graficos.delete("all")
@@ -1186,7 +1202,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 self.trap[i] = graficos.create_image(1035, 139*(i+1),
                                                      image=trampa_im[0])
 
-        self.tiempo = 12  # String para el tiempo del nivel
+        self.tiempo = 11  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_3(self):  # --- --- --- --- 18 Puentes
@@ -1248,7 +1264,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 self.trap[i] = graficos.create_image(1035, 139*(i+1),
                                                      image=trampa_im[0])
 
-        self.tiempo = 16  # String para el tiempo del nivel
+        self.tiempo = 14  # String para el tiempo del nivel
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def nivel_4(self):  # --- --- --- --- 17 Puentes
