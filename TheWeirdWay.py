@@ -7,6 +7,7 @@
     como ya asignada. Pero si lo estan.                                     """
 
 from tkinter import Canvas, Frame, Tk, PhotoImage, Button
+# import pygame
 
 # -- -- -- Titulo
 titulo = "The Weird Way"
@@ -55,6 +56,7 @@ selec_im = PhotoImage(file="Imgs/Selector.png")  # Fondo Selector
 fondo_im = PhotoImage(file="Imgs/Fondo_a.png")  # Escenario del juego
 candado_im = PhotoImage(file="Imgs/Candado2.png")  # Niveles bloqueados
 cuadro_im = PhotoImage(file="Imgs/Menu_play.png")  # Fondo de la Pausa
+restart_im = PhotoImage(file="Imgs/restart.png")  # Fondo de la Pausa
 red_orb1_im = PhotoImage(file="Imgs/RedOrb1.png")  # Orbes Rojos / Puntos
 red_orb2_im = PhotoImage(file="Imgs/RedOrb2.png")  # Orbes Rojos / Puntos
 red_orb3_im = PhotoImage(file="Imgs/RedOrb3.png")  # Orbes Rojos / Puntos
@@ -362,7 +364,6 @@ class Seleccion:  # Seleccionador de Niveles.
         # 0=Dross|1=Randolph|2=Dolar|3=Freud|4=Milei|5=Seba|6=Franco|7=Menem #
         print("X =", cursor.x, "| Y =", cursor.y)
 
-        star_min = 0
         # -- -- Posición del click al elegír un personaje
         for click in (("dross", 133, 161, 281, 339, 206, 253, 0),
                       ("randolph", 299, 162, 443, 339, 371, 253, 3),
@@ -383,17 +384,15 @@ class Seleccion:  # Seleccionador de Niveles.
                     self.back_im = PhotoImage(file="Imgs/Chars/Inter_{}.png".
                                               format(click[0]))
 
-                    graficos.coords(self.marco, click[5], click[6]) 
+                    graficos.coords(self.marco, click[5], click[6])
                     self.backg = graficos.create_image(ancho/2, alto/2,
                                                        image=self.back_im)
                     graficos.lower(self.backg)
-                    star_min += 3
                     break
 
                 elif self.total_p < click[7]:
                     self.cuadro_advertencia(click[7], False)
                     break
-        del star_min
 
         # Presentación
         self.presen = PhotoImage(file="Imgs/Chars/{}/Presentacion.png".
@@ -444,6 +443,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.fondo = graficos.create_image(ancho/2, alto/2, image=fondo_im)
         self.tiempo = 0  # String para el tiempo del nivel
 
+        self.reinicio = Button(graficos, font=("Century Gothic", 15),
+                               bd=0, highlightthickness=0, image=restart_im,
+                               activebackground='#1d2023',
+                               cursor="hand2", command=self.reiniciar)
+        
         self.home = Button(graficos, font=("Century Gothic", 15),
                            bd=0, highlightthickness=0, image=home_im,
                            activebackground='#23272d',
@@ -457,8 +461,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                            text=f"Bonus: {self.tiempo}",
                                            font=("Century Gothic", 18))
 
-        graficos.create_window(35, 35, window=self.home)  # Botón de regreso
-        graficos.create_window(1035, 35, window=self.walk)  # Botón de caminar
+        graficos.create_window(35, 35, window=self.home)
+        graficos.create_window(1035, 35, window=self.walk)
+        graficos.create_window(70, 20, window=self.reinicio)
         graficos.bind("<Button-1>", self.giro)  # Giro de los caminos
 
         self.interrupcion = False  # Pausa de las animaciones
@@ -495,11 +500,16 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
             return graficos.after(1005, self.tiempo_bonus)
 
+    def reiniciar(self):  # Reinicio del estado del nivel
+        graficos.delete("all")
+        exec("Partida(self.char).nivel_{}()".format(self.piso))
+
     def pausa(self):  # Ret = Return / Retorno
         self.interrupcion = True
         graficos.unbind("<Button-1>")
         self.home.config(command=lambda: None)
         self.walk.config(command=lambda: None)
+        self.reinicio.config(command=lambda: None)
 
         for boton in ("reanudar", "sele", "exit"):  # Generación de botones
             exec("""self.{} = Button(graficos, bg="#22144f", bd=2, fg=c_fg,
@@ -1059,6 +1069,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         graficos.unbind("<Button-1>")
         self.walk.config(command=lambda: None)
         self.home.config(command=lambda: None)
+        self.reinicio.config(command=lambda: None)
         try:  # Forma de chequear si la lista esta vacía o no:
             self.mov_personaje(paso[0])
         except IndexError:  # Si esta vacía, se terminó la animación:
@@ -1661,6 +1672,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         del self.reanudar, self.sele, self.exit
         graficos.bind("<Button-1>", self.giro)  # Giro de los caminos
         self.home.config(command=self.pausa)
+        self.reinicio.config(command=self.reiniciar)
         graficos.update()
 
         return (self.nivel_ganado(), self.lava_mov(),  # Despausa animaciones
