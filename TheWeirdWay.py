@@ -56,21 +56,22 @@ selec_im = PhotoImage(file="Imgs/Selector.png")  # Fondo Selector
 fondo_im = PhotoImage(file="Imgs/Fondo_a.png")  # Escenario del juego
 candado_im = PhotoImage(file="Imgs/Candado2.png")  # Niveles bloqueados
 cuadro_im = PhotoImage(file="Imgs/Menu_play.png")  # Fondo de la Pausa
-restart_im = PhotoImage(file="Imgs/restart.png")  # Fondo de la Pausa
 red_orb1_im = PhotoImage(file="Imgs/RedOrb1.png")  # Orbes Rojos / Puntos
 red_orb2_im = PhotoImage(file="Imgs/RedOrb2.png")  # Orbes Rojos / Puntos
 red_orb3_im = PhotoImage(file="Imgs/RedOrb3.png")  # Orbes Rojos / Puntos
 elec_im = PhotoImage(file="Imgs/Chars/Marco.png")  # Marco de selección de char
 star0_im = PhotoImage(file="Imgs/star0.png")  # Estrella inactiva
 star1_im = PhotoImage(file="Imgs/star1.png")  # Estrella activa
+puntos_im = PhotoImage(file="Imgs/Puntos.png")  # Estrella activa
 lava_imgs = [None, None, None]  # Material para la animación de lava
 for frame in range(3):
     lava_imgs[frame] = PhotoImage(file=f"Imgs/Fondo_b{frame + 1}.png")
 # -- -- Botones In-Game
 home_im = PhotoImage(file="Imgs/Retorno_Menu.png")  # Regreso al menu
+restart_im = PhotoImage(file="Imgs/restart.png")  # Reinicio de nivel
 walk0_im = PhotoImage(file="Imgs/Moverse0.png")  # Caminar desactivado
-walk1_im = PhotoImage(file="Imgs/Moverse1.png")  # Caminar sin | punto |
-walk2_im = PhotoImage(file="Imgs/Moverse2.png")  # Caminar con | punto |
+walk1_im = PhotoImage(file="Imgs/Moverse1.png")  # Caminar sin punto
+walk2_im = PhotoImage(file="Imgs/Moverse2.png")  # Caminar con punto
 # -- -- Trampas
 trampa_im = [None, None, None, None]
 for img in range(4):  # Trampas de fondo
@@ -360,6 +361,11 @@ class Seleccion:  # Seleccionador de Niveles.
                                  format(self.chara))  # Presentación
         graficos.create_image(125, 575, image=self.presen)
 
+        #  Anotación del total de estrellas
+        graficos.create_image(950, 58, image=puntos_im)
+        graficos.create_text(1000, 56, text=self.total_p, fill="#f4f4f4",
+                             font=("Century Gothic", 30))
+
     def cambio_chars(self, cursor):  # Selección de personajes
         # 0=Dross|1=Randolph|2=Dolar|3=Freud|4=Milei|5=Seba|6=Franco|7=Menem #
         print("X =", cursor.x, "| Y =", cursor.y)
@@ -447,7 +453,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                bd=0, highlightthickness=0, image=restart_im,
                                activebackground='#1d2023',
                                cursor="hand2", command=self.reiniciar)
-        
+
         self.home = Button(graficos, font=("Century Gothic", 15),
                            bd=0, highlightthickness=0, image=home_im,
                            activebackground='#23272d',
