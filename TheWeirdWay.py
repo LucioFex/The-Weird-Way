@@ -7,7 +7,7 @@
     como ya asignada. Pero si lo estan.                                     """
 
 from tkinter import Canvas, Frame, Tk, PhotoImage, Button
-# import pygame
+from pygame import mixer
 
 # -- -- -- Titulo
 titulo = "The Weird Way"
@@ -40,6 +40,7 @@ tres_p = ("abd", "acd", "abc", "bcd")  # Cantidad de direcciones: 4
 # Extras
 maximo = 1  # Mayor nivel alcanzado en el regístro del juego
 all_s = ["10", "20", "30", "40", "50", "60", "70", "80", "90"]  # Stars | Lvl
+arranque = True  # Musica de inicio
 # -- -- -- Root
 root = Tk()
 root.title(titulo)
@@ -117,11 +118,19 @@ graficos = Canvas(pantalla, width=ancho, height=alto, bg=c_pantalla,
                   borderwidth=0, highlightthickness=0)
 graficos.pack()
 
+# -- -- -- Musica y sonido
+mixer.init(channels=1)
+mixer.music.load("Audio/Musica/Menu.mp3")
+select1_se = mixer.Sound("Audio/Sonido/select3.mp3")
+red_orb_se = mixer.Sound("Audio/Sonido/red_orb.wav")
+caminar_se = mixer.Sound('Audio/Sonido/walking_1.mp3')
+caminar_se.set_volume(0.5)
+
 
 # -- -- -- Botones Menu
 class Menu:  # Menu principal
     def crear_menu(self, per="dross"):
-
+        global arranque
         self.num = alto  # Reseteo del numerador de la animación de cerrado.
         self.imagen = graficos.create_image(ancho/2, alto/2, image=menu_im)
         self.logo2 = graficos.create_image(ancho/2, alto/2 - alto/4,
@@ -156,11 +165,21 @@ class Menu:  # Menu principal
         self.salir2 = graficos.create_window(ancho/2, alto/2 + alto/2.70,
                                              window=self.salir)
 
+        # Musica
+        if arranque:
+            mixer.music.play(loops=-1)
+            arranque = False
+        # Sonido
+        select1_se.set_volume(0.3)
+
     def cerrar_menu(self, selected, per):  # 1ro: Animación, luego cerrado.
         for boton in (self.nueva, self.continuar, self.salir):
             boton.config(command=lambda: None)
 
-        # Animaciones:
+        # Sonido
+        select1_se.play() if self.num == alto else None
+
+        # Animaciones
         self.num -= 50
         graficos.coords(self.ani_menu, -1, alto, ancho, self.num)
 
@@ -173,6 +192,8 @@ class Menu:  # Menu principal
             graficos.move(self.continuar2, + 65, 0)
             graficos.move(self.salir2,     - 65, 0)
         elif selected == "salir":
+            mixer.music.fadeout(1000)
+            select1_se.fadeout(1000)
             graficos.move(self.nueva2,     - 65, 0)
             graficos.move(self.continuar2, - 65, 0)
             graficos.move(self.salir2,     + 65, 0)
@@ -990,8 +1011,12 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
     def mov_personaje(self, direccion, iter=0):  # iter = Iteraciones
         # 1 = DER | 2 = IZQ | 3 = ABA | 4 = ARR | 0 = Primer DER #
+        global jojo
         if iter == 13:
             return None
+
+        if mixer.Channel(1).get_busy() == 0:  # Sonido de pasos de pies
+            mixer.Channel(1).play(caminar_se)
 
         if direccion == 0:  # Dirección = Derecha Inicial
             if iter >= 0 and iter < 3:
@@ -1060,6 +1085,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
         # -- -- -- Obtención del punto / orbe:
         if self.len_x == self.orbe_x and self.len_y == self.orbe_y:
+            red_orb_se.play() if iter == 4 else None
             if iter >= 8 and iter < 10:
                 graficos.lift(self.orbe)
                 graficos.itemconfig(self.orbe, image=red_orb2_im)
@@ -1688,6 +1714,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.interrupcion = True
         graficos.unbind("<Button-1>")
         graficos.delete("all")
+        mixer.Channel(1).stop()
 
         if destino == "selec":  # Retorno + New Lvl
             return Seleccion().abrir_selector(self.char,
