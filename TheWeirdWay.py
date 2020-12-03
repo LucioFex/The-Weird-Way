@@ -1135,6 +1135,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         try:  # Forma de chequear si la lista esta vacía o no:
             self.mov_personaje(paso[0])
         except IndexError:  # Si esta vacía, se terminó la animación:
+            caminar_boton_se = True
             if self.tiempo > 0:
                 return self.regresar(desbloqueado=nivel + 1,
                                      puntos=str(int(camino) + 1))
@@ -1240,10 +1241,10 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_abd_im), "abd"]
         self.puente12 = [graficos.create_image(154.5*2, 140,
                                                image=puente_abc_im), "abc"]
-        self.puente13 = [graficos.create_image(154.5*3, 140,
-                                               image=puente_x2_im), "x2"]
-        self.puente14 = [graficos.create_image(154.5*4, 140,
-                                               image=puente_ad2_im), "ad2"]
+        self.puente13b = [graficos.create_image(154.5*3, 140,
+                                                image=puente_x2_im), "x2"]
+        self.puente14b = [graficos.create_image(154.5*4, 140,
+                                                image=puente_ad2_im), "ad2"]
         self.puente22 = [graficos.create_image(154.5*2, 140*2,
                                                image=puente_y_im), "y"]
         self.puente32 = [graficos.create_image(154.5*2, 140*3,
@@ -1308,8 +1309,9 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_x_im), "x"]
         self.puente24 = [graficos.create_image(154.5*4, 140*2,
                                                image=puente_ac_im), "ac"]
-        self.puente34 = [graficos.create_image(154.5*4, 140*3,
-                                               image=puente_f1ll2_im), "f1ll2"]
+        self.puente34b = [graficos.create_image(154.5*4, 140*3,
+                                                image=puente_f1ll2_im),
+                          "f1ll2"]
         self.puente44 = [graficos.create_image(154.5*4, 140*4,
                                                image=puente_y_im), "y"]
         self.puente15 = [graficos.create_image(154.5*5, 140,
@@ -1322,8 +1324,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_bc_im), "bc"]
         self.puente26 = [graficos.create_image(154.5*6, 140*2,
                                                image=puente_ac_im), "ac"]
-        self.puente36 = [graficos.create_image(154.5*6, 140*3,
-                                               image=puente_ac2_im), "ac2"]
+        self.puente36b = [graficos.create_image(154.5*6, 140*3,
+                                                image=puente_ac2_im), "ac2"]
 
         self.orbe = graficos.create_image(154.5*3, 140, image=red_orb1_im)
         graficos.lift(self.player)
@@ -1350,12 +1352,12 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.piso = 4
         graficos.coords(self.player, 154.5*0.25, 140*3)
 
-        self.puente21 = [graficos.create_image(154.5, 140*2,
-                                               image=puente_bd2_im), "bd2"]
+        self.puente21b = [graficos.create_image(154.5, 140*2,
+                                                image=puente_bd2_im), "bd2"]
         self.puente31 = [graficos.create_image(154.5, 140*3,
                                                image=puente_bc_im), "bc"]
-        self.puente41 = [graficos.create_image(154.5, 140*4,
-                                               image=puente_bc2_im), "bc2"]
+        self.puente41b = [graficos.create_image(154.5, 140*4,
+                                                image=puente_bc2_im), "bc2"]
         self.puente22 = [graficos.create_image(154.5*2, 140*2,
                                                image=puente_y_im), "y"]
         self.puente32 = [graficos.create_image(154.5*2, 140*3,
@@ -1370,8 +1372,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_y_im), "y"]
         self.puente14 = [graficos.create_image(154.5*4, 140,
                                                image=puente_x2_im), "x2"]
-        self.puente34 = [graficos.create_image(154.5*4, 140*3,
-                                               image=puente_bd2_im), "bd2"]
+        self.puente34b = [graficos.create_image(154.5*4, 140*3,
+                                                image=puente_bd2_im), "bd2"]
         self.puente44 = [graficos.create_image(154.5*4, 140*4,
                                                image=puente_bc_im), "bc"]
         self.puente15 = [graficos.create_image(154.5*5, 140,
@@ -1382,8 +1384,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ac_im), "ac"]
         self.puente26 = [graficos.create_image(154.5*6, 140*2,
                                                image=puente_x_im), "x"]
-        self.puente36 = [graficos.create_image(154.5*6, 140*3,
-                                               image=puente_abc2_im), "abc2"]
+        self.puente36b = [graficos.create_image(154.5*6, 140*3,
+                                                image=puente_abc2_im), "abc2"]
 
         self.orbe = graficos.create_image(154.5*6, 140, image=red_orb1_im)
         graficos.lift(self.player)
@@ -1412,14 +1414,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
 
         self.puente11 = [graficos.create_image(154.5, 140,
                                                image=puente_ac_im), "ac"]
-        self.puente21 = [graficos.create_image(154.5, 140*2,
-                                               image=puente_y2_im), "y2"]
+        self.puente21b = [graficos.create_image(154.5, 140*2,
+                                                image=puente_y2_im), "y2"]
         self.puente31 = [graficos.create_image(154.5, 140*3,
                                                image=puente_acd_im), "acd"]
-        self.puente41 = [graficos.create_image(154.5, 140*4,
-                                               image=puente_bc2_im), "bc2"]
-        self.puente12 = [graficos.create_image(154.5*2, 140,
-                                               image=puente_bd2_im), "bd2"]
+        self.puente41b = [graficos.create_image(154.5, 140*4,
+                                                image=puente_bc2_im), "bc2"]
+        self.puente12b = [graficos.create_image(154.5*2, 140,
+                                                image=puente_bd2_im), "bd2"]
         self.puente22 = [graficos.create_image(154.5*2, 140*2,
                                                image=puente_bd_im), "bd"]
         self.puente32 = [graficos.create_image(154.5*2, 140*3,
@@ -1436,14 +1438,14 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_y_im), "y"]
         self.puente24 = [graficos.create_image(154.5*4, 140*2,
                                                image=puente_y_im), "y"]
-        self.puente15 = [graficos.create_image(154.5*5, 140,
-                                               image=puente_x2_im), "x2"]
+        self.puente15b = [graficos.create_image(154.5*5, 140,
+                                                image=puente_x2_im), "x2"]
         self.puente25 = [graficos.create_image(154.5*5, 140*2,
                                                image=puente_y_im), "y"]
         self.puente16 = [graficos.create_image(154.5*6, 140,
                                                image=puente_ac_im), "ac"]
-        self.puente26 = [graficos.create_image(154.5*6, 140*2,
-                                               image=puente_abc2_im), "abc2"]
+        self.puente26b = [graficos.create_image(154.5*6, 140*2,
+                                                image=puente_abc2_im), "abc2"]
 
         self.orbe = graficos.create_image(154.5*2, 140, image=red_orb1_im)
         graficos.lift(self.player)
@@ -1474,12 +1476,12 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ac_im), "ac"]
         self.puente21 = [graficos.create_image(154.5, 140*2,
                                                image=puente_bc_im), "bc"]
-        self.puente31 = [graficos.create_image(154.5, 140*3,
-                                               image=puente_y2_im), "y2"]
+        self.puente31b = [graficos.create_image(154.5, 140*3,
+                                                image=puente_y2_im), "y2"]
         self.puente41 = [graficos.create_image(154.5, 140*4,
                                                image=puente_ac_im), "ac"]
-        self.puente12 = [graficos.create_image(154.5*2, 140,
-                                               image=puente_abd2_im), "abd2"]
+        self.puente12b = [graficos.create_image(154.5*2, 140,
+                                                image=puente_abd2_im), "abd2"]
         self.puente22 = [graficos.create_image(154.5*2, 140*2,
                                                image=puente_ac_im), "ac"]
         self.puente32 = [graficos.create_image(154.5*2, 140*3,
@@ -1492,20 +1494,20 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_f1ll_im), "f1ll"]
         self.puente43 = [graficos.create_image(154.5*3, 140*4,
                                                image=puente_y_im), "y"]
-        self.puente24 = [graficos.create_image(154.5*4, 140*2,
-                                               image=puente_ad2_im), "ad2"]
+        self.puente24b = [graficos.create_image(154.5*4, 140*2,
+                                                image=puente_ad2_im), "ad2"]
         self.puente34 = [graficos.create_image(154.5*4, 140*3,
                                                image=puente_ac_im), "ac"]
-        self.puente44 = [graficos.create_image(154.5*4, 140*4,
-                                               image=puente_x2_im), "x2"]
+        self.puente44b = [graficos.create_image(154.5*4, 140*4,
+                                                image=puente_x2_im), "x2"]
         self.puente35 = [graficos.create_image(154.5*5, 140*3,
                                                image=puente_y_im), "y"]
         self.puente45 = [graficos.create_image(154.5*5, 140*4,
                                                image=puente_acd_im), "acd"]
         self.puente36 = [graficos.create_image(154.5*6, 140*3,
                                                image=puente_abc_im), "abc"]
-        self.puente46 = [graficos.create_image(154.5*6, 140*4,
-                                               image=puente_ac2_im), "ac2"]
+        self.puente46b = [graficos.create_image(154.5*6, 140*4,
+                                                image=puente_ac2_im), "ac2"]
 
         self.orbe = graficos.create_image(154.5*3, 140*2, image=red_orb1_im)
         graficos.lift(self.player)
@@ -1538,10 +1540,10 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_x_im), "x"]
         self.puente41 = [graficos.create_image(154.5, 140*4,
                                                image=puente_bc_im), "bc"]
-        self.puente22 = [graficos.create_image(154.5*2, 140*2,
-                                               image=puente_x2_im), "x2"]
-        self.puente32 = [graficos.create_image(154.5*2, 140*3,
-                                               image=puente_bd2_im), "bd2"]
+        self.puente22b = [graficos.create_image(154.5*2, 140*2,
+                                                image=puente_x2_im), "x2"]
+        self.puente32b = [graficos.create_image(154.5*2, 140*3,
+                                                image=puente_bd2_im), "bd2"]
         self.puente42 = [graficos.create_image(154.5*2, 140*4,
                                                image=puente_ad_im), "ad"]
         self.puente13 = [graficos.create_image(154.5*3, 140,
@@ -1556,8 +1558,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_bc_im), "bc"]
         self.puente24 = [graficos.create_image(154.5*4, 140*2,
                                                image=puente_x_im), "x"]
-        self.puente34 = [graficos.create_image(154.5*4, 140*3,
-                                               image=puente_ac2_im), "ac2"]
+        self.puente34b = [graficos.create_image(154.5*4, 140*3,
+                                                image=puente_ac2_im), "ac2"]
         self.puente44 = [graficos.create_image(154.5*4, 140*4,
                                                image=puente_y_im), "y"]
         self.puente15 = [graficos.create_image(154.5*5, 140,
@@ -1566,10 +1568,10 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ac_im), "ac"]
         self.puente35 = [graficos.create_image(154.5*5, 140*3,
                                                image=puente_x_im), "x"]
-        self.puente45 = [graficos.create_image(154.5*5, 140*4,
-                                               image=puente_ac2_im), "ac2"]
-        self.puente26 = [graficos.create_image(154.5*6, 140*2,
-                                               image=puente_x2_im), "x2"]
+        self.puente45b = [graficos.create_image(154.5*5, 140*4,
+                                                image=puente_ac2_im), "ac2"]
+        self.puente26b = [graficos.create_image(154.5*6, 140*2,
+                                                image=puente_x2_im), "x2"]
 
         self.orbe = graficos.create_image(154.5*5, 140, image=red_orb1_im)
         graficos.lift(self.player)
@@ -1602,8 +1604,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ad_im), "ad"]
         self.puente41 = [graficos.create_image(154.5, 140*4,
                                                image=puente_bd_im), "bd"]
-        self.puente12 = [graficos.create_image(154.5*2, 140,
-                                               image=puente_abd2_im), "abd2"]
+        self.puente12b = [graficos.create_image(154.5*2, 140,
+                                                image=puente_abd2_im), "abd2"]
         self.puente22 = [graficos.create_image(154.5*2, 140*2,
                                                image=puente_ac_im), "ac"]
         self.puente32 = [graficos.create_image(154.5*2, 140*3,
@@ -1612,8 +1614,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_ad_im), "ad"]
         self.puente13 = [graficos.create_image(154.5*3, 140,
                                                image=puente_bcd_im), "bcd"]
-        self.puente23 = [graficos.create_image(154.5*3, 140*2,
-                                               image=puente_bc2_im), "bc2"]
+        self.puente23b = [graficos.create_image(154.5*3, 140*2,
+                                                image=puente_bc2_im), "bc2"]
         self.puente43 = [graficos.create_image(154.5*3, 140*4,
                                                image=puente_y_im), "y"]
         self.puente14 = [graficos.create_image(154.5*4, 140,
@@ -1622,8 +1624,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_y_im), "y"]
         self.puente34 = [graficos.create_image(154.5*4, 140*3,
                                                image=puente_ad_im), "ad"]
-        self.puente44 = [graficos.create_image(154.5*4, 140*4,
-                                               image=puente_ac2_im), "ac2"]
+        self.puente44b = [graficos.create_image(154.5*4, 140*4,
+                                                image=puente_ac2_im), "ac2"]
         self.puente15 = [graficos.create_image(154.5*5, 140,
                                                image=puente_y_im), "y"]
         self.puente25 = [graficos.create_image(154.5*5, 140*2,
@@ -1632,12 +1634,12 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_bd_im), "bd"]
         self.puente45 = [graficos.create_image(154.5*5, 140*4,
                                                image=puente_ac_im), "ac"]
-        self.puente16 = [graficos.create_image(154.5*6, 140,
-                                               image=puente_ad2_im), "ad2"]
+        self.puente16b = [graficos.create_image(154.5*6, 140,
+                                                image=puente_ad2_im), "ad2"]
         self.puente26 = [graficos.create_image(154.5*6, 140*2,
                                                image=puente_y_im), "y"]
-        self.puente36 = [graficos.create_image(154.5*6, 140*3,
-                                               image=puente_abd2_im), "abd2"]
+        self.puente36b = [graficos.create_image(154.5*6, 140*3,
+                                                image=puente_abd2_im), "abd2"]
         self.puente46 = [graficos.create_image(154.5*6, 140*4,
                                                image=puente_ad_im), "ad"]
 
@@ -1666,8 +1668,8 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         self.piso = 9
         graficos.coords(self.player, 154.5*0.25, 140*3)
 
-        self.puente11 = [graficos.create_image(154.5, 140,
-                                               image=puente_bd2_im), "bd2"]
+        self.puente11b = [graficos.create_image(154.5, 140,
+                                                image=puente_bd2_im), "bd2"]
         self.puente21 = [graficos.create_image(154.5, 140*2,
                                                image=puente_x_im), "x"]
         self.puente31 = [graficos.create_image(154.5, 140*3,
@@ -1678,18 +1680,18 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_bc_im), "bc"]
         self.puente22 = [graficos.create_image(154.5*2, 140*2,
                                                image=puente_ad_im), "ad"]
-        self.puente32 = [graficos.create_image(154.5*2, 140*3,
-                                               image=puente_bc2_im), "bc2"]
+        self.puente32b = [graficos.create_image(154.5*2, 140*3,
+                                                image=puente_bc2_im), "bc2"]
         self.puente42 = [graficos.create_image(154.5*2, 140*4,
                                                image=puente_y_im), "y"]
-        self.puente13 = [graficos.create_image(154.5*3, 140,
-                                               image=puente_bd2_im), "bd2"]
+        self.puente13b = [graficos.create_image(154.5*3, 140,
+                                                image=puente_bd2_im), "bd2"]
         self.puente23 = [graficos.create_image(154.5*3, 140*2,
                                                image=puente_bd_im), "bd"]
         self.puente33 = [graficos.create_image(154.5*3, 140*3,
                                                image=puente_f1ll_im), "f1ll"]
-        self.puente43 = [graficos.create_image(154.5*3, 140*4,
-                                               image=puente_abc2_im), "abc2"]
+        self.puente43b = [graficos.create_image(154.5*3, 140*4,
+                                                image=puente_abc2_im), "abc2"]
         self.puente14 = [graficos.create_image(154.5*4, 140,
                                                image=puente_y_im), "y"]
         self.puente34 = [graficos.create_image(154.5*4, 140*3,
@@ -1700,18 +1702,18 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                                image=puente_bc_im), "bc"]
         self.puente25 = [graficos.create_image(154.5*5, 140*2,
                                                image=puente_abc_im), "abc"]
-        self.puente35 = [graficos.create_image(154.5*5, 140*3,
-                                               image=puente_ac2_im), "ac2"]
+        self.puente35b = [graficos.create_image(154.5*5, 140*3,
+                                                image=puente_ac2_im), "ac2"]
         self.puente45 = [graficos.create_image(154.5*5, 140*4,
                                                image=puente_y_im), "y"]
         self.puente16 = [graficos.create_image(154.5*6, 140,
                                                image=puente_ac_im), "ac"]
-        self.puente26 = [graficos.create_image(154.5*6, 140*2,
-                                               image=puente_y2_im), "y2"]
+        self.puente26b = [graficos.create_image(154.5*6, 140*2,
+                                                image=puente_y2_im), "y2"]
         self.puente36 = [graficos.create_image(154.5*6, 140*3,
                                                image=puente_x_im), "x"]
-        self.puente46 = [graficos.create_image(154.5*6, 140*4,
-                                               image=puente_ac2_im), "ac2"]
+        self.puente46b = [graficos.create_image(154.5*6, 140*4,
+                                                image=puente_ac2_im), "ac2"]
 
         self.orbe = graficos.create_image(154.5*5, 140, image=red_orb1_im)
         graficos.lift(self.player)
