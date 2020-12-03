@@ -41,6 +41,9 @@ tres_p = ("abd", "acd", "abc", "bcd")  # Cantidad de direcciones: 4
 maximo = 1  # Mayor nivel alcanzado en el regístro del juego
 all_s = ["10", "20", "30", "40", "50", "60", "70", "80", "90"]  # Stars | Lvl
 arranque = True  # Musica de inicio
+piernas = {"dross", "randolph", "freud", "milei", "menem"}
+ruedas = {"dolar", "seba", "franco"}
+caminar_boton_se = True
 # -- -- -- Root
 root = Tk()
 root.title(titulo)
@@ -121,10 +124,21 @@ graficos.pack()
 # -- -- -- Musica y sonido
 mixer.init(channels=1)
 mixer.music.load("Audio/Musica/Menu.mp3")
-select1_se = mixer.Sound("Audio/Sonido/select3.mp3")
+select1_se = mixer.Sound("Audio/Sonido/select1.wav")
+select2_se = mixer.Sound("Audio/Sonido/select2.wav")
+select3_se = mixer.Sound("Audio/Sonido/select3.mp3")
 red_orb_se = mixer.Sound("Audio/Sonido/red_orb.wav")
-caminar_se = mixer.Sound('Audio/Sonido/walking_1.mp3')
-caminar_se.set_volume(0.5)
+giro_se = mixer.Sound('Audio/Sonido/giro_puente.wav')
+restart_se = mixer.Sound('Audio/Sonido/restart.mp3')
+imposible_se = mixer.Sound('Audio/Sonido/imposible.wav')
+run_se = mixer.Sound('Audio/Sonido/run.wav')
+caminar1_se = mixer.Sound('Audio/Sonido/walking_1.wav')
+caminar2_se = mixer.Sound('Audio/Sonido/walking_2.wav')
+
+giro_se.set_volume(0.5)
+run_se.set_volume(0.8)
+caminar1_se.set_volume(0.5)
+caminar2_se.set_volume(1)
 
 
 # -- -- -- Botones Menu
@@ -170,14 +184,14 @@ class Menu:  # Menu principal
             mixer.music.play(loops=-1)
             arranque = False
         # Sonido
-        select1_se.set_volume(0.3)
+        select3_se.set_volume(0.3)
 
     def cerrar_menu(self, selected, per):  # 1ro: Animación, luego cerrado.
         for boton in (self.nueva, self.continuar, self.salir):
             boton.config(command=lambda: None)
 
         # Sonido
-        select1_se.play() if self.num == alto else None
+        select3_se.play() if self.num == alto else None
 
         # Animaciones
         self.num -= 50
@@ -193,7 +207,7 @@ class Menu:  # Menu principal
             graficos.move(self.salir2,     - 65, 0)
         elif selected == "salir":
             mixer.music.fadeout(1000)
-            select1_se.fadeout(1000)
+            select3_se.fadeout(1000)
             graficos.move(self.nueva2,     - 65, 0)
             graficos.move(self.continuar2, - 65, 0)
             graficos.move(self.salir2,     + 65, 0)
@@ -326,6 +340,7 @@ class Seleccion:  # Seleccionador de Niveles.
         return all_s  # Todas las estrellas
 
     def personajes(self, per):
+        mixer.Sound.play(select1_se)
         graficos.delete("all")
         graficos.bind("<Button-1>", self.cambio_chars)
         self.chara = per  # Personajenaje pre-establecido
@@ -429,14 +444,16 @@ class Seleccion:  # Seleccionador de Niveles.
     def cuadro_advertencia(self, estrellas, limpiar):
         aviso = (f"   Se requieren \n{estrellas} estrellas para\n" +
                  " este personaje")
-
         try:
             graficos.delete(self.bg_texto)
             graficos.delete(self.texto)
         except AttributeError:
             pass
         finally:
-            if limpiar is not True:
+            if limpiar:
+                mixer.Sound.play(select1_se)
+            elif limpiar is not True:
+                mixer.Sound.play(imposible_se)
                 self.bg_texto = graficos.create_rectangle(832, 450, 1069, 555,
                                                           fill="#350b0b")
                 self.texto = graficos.create_text(950, 500, text=aviso,
@@ -444,6 +461,7 @@ class Seleccion:  # Seleccionador de Niveles.
                                                   font=("Century Gothic", 19))
 
     def salir_chars(self):
+        mixer.Sound.play(select1_se)
         graficos.delete("all")
         graficos.unbind("<Button-1>")
         return self.abrir_selector(self.chara, maximo)
@@ -455,8 +473,10 @@ class Seleccion:  # Seleccionador de Niveles.
         self.nivel_8, self.nivel_9
 
         if nivel == "0":  # If por si se quiere volver al menu principal
+            mixer.Sound.play(select1_se)
             return Menu().crear_menu(per)
         elif nivel != "0":  # Elif para buscar un nivel
+            mixer.Sound.play(select2_se)
             for lvl in ("1", "2", "3", "4", "5", "6", "7", "8", "9"):
                 if nivel == lvl:
                     exec('Partida(per).nivel_{0}()'.format(lvl))
@@ -528,10 +548,12 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
             return graficos.after(1005, self.tiempo_bonus)
 
     def reiniciar(self):  # Reinicio del estado del nivel
+        mixer.Sound.play(restart_se)
         graficos.delete("all")
         exec("Partida(self.char).nivel_{}()".format(self.piso))
 
     def pausa(self):  # Ret = Return / Retorno
+        mixer.Sound.play(select1_se)
         self.interrupcion = True
         graficos.unbind("<Button-1>")
         self.home.config(command=lambda: None)
@@ -733,7 +755,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 print("No hay cuadro 46")
 
     def cambio(self, dire):  # p = Posición de los puentes
-
+        mixer.Sound.play(giro_se)
         if dire[1] in all_p:
             if dire[1] == "f1ll":
                 dire[1] = "f2ll"
@@ -1015,8 +1037,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         if iter == 13:
             return None
 
-        if mixer.Channel(1).get_busy() == 0:  # Sonido de pasos de pies
-            mixer.Channel(1).play(caminar_se)
+        if mixer.Channel(1).get_busy() == 0 and self.char in piernas:
+            mixer.Channel(1).play(caminar1_se)  # Sonido de pasos de pies
+
+        elif mixer.Channel(1).get_busy() == 0 and self.char in ruedas:
+            mixer.Channel(1).play(caminar2_se)  # Sonido de ruedas girando
 
         if direccion == 0:  # Dirección = Derecha Inicial
             if iter >= 0 and iter < 3:
@@ -1098,6 +1123,11 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         graficos.after(27, lambda: self.mov_personaje(direccion, iter+1))
 
     def mov_animacion(self, nivel, paso, camino):  # Animación del char
+        global caminar_boton_se
+        if caminar_boton_se:
+            mixer.Sound.play(run_se)
+            caminar_boton_se = False
+
         graficos.unbind("<Button-1>")
         self.walk.config(command=lambda: None)
         self.home.config(command=lambda: None)
@@ -1699,6 +1729,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
         return self.trampas(), self.orbe_mov(), self.tiempo_bonus()
 
     def despausa(self):
+        mixer.Sound.play(select1_se)
         self.interrupcion = False
         graficos.delete(self.cuadro, self.retorno, self.selector, self.salida)
         del self.reanudar, self.sele, self.exit
@@ -1711,6 +1742,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                 self.trampas(), self.orbe_mov(), self.tiempo_bonus())
 
     def regresar(self, destino="selec", desbloqueado=1, puntos="00"):  # Return
+        mixer.Sound.play(select1_se)
         self.interrupcion = True
         graficos.unbind("<Button-1>")
         graficos.delete("all")
