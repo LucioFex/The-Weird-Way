@@ -8,6 +8,7 @@
 
 from tkinter import Canvas, Frame, Tk, PhotoImage, Button
 from pygame import mixer
+import TheWeirdBBDD
 
 # -- -- -- Titulo
 titulo = "The Weird Way"
@@ -44,6 +45,7 @@ arranque = True  # Musica de inicio
 piernas = {"dross", "randolph", "freud", "milei", "menem"}
 ruedas = {"dolar", "seba", "franco"}
 caminar_boton_se = True
+
 # -- -- -- Root
 root = Tk()
 root.title(titulo)
@@ -51,6 +53,9 @@ root.resizable(False, False)
 root.geometry(f"{ancho}x{alto}+{200}+{45}")
 root.iconbitmap("LucioPalIco.ico")
 root.config(bg=c_fondo)
+
+# -- -- -- Guardado de la partida / BBDD
+memoria = TheWeirdBBDD.Memoria()
 
 # -- -- -- Imgs
 # A = Izquierda | B = Derecha | C = Arriba | D = Abajo
@@ -217,7 +222,8 @@ class Menu:  # Menu principal
 
         elif self.num <= -50:  # Acciones tras animación. Eliminación de todo.
             graficos.delete("all")
-            if selected != "salir":
+            if selected == "nueva":
+                if memoria.cargar() != [0, 0]:
                 return Seleccion().abrir_selector(per)  # Si no se quiere salir
             return root.destroy()  # Si se quiere salir
 
