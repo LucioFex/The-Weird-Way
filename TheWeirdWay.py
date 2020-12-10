@@ -23,14 +23,13 @@ alto = 708
 c_fondo = "#1c1b20"  # Fondo del root
 c_pantalla = "#26242b"  # Fondo del canvas "Graficos"
 c_fg = "#e7e7e7"  # Todas las letras base
-c_fg_win = "#615637"  # Letras de los niveles ganados
+c_fg_no = "#aaa7a4"  # Todas las letras base
 c_bg_se = "#1a1820"  # Color de cuadros de inicio
 c_bg_no = "#1e1c24"  # Color de niveles bloqueados
+c_bg_no2 = "#282121"  # Color de niveles bloqueados
 c_bg_si = "#272430"  # Color de niveles desbloqueados
 c_bg_press = "#1a1920"  # Color de botones comúnes siendo presionados
 c_bg_press_si = "#221f2a"  # Color de niveles desbloqueados siendo presionados
-c_bg_win = "#d7b64c"  # Color de niveles superados
-c_bg_press_win = "#cbab47"  # Color de niveles ganados siendo presionados
 
 # Direcciones
 all_p = ("f1ll", "f2ll", "f3ll", "f4ll")  # Cantidad de direcciones: 4
@@ -148,8 +147,9 @@ caminar2_se.set_volume(1)
 
 # -- -- -- Botones Menu
 class Menu:  # Menu principal
-    def crear_menu(self, per="dross"):
+    def crear_menu(self):
         global arranque
+        per = memoria.cargar()[2]
         self.num = alto  # Reseteo del numerador de la animación de cerrado.
         self.imagen = graficos.create_image(ancho/2, alto/2, image=menu_im)
         self.logo2 = graficos.create_image(ancho/2, alto/2 - alto/4,
@@ -162,14 +162,18 @@ class Menu:  # Menu principal
                             cursor="hand2", font=("Century Gothic", 20),
                             bg=c_bg_no, width=30, activeforeground=c_fg,
                             activebackground=c_bg_se,
-                            command=lambda: self.cerrar_menu("nueva", per))
+                            command=lambda: self.advertencia_reinicio())
 
-        self.continuar = Button(graficos, text="Continuar Partida", fg=c_fg,
-                                cursor="hand2", font=("Century Gothic", 20),
-                                bg=c_bg_no, width=27, activeforeground=c_fg,
-                                activebackground=c_bg_se,
-                                command=lambda: self.cerrar_menu("continuar",
-                                                                 per))
+        self.continuar = Button(graficos, text="Continuar Partida", fg=c_fg_no,
+                                cursor="arrow", font=("Century Gothic", 20),
+                                bg=c_bg_no2, width=27, state="disabled")
+        if memoria.cargar() != [1, all_s, 'dross']:
+            print("Supuesto 1:", [1, all_s, 'dross'])
+            print("Supuesto 2:", memoria.cargar())
+            self.continuar.config(cursor="hand2", activeforeground=c_fg,
+                                  activebackground=c_bg_se, fg=c_fg,
+                                  bg=c_bg_no, state="normal", command=lambda:
+                                  self.cerrar_menu("continuar", per))
 
         self.salir = Button(graficos, text="Salir", fg=c_fg, cursor="hand2",
                             font=("Century Gothic", 20), bg=c_bg_no,
@@ -222,18 +226,39 @@ class Menu:  # Menu principal
 
         elif self.num <= -50:  # Acciones tras animación. Eliminación de todo.
             graficos.delete("all")
+
             if selected == "nueva":
-                if memoria.cargar() != [0, 0]:
-                return Seleccion().abrir_selector(per)  # Si no se quiere salir
+                memoria.vaciar()
+                return Seleccion().abrir_selector(per)
+
+            elif selected == "continuar":
+                return Seleccion().abrir_selector(per, memoria.cargar()[0])
             return root.destroy()  # Si se quiere salir
+
+    def advertencia_reinicio(self):
+        if memoria.cargar() == [1, memoria.cargar()[1], 'dross']:
+            return self.cerrar_menu("nueva", "dross")
+
+        mixer.Sound.play(select1_se)
+        aviso = ("    Se ha encontrado\n" +
+                 "una partida guardada.\n" +
+                 "¿Quieres reemplazarla\n" +
+                 "    de todos modos?")
+        self.bg_texto = graficos.create_rectangle(25, 300, 275, 450,
+                                                  fill="#102f44")
+        self.texto = graficos.create_text(150, 370, text=aviso,
+                                          fill="#e5e5e5",
+                                          font=("Century Gothic", 16))
+        self.nueva.config(command=lambda: self.cerrar_menu("nueva", "dross"))
 
 
 class Seleccion:  # Seleccionador de Niveles.
     def abrir_selector(self, per, desbloqueados=1, punto="00"):
         # Nivel predeterminado: 1
-        global maximo
-        if desbloqueados >= maximo:  # Guardado del nivel aumentado
-            maximo = desbloqueados
+        # global maximo
+        if desbloqueados >= memoria.cargar()[0]:  # Guardado del nivel jugado
+            memoria.añadir_n(desbloqueados)
+        maximo = memoria.cargar()[0]
 
         self.volver = Button(graficos, text="Volver al menu principal",
                              width=19, font=("Verdana", 15),
@@ -248,7 +273,7 @@ class Seleccion:  # Seleccionador de Niveles.
                                cursor="hand2", activeforeground=c_fg,
                                image=self.char, compound="right",
                                activebackground=c_bg_press,
-                               command=lambda: self.personajes(per))
+                               command=self.personajes)
 
         # Loop para generar los botones de los niveles:
         for nivel in ("self.nivel_1", "self.nivel_2", "self.nivel_3",
@@ -310,6 +335,7 @@ class Seleccion:  # Seleccionador de Niveles.
 
     def puntaje(self, obtenido):
         repe = 1  # Repetición
+        lista_s = memoria.cargar()[1]  # Lista de niveles editable
 
         for star_x in (115, 200, 285):  # Generación de estrellas huecas
             for star_y in (245, 455, 655):
@@ -322,13 +348,14 @@ class Seleccion:  # Seleccionador de Niveles.
 
         for p in range(1, 9 + 1):  # Incremento de estrellas por avance en lvl
             if (int(obtenido[0]) == p and
-               int(obtenido[1]) > int(all_s[p-1][1])):
+               int(obtenido[1]) > int(lista_s[p-1][1])):
 
                 # Reemplazo por mayores puntos (++) si son (>) a los anteriores
-                all_s[p - 1] = all_s[p-1][0:-1] + obtenido[1]
+                lista_s[p - 1] = (lista_s[p-1][0:-1] +
+                                  obtenido[1])
                 break
 
-        for p in all_s:  # Estrellas obtenidas por nivel
+        for p in lista_s:  # Estrellas obtenidas por nivel
             lista = []
             lista.append(0) if p[1] == "1" else None
             lista.extend([0, 9]) if p[1] == "2" else None
@@ -339,17 +366,18 @@ class Seleccion:  # Seleccionador de Niveles.
                      format(int(p[0]) + punto))
 
         self.total_p = 0  # Todos los puntos obtenidos
-        for i in all_s:
+        for i in lista_s:
             self.total_p += int(i[1])
         print(self.total_p)
+        memoria.añadir_e(lista_s)
 
-        return all_s  # Todas las estrellas
+        return lista_s  # Todas las estrellas
 
-    def personajes(self, per):
+    def personajes(self):
         mixer.Sound.play(select1_se)
         graficos.delete("all")
         graficos.bind("<Button-1>", self.cambio_chars)
-        self.chara = per  # Personajenaje pre-establecido
+        self.chara = memoria.cargar()[2]
 
         for face in ("dross", "randolph", "dolar", "freud",
                      "milei", "seba", "franco", "menem"):
@@ -368,7 +396,7 @@ class Seleccion:  # Seleccionador de Niveles.
                         ("milei", 856, 252), ("seba", 369, 449),
                         ("franco", 531, 447), ("menem", 696, 447)):
             # print(f"DEFAULT = {default} | PER = {per}")
-            if default[0] == per:
+            if default[0] == self.chara:
                 #  back = Imagen de fondo
                 self.back_im = PhotoImage(file="Imgs/Chars/Inter_{}.png".
                                           format(default[0]))
@@ -393,10 +421,8 @@ class Seleccion:  # Seleccionador de Niveles.
                   (696, 447, self.menem_img)):
 
             if self.total_p >= star_min:
-
                 graficos.create_image(i[0], i[1], image=i[2])
                 star_min += 3
-
         del star_min
 
         self.presen = PhotoImage(file="Imgs/Chars/{}/Presentacion.png".
@@ -410,7 +436,6 @@ class Seleccion:  # Seleccionador de Niveles.
 
     def cambio_chars(self, cursor):  # Selección de personajes
         # 0=Dross|1=Randolph|2=Dolar|3=Freud|4=Milei|5=Seba|6=Franco|7=Menem #
-        print("X =", cursor.x, "| Y =", cursor.y)
 
         # -- -- Posición del click al elegír un personaje
         for click in (("dross", 133, 161, 281, 339, 206, 253, 0),
@@ -447,6 +472,8 @@ class Seleccion:  # Seleccionador de Niveles.
                                  format(self.chara))
         graficos.create_image(125, 575, image=self.presen)
 
+        return memoria.añadir_p(self.chara)
+
     def cuadro_advertencia(self, estrellas, limpiar):
         aviso = (f"   Se requieren \n{estrellas} estrellas para\n" +
                  " este personaje")
@@ -480,7 +507,7 @@ class Seleccion:  # Seleccionador de Niveles.
 
         if nivel == "0":  # If por si se quiere volver al menu principal
             mixer.Sound.play(select1_se)
-            return Menu().crear_menu(per)
+            return Menu().crear_menu()
         elif nivel != "0":  # Elif para buscar un nivel
             mixer.Sound.play(select2_se)
             for lvl in ("1", "2", "3", "4", "5", "6", "7", "8", "9"):
@@ -1761,7 +1788,7 @@ class Partida:  # Ancho base = 154.5 (77 X) | Alto base = 140 (140 Y)
                                               desbloqueados=desbloqueado,
                                               punto=puntos)
         elif destino == "menu":
-            return Menu().crear_menu(self.char)
+            return Menu().crear_menu()
 
 
 Menu().crear_menu()
