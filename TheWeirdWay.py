@@ -167,9 +167,8 @@ class Menu:  # Menu principal
         self.continuar = Button(graficos, text="Continuar Partida", fg=c_fg_no,
                                 cursor="arrow", font=("Century Gothic", 20),
                                 bg=c_bg_no2, width=27, state="disabled")
+
         if memoria.cargar() != [1, all_s, 'dross']:
-            print("Supuesto 1:", [1, all_s, 'dross'])
-            print("Supuesto 2:", memoria.cargar())
             self.continuar.config(cursor="hand2", activeforeground=c_fg,
                                   activebackground=c_bg_se, fg=c_fg,
                                   bg=c_bg_no, state="normal", command=lambda:
@@ -207,19 +206,25 @@ class Menu:  # Menu principal
         graficos.coords(self.ani_menu, -1, alto, ancho, self.num)
 
         if selected == "nueva":
-            graficos.move(self.nueva2,     + 65, 0)
-            graficos.move(self.continuar2, - 65, 0)
-            graficos.move(self.salir2,     - 65, 0)
+            try:
+                graficos.move(self.bg_texto,   -65, 0)
+                graficos.move(self.texto,      -65, 0)
+            except AttributeError:
+                pass
+            finally:
+                graficos.move(self.nueva2,     + 65, 0)
+                graficos.move(self.continuar2, - 65, 0)
+                graficos.move(self.salir2,     - 65, 0)
         elif selected == "continuar":
-            graficos.move(self.nueva2,     - 65, 0)
-            graficos.move(self.continuar2, + 65, 0)
-            graficos.move(self.salir2,     - 65, 0)
+            graficos.move(self.nueva2,         - 65, 0)
+            graficos.move(self.continuar2,     + 65, 0)
+            graficos.move(self.salir2,         - 65, 0)
         elif selected == "salir":
             mixer.music.fadeout(1000)
             select3_se.fadeout(1000)
-            graficos.move(self.nueva2,     - 65, 0)
-            graficos.move(self.continuar2, - 65, 0)
-            graficos.move(self.salir2,     + 65, 0)
+            graficos.move(self.nueva2,         - 65, 0)
+            graficos.move(self.continuar2,     - 65, 0)
+            graficos.move(self.salir2,         + 65, 0)
 
         if self.num > -50:  # Bucle generado para repetír el método (Animación)
             root.after(60, lambda: self.cerrar_menu(selected, per))

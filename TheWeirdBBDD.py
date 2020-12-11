@@ -54,7 +54,7 @@ class Memoria:
         return self.contenido
 
 
-c = Memoria()
+# c = Memoria()
 # c.añadir(1, ["10", "20", "30", "40", "50", "60", "70", "80", "90"], "dross")
-print(c.cargar())
-del c
+# print(c.cargar())
+# del c
