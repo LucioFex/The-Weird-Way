@@ -52,9 +52,3 @@ class Memoria:
     def cargar(self):
         """Carga los valores obtenidos, y los retorna en el método."""
         return self.contenido
-
-
-# c = Memoria()
-# c.añadir(1, ["10", "20", "30", "40", "50", "60", "70", "80", "90"], "dross")
-# print(c.cargar())
-# del c
