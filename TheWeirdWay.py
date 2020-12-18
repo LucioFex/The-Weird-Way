@@ -1,11 +1,3 @@
-"""                    Programa hecho por: Luciano Esteban
-    -------------------------------------------------------------------------
-    Aviso previo: Es normal encontrarse con variables que parezcan no
-    asignadas en el caso de utilizar Kite, realmente lo están. Esto es
-    debido al uso de la función exec(), donde las defíno con un formato
-    String, por lo que muchos IDEs y editores de texto no la van a reconocer
-    como ya asignada. Pero si lo estan.                                     """
-
 from tkinter import Canvas, Frame, Tk, PhotoImage, Button
 from pygame import mixer
 import TheWeirdBBDD
