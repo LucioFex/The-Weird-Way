@@ -2,6 +2,8 @@
 
 'The Weird Way' is a simple and experimental pipe game made in Python.
 
+![](Imgs/Logo.png)
+
 ## Requeriments
 
 ### In case of using the .py files:
