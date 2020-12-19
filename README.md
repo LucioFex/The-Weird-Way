@@ -1,6 +1,6 @@
 # The Weird Way
 
-'The Weird Way' is a simple and experimental pipe game made in Python.
+'The Weird Way' is a simple and experimental pipe game made in [Python](https://www.python.org/).
 
 ![](Imgs/Logo.png)
 
@@ -8,9 +8,9 @@
 
 ### In case of using the .py files:
 
-- Programming Language "[Python](https://www.python.org/)" (version 3 or higher).
-- Python "Pygame" library. (You have to install it with the package manager [pip](https://pip.pypa.io/en/stable/).
-- Python "Tkinter (Tcl/Tk)" library. (It's a part of the "standard libraries" of Python, so you already have it).
+- Programming Language [Python](https://www.python.org/) (version 3).
+- Python [Pygame](https://www.pygame.org/news) library. (You have to install it with the package manager [pip](https://pip.pypa.io/en/stable/).
+- Python [Tkinter (Tcl/Tk)](https://docs.python.org/3/library/tkinter.html) library. (It's a part of the "standard libraries" of Python, so you already have it).
 
 ### In case of using the .exe file:
 
