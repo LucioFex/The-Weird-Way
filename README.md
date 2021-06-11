@@ -4,7 +4,7 @@
 
 ![](Imgs/Logo.png)
 
-## Requeriments
+## Requirements
 
 ### In case of using the .py files:
 
